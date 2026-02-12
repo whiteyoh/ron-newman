@@ -43,3 +43,29 @@ def test_pr_manager_sections() -> None:
     ).body
     assert "## Scope" in pr_body
     assert "## Validation" in pr_body
+
+
+
+def test_evolution_classifies_priority_and_theme() -> None:
+    state = EvolutionState()
+    builder = AgenticBuilder()
+
+    suggestion = builder.evolve("Critical security policy checks are missing", state)
+
+    assert "[P0/security]" in suggestion
+    assert "Backlog now contains 1 unique item(s)" in suggestion
+    assert len(state.backlog) == 1
+
+
+def test_evolution_deduplicates_repeated_feedback() -> None:
+    state = EvolutionState()
+    builder = AgenticBuilder()
+
+    first = builder.evolve("Improve chat UX response formatting", state)
+    second = builder.evolve("Improve chat UX response formatting", state)
+
+    assert "Backlog now contains 1 unique item(s)" in first
+    assert "already tracked" in second
+    assert len(state.backlog) == 1
+    assert len(state.history) == 2
+    assert len(state.feedback_log) == 2

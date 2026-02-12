@@ -39,6 +39,7 @@ class PullRequestDraft:
 class EvolutionState:
     history: list[str] = field(default_factory=list)
     feedback_log: list[str] = field(default_factory=list)
+    backlog: dict[str, str] = field(default_factory=dict)
 
     def append_feedback(self, feedback: str) -> None:
         timestamp = datetime.now(tz=timezone.utc).isoformat()
@@ -47,3 +48,10 @@ class EvolutionState:
     def append_improvement(self, suggestion: str) -> None:
         timestamp = datetime.now(tz=timezone.utc).isoformat()
         self.history.append(f"[{timestamp}] {suggestion}")
+
+    def upsert_backlog_item(self, key: str, value: str) -> str:
+        if key in self.backlog:
+            return "existing"
+
+        self.backlog[key] = value
+        return "new"
