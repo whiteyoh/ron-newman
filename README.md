@@ -54,3 +54,13 @@ pytest
 - Replace rule-based planning with an LLM provider.
 - Add a git integration agent that opens real PRs automatically.
 - Add policy/security checks before proposing implementation changes.
+
+## Populate a GitHub Project with Tickets
+
+Use `project_tickets.csv` as a starter backlog and run:
+
+```bash
+GITHUB_TOKEN=YOUR_TOKEN REPO=YOUR_REPO ./scripts/populate_github_project.sh OWNER PROJECT_NUMBER ./project_tickets.csv
+```
+
+This will create issues in `OWNER/REPO` and add them to GitHub Project (v2) number `PROJECT_NUMBER`.
