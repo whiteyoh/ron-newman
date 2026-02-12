@@ -30,23 +30,50 @@ with st.expander("Agent registry"):
 
 if st.button("Analyze Folder and Draft PR"):
     builder = st.session_state.builder
+    progress_lines: list[str] = []
+    progress_placeholder = st.empty()
+
     try:
-        result = builder.run(folder_path)
+        for update in builder.run_with_updates(folder_path):
+            if isinstance(update, tuple) and update[0] == "done":
+                result = update[1]
+                break
+
+            progress_lines.append(f"- {update}")
+            progress_placeholder.markdown(
+                "### Live agent narration\n"
+                "I will narrate each phase in plain language as I work.\n\n"
+                + "\n".join(progress_lines)
+            )
+        else:
+            raise RuntimeError("Analysis ended before a final result was produced.")
+
         response = (
-            "### Agent activity log\n"
-            f"{result['chat_log']}\n\n"
-            "### Final decision\n"
-            f"{result['decision']}\n\n"
-            f"### New agents created this run\n"
-            f"{result['created_agents']}\n\n"
-            f"### {result['title']}\n\n"
-            f"{result['summary']}\n\n"
-            f"**PR Title:** `{result['pr_title']}`\n\n"
-            f"```markdown\n{result['pr_body']}\n```"
+            "### Live agent narration\n"
+            "I narrated my steps while working.\n\n"
+            + "\n".join(progress_lines)
+            + "\n\n### What I looked at\n"
+            + result["inspection_note"]
+            + "\n\n### Agent activity log\n"
+            + result["chat_log"]
+            + "\n\n### Final decision\n"
+            + result["decision"]
+            + "\n\n### New agents created this run\n"
+            + result["created_agents"]
+            + "\n\n### "
+            + result["title"]
+            + "\n\n"
+            + result["summary"]
+            + "\n\n**PR Title:** `"
+            + result["pr_title"]
+            + "`\n\n```markdown\n"
+            + result["pr_body"]
+            + "\n```"
         )
     except Exception as exc:  # noqa: BLE001
         response = f"Could not analyze folder: `{exc}`"
 
+    progress_placeholder.empty()
     st.session_state.messages.append({"role": "assistant", "content": response})
     st.rerun()
 

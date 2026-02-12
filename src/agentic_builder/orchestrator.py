@@ -71,26 +71,57 @@ class AgenticBuilder:
         chat_log.append(f"🧭 Decision: {decision}")
         return decision
 
-    def run(self, target_folder: str) -> dict[str, str]:
+    def _describe_inspection_scope(self, insight: FolderInsight) -> str:
+        top_level_counts: dict[str, int] = {}
+        for file in insight.files:
+            top_level = file.path.split("/", maxsplit=1)[0]
+            top_level_counts[top_level] = top_level_counts.get(top_level, 0) + 1
+
+        top_sections = sorted(top_level_counts.items(), key=lambda item: (-item[1], item[0]))[:5]
+        section_text = ", ".join(f"`{name}` ({count})" for name, count in top_sections) or "none"
+
+        largest_files = sorted(insight.files, key=lambda file: file.size_bytes, reverse=True)[:3]
+        largest_text = (
+            ", ".join(f"`{file.path}` ({file.size_bytes} bytes)" for file in largest_files)
+            if largest_files
+            else "none"
+        )
+
+        return (
+            "I inspected the following areas first: "
+            f"{section_text}. Largest files reviewed for context: {largest_text}."
+        )
+
+    def run_with_updates(self, target_folder: str):
         chat_log: list[str] = [f"📁 Starting analysis for `{target_folder}`."]
         existing_agents = set(self._agents)
+
+        yield "I am checking which agents are available and creating any missing ones."
         scanner = self._get_or_create_agent("scanner", FolderScanner, chat_log)
         planner = self._get_or_create_agent("planner", ToolPlanner, chat_log)
         pr_manager = self._get_or_create_agent("pr_manager", PRManager, chat_log)
 
+        yield "I am scanning your folder now so I can explain exactly what I am looking at."
         insight = scanner.scan(Path(target_folder))
         chat_log.append(
             f"🔎 Scanner analyzed `{insight.root}` and found {insight.file_count} file(s)."
         )
+        inspection_note = self._describe_inspection_scope(insight)
+        chat_log.append(f"🗂️ Scope: {inspection_note}")
+
+        yield "I finished the scan and I am now deciding the best implementation focus."
         decision = self._decide_focus(insight, chat_log)
 
+        yield "I am drafting the blueprint with capabilities, architecture, and tests."
         blueprint = planner.build_blueprint(insight)
         chat_log.append("🧠 Planner generated a tool blueprint from the folder insight.")
+
+        yield "I am turning the blueprint into a PR-style execution plan."
         pr_draft = pr_manager.create_draft(blueprint)
         chat_log.append("📝 PR manager drafted a pull request plan and validation checklist.")
         created_agents = sorted(set(self._agents) - existing_agents)
 
-        return {
+        final_result = {
             "title": blueprint.title,
             "summary": blueprint.summary,
             "pr_title": pr_draft.title,
@@ -98,7 +129,17 @@ class AgenticBuilder:
             "decision": decision,
             "created_agents": ", ".join(created_agents) or "none",
             "chat_log": "\n".join(f"- {line}" for line in chat_log),
+            "inspection_note": inspection_note,
         }
+
+        yield "done", final_result
+
+    def run(self, target_folder: str) -> dict[str, str]:
+        final_result: dict[str, str] = {}
+        for update in self.run_with_updates(target_folder):
+            if isinstance(update, tuple) and update[0] == "done":
+                final_result = update[1]
+        return final_result
 
     def evolve(self, feedback: str, state: EvolutionState) -> str:
         evolver = self._agents.get("evolver")

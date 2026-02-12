@@ -28,8 +28,21 @@ def test_end_to_end_orchestration(tmp_path: Path) -> None:
     assert "## Objective" in result["pr_body"]
     assert "dominant file type" in result["decision"]
     assert "Auto-creating it now" in result["chat_log"]
+    assert "I inspected the following areas first" in result["inspection_note"]
+    assert "Representative files reviewed" in result["summary"]
     assert result["created_agents"] == "planner, pr_manager, scanner"
 
+
+def test_run_with_updates_streams_human_readable_steps(tmp_path: Path) -> None:
+    (tmp_path / "main.py").write_text("print('ok')\n", encoding="utf-8")
+
+    builder = AgenticBuilder()
+    updates = list(builder.run_with_updates(str(tmp_path)))
+
+    assert any(isinstance(update, str) and "I am scanning your folder now" in update for update in updates)
+    assert isinstance(updates[-1], tuple)
+    assert updates[-1][0] == "done"
+    assert "inspection_note" in updates[-1][1]
 
 def test_builder_reuses_agents_on_second_run(tmp_path: Path) -> None:
     (tmp_path / "main.py").write_text("print('ok')\n", encoding="utf-8")

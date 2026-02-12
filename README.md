@@ -10,6 +10,7 @@ This project is a starter implementation of an **agentic AI tool that builds age
 - Generates a tool blueprint with capabilities, architecture, and testing strategy.
 - Drafts output as pull-request style content.
 - Streams each artifact into a chat-style Streamlit UI.
+- Narrates analysis live in plain English so you can see what the tool is doing step-by-step.
 - Supports iterative evolution by turning feedback into a history of improvements.
 
 ---
@@ -43,8 +44,10 @@ Once the app is open:
    - Example: `.` (current repo)
    - Example: `/absolute/path/to/your/project`
 2. Click **Analyze Folder and Draft PR**.
-3. Wait for the app to generate:
-   - A folder summary
+3. Watch the **Live agent narration** panel while it runs. You will see human-readable progress updates (for example, when it is scanning files, planning architecture, or drafting the PR).
+4. After completion, review:
+   - **What I looked at**: top areas and largest files inspected for context
+   - A folder summary with representative files
    - A proposed blueprint/plan
    - A PR-style draft output
 
@@ -63,6 +66,8 @@ This is a reliable first run because the app can inspect known files immediately
 ## 3) Example: how to make it evolve
 
 After the initial analysis finishes, add feedback in the chat input.
+
+The system can create missing agents automatically (scanner/planner/PR/evolver) and then reuse them in later runs. You can always inspect current status in the **Agent registry** expander in the UI.
 
 Example prompts you can paste directly:
 
