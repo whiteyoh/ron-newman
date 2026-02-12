@@ -26,15 +26,15 @@ class EvolutionEngine:
         display_feedback = normalized_feedback or "No feedback text provided."
         backlog_key = self._feedback_key(display_feedback)
         backlog_item = f"[{priority}/{theme}] {display_feedback}"
-        change_kind = state.upsert_backlog_item(backlog_key, backlog_item)
+        change_kind, ticket_id = state.upsert_backlog_item(backlog_key, backlog_item)
 
         if change_kind == "existing":
             suggestion = (
                 "Feedback already tracked; escalating visibility in roadmap: "
-                f"{backlog_item}"
+                f"{ticket_id} {backlog_item}"
             )
         else:
-            suggestion = f"Promote latest feedback into roadmap: {backlog_item}"
+            suggestion = f"Promote latest feedback into roadmap: {ticket_id} {backlog_item}"
 
         suggestion = (
             f"{suggestion}. "

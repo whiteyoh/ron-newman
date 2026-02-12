@@ -42,6 +42,9 @@ def test_pr_manager_sections() -> None:
         )
     ).body
     assert "## Scope" in pr_body
+    assert "## Prioritized Backlog (Important Features)" in pr_body
+    assert "TKT-001" in pr_body
+    assert "## Amendment Ticket Slice (Max 2 per PR)" in pr_body
     assert "## Validation" in pr_body
 
 
@@ -52,6 +55,7 @@ def test_evolution_classifies_priority_and_theme() -> None:
 
     suggestion = builder.evolve("Critical security policy checks are missing", state)
 
+    assert "TKT-001" in suggestion
     assert "[P0/security]" in suggestion
     assert "Backlog now contains 1 unique item(s)" in suggestion
     assert len(state.backlog) == 1
@@ -69,3 +73,18 @@ def test_evolution_deduplicates_repeated_feedback() -> None:
     assert len(state.backlog) == 1
     assert len(state.history) == 2
     assert len(state.feedback_log) == 2
+
+
+def test_pr_manager_limits_amendment_slice_to_two_tickets(tmp_path: Path) -> None:
+    (tmp_path / "main.py").write_text("print('ok')\n", encoding="utf-8")
+    builder = AgenticBuilder()
+    blueprint = builder.planner.build_blueprint(builder.scanner.scan(tmp_path))
+    pr_body = PRManager().create_draft(blueprint).body
+
+    lines = pr_body.splitlines()
+    start = lines.index("## Amendment Ticket Slice (Max 2 per PR)") + 1
+    end = lines.index("", start)
+    slice_lines = [line for line in lines[start:end] if line.startswith("-")]
+
+    assert len(slice_lines) == 2
+

@@ -49,9 +49,12 @@ class EvolutionState:
         timestamp = datetime.now(tz=timezone.utc).isoformat()
         self.history.append(f"[{timestamp}] {suggestion}")
 
-    def upsert_backlog_item(self, key: str, value: str) -> str:
+    def upsert_backlog_item(self, key: str, value: str) -> tuple[str, str]:
         if key in self.backlog:
-            return "existing"
+            existing_value = self.backlog[key]
+            ticket_id = existing_value.split(" ", maxsplit=1)[0]
+            return "existing", ticket_id
 
-        self.backlog[key] = value
-        return "new"
+        ticket_id = f"TKT-{len(self.backlog) + 1:03d}"
+        self.backlog[key] = f"{ticket_id} {value}"
+        return "new", ticket_id
