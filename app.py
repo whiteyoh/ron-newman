@@ -27,6 +27,10 @@ if st.button("Analyze Folder and Draft PR"):
     try:
         result = builder.run(folder_path)
         response = (
+            "### Agent activity log\n"
+            f"{result['chat_log']}\n\n"
+            "### Final decision\n"
+            f"{result['decision']}\n\n"
             f"### {result['title']}\n\n"
             f"{result['summary']}\n\n"
             f"**PR Title:** `{result['pr_title']}`\n\n"
