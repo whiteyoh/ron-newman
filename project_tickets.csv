@@ -1,0 +1,13 @@
+Title,Body,Status,Priority,Estimate
+Set up project charter,"Define scope, goals, and success metrics for the project.",Todo,High,2
+Create architecture overview,"Document system architecture and key dependencies.",Todo,High,3
+Define API contract,"Draft and review API endpoints, payloads, and error handling.",Todo,High,3
+Build authentication flow,"Implement login/logout and session management.",Todo,High,5
+Add user profile page,"Create profile UI and data update workflow.",Todo,Medium,3
+Implement notifications,"Add in-app and email notification support.",Todo,Medium,5
+Create dashboard metrics,"Build dashboard cards and trend charts for key KPIs.",Todo,Medium,5
+Add audit logging,"Track sensitive user actions for compliance.",Todo,High,3
+Write test plan,"Document unit, integration, and E2E testing strategy.",Todo,High,2
+Run accessibility pass,"Audit key screens for accessibility and fix blocking issues.",Todo,Medium,3
+Prepare release checklist,"Create release readiness criteria and rollback plan.",Todo,High,2
+Post-release monitoring,"Define alerts and monitor key production metrics.",Todo,Medium,2
