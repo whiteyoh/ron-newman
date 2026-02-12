@@ -27,7 +27,8 @@ def test_end_to_end_orchestration(tmp_path: Path) -> None:
     assert "PR Title" not in result["pr_body"]
     assert "## Objective" in result["pr_body"]
     assert "dominant file type" in result["decision"]
-    assert "Creating it now" in result["chat_log"]
+    assert "Auto-creating it now" in result["chat_log"]
+    assert result["created_agents"] == "planner, pr_manager, scanner"
 
 
 def test_builder_reuses_agents_on_second_run(tmp_path: Path) -> None:
@@ -37,11 +38,23 @@ def test_builder_reuses_agents_on_second_run(tmp_path: Path) -> None:
     first = builder.run(str(tmp_path))
     second = builder.run(str(tmp_path))
 
-    assert "Creating it now" in first["chat_log"]
+    assert "Auto-creating it now" in first["chat_log"]
+    assert first["created_agents"] == "planner, pr_manager, scanner"
+    assert second["created_agents"] == "none"
     assert "Reusing existing `scanner` agent" in second["chat_log"]
     assert "Reusing existing `planner` agent" in second["chat_log"]
     assert "Reusing existing `pr_manager` agent" in second["chat_log"]
 
+
+
+def test_builder_exposes_agent_registry() -> None:
+    builder = AgenticBuilder()
+
+    registry = builder.describe_agent_registry()
+
+    assert len(registry) == 4
+    assert {agent["name"] for agent in registry} == {"scanner", "planner", "pr_manager", "evolver"}
+    assert all(agent["active"] is False for agent in registry)
 
 def test_pr_manager_sections() -> None:
     state = EvolutionState()

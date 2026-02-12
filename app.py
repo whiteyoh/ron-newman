@@ -22,6 +22,12 @@ for message in st.session_state.messages:
 
 folder_path = st.text_input("Folder path to analyze", value=".")
 
+with st.expander("Agent registry"):
+    st.write("The builder auto-creates missing agents during execution without asking for confirmation.")
+    for agent in st.session_state.builder.describe_agent_registry():
+        status = "active" if agent["active"] else "idle"
+        st.markdown(f"- **{agent['name']}** ({status}): {agent['description']}")
+
 if st.button("Analyze Folder and Draft PR"):
     builder = st.session_state.builder
     try:
@@ -31,6 +37,8 @@ if st.button("Analyze Folder and Draft PR"):
             f"{result['chat_log']}\n\n"
             "### Final decision\n"
             f"{result['decision']}\n\n"
+            f"### New agents created this run\n"
+            f"{result['created_agents']}\n\n"
             f"### {result['title']}\n\n"
             f"{result['summary']}\n\n"
             f"**PR Title:** `{result['pr_title']}`\n\n"
