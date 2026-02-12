@@ -8,6 +8,7 @@ class ToolPlanner:
 
     def build_blueprint(self, insight: FolderInsight) -> ToolBlueprint:
         ext_text = ", ".join(f"{k}: {v}" for k, v in insight.extensions.items()) or "unknown"
+        representative_files = ", ".join(f"`{file.path}`" for file in insight.files[:5]) or "none"
         capabilities = [
             "Analyze uploaded folder structure and file types.",
             "Generate implementation plans and tasks as pull-request sized units.",
@@ -31,6 +32,7 @@ class ToolPlanner:
         summary = (
             f"Scanned `{insight.root.name}` with {insight.file_count} files. "
             f"Detected extension profile: {ext_text}. "
+            f"Representative files reviewed: {representative_files}. "
             "The generated system should optimize for transparent chat-first collaboration and PR-first delivery."
         )
 
