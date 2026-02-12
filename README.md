@@ -43,6 +43,12 @@ Then open the shown local URL and:
 - `src/agentic_builder/orchestrator.py` — high-level orchestration.
 - `tests/` — automated tests.
 
+
+## Planning artifacts
+
+- `docs/architecture_overview.md` — high-level architecture and data-flow reference.
+- `docs/test_plan.md` — test scope, levels, and release exit criteria.
+
 ## Run tests
 
 ```bash
