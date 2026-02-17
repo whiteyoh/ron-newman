@@ -1,3 +1,3 @@
 # Rewritten statement
 
-Build a unified agent that analyzes OpenShift logs, detects operational issues, and presents findings in a clear, easy-to-read report.
+Build a single intelligent agent that uses a localized Ollama LLM to scan OpenShift logs, identify and prioritize operational issues, and generate a clear, human-readable summary with recommended next actions.
