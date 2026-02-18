@@ -3,19 +3,20 @@ requires = ["setuptools>=68", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "agentic-builder"
+name = "openshift-log-analyzer"
 version = "0.1.0"
-description = "Agentic AI tool that designs agentic AI tools from uploaded folders"
+description = "Analyze OpenShift logs and render a human-readable report"
 readme = "README.md"
 requires-python = ">=3.10"
-dependencies = [
-  "streamlit>=1.36.0",
-]
+dependencies = []
 
 [project.optional-dependencies]
 dev = [
   "pytest>=8.0.0",
 ]
+
+[project.scripts]
+openshift-log-analyzer = "openshift_log_analyzer.cli:main"
 
 [tool.pytest.ini_options]
 pythonpath = ["src"]
