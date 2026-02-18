@@ -9,6 +9,11 @@ def render_human_readable_report(summary: LogSummary) -> str:
             return f"- No {label} found in this file."
         return "\n".join(f"- {name}: {count} entries" for name, count in items)
 
+    def format_signals(signals: list[str], label: str) -> str:
+        if not signals:
+            return f"- No {label} detected."
+        return "\n".join(f"- {entry}" for entry in signals)
+
     levels = "\n".join(f"- {level}: {count}" for level, count in summary.levels.items())
     if not levels:
         levels = "- No standard log levels detected."
@@ -35,5 +40,26 @@ def render_human_readable_report(summary: LogSummary) -> str:
             "",
             "## Notable Error/Failure Lines",
             notable,
+            "",
+            "## API Failures & Failure Patterns",
+            format_signals(summary.api_failure_signals, "API failures or repeating failure patterns"),
+            "",
+            "## Watch Storm / Watch Collapse Signals",
+            format_signals(summary.watch_storm_signals, "watch storm/collapse indicators"),
+            "",
+            "## Problematic Namespaces",
+            format_ranked(summary.problematic_namespaces, "problematic namespaces"),
+            "",
+            "## Problematic Nodes (master/infra/worker)",
+            format_ranked(summary.problematic_nodes, "problematic nodes"),
+            "",
+            "## Control Plane / Infrastructure Hotspots",
+            format_ranked(summary.infrastructure_hotspots, "control-plane components"),
+            "",
+            "## Master Node Risk Indicators",
+            format_signals(summary.master_node_risk_signals, "master-node risk indicators"),
+            "",
+            "## Unhealthy Operator Signals",
+            format_signals(summary.unhealthy_operator_signals, "unhealthy operator indicators"),
         ]
     )
