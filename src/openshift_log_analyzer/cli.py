@@ -3,7 +3,7 @@ from __future__ import annotations
 import argparse
 
 from . import analyze_log_file, render_human_readable_report
-from .ollama_agent import request_ollama_agent_analysis
+from .ollama_agent import AgentPolicy, ExecutionMode, request_ollama_agent_analysis
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -28,6 +28,14 @@ def build_parser() -> argparse.ArgumentParser:
         default="http://127.0.0.1:11434",
         help="Base URL for a local Ollama server (default: http://127.0.0.1:11434).",
     )
+    parser.add_argument(
+        "--agent-mode",
+        choices=[mode.value for mode in ExecutionMode],
+        default=ExecutionMode.PROPOSE_CHANGES.value,
+        help="Human gate mode: propose_changes (default) or apply_changes.",
+    )
+    parser.add_argument("--tenant", default="default", help="Tenant identifier for policy checks.")
+    parser.add_argument("--namespace", default="default", help="Namespace identifier for policy checks.")
     return parser
 
 
@@ -43,6 +51,12 @@ def main() -> None:
             summary=summary,
             model=args.ollama_model,
             base_url=args.ollama_url,
+            mode=ExecutionMode(args.agent_mode),
+            policy=AgentPolicy(
+                tenant=args.tenant,
+                namespace=args.namespace,
+                allowed_tools={"ollama.generate": ["*"]},
+            ),
         )
         print(agent_analysis)
 
