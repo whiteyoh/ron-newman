@@ -99,3 +99,28 @@ def test_tool_schema_and_replay_harness(tmp_path: Path) -> None:
     assert report.total_cases == 1
     assert report.passed_cases == 1
     assert report.failed_cases == 0
+
+
+def test_workflow_step_events_and_human_rejection(monkeypatch, tmp_path: Path) -> None:
+    log_file = tmp_path / "cluster.log"
+    log_file.write_text("ERROR namespace=foo kube-apiserver unavailable\n", encoding="utf-8")
+    summary = analyze_log_file(log_file)
+
+    def fake_urlopen(req, timeout: int = 60):
+        return _FakeResponse({"response": "agent diagnosis"})
+
+    monkeypatch.setattr("openshift_log_analyzer.ollama_agent.request.urlopen", fake_urlopen)
+
+    seen_steps: list[str] = []
+
+    output = request_ollama_agent_analysis(
+        summary=summary,
+        model="llama3.2",
+        base_url="http://127.0.0.1:11434",
+        mode=ExecutionMode.APPLY_CHANGES,
+        step_event_handler=lambda trace: seen_steps.append(trace.step.value),
+        approval_callback=lambda recommendation: False,
+    )
+
+    assert seen_steps == [step.value for step in WorkflowStep]
+    assert "Human rejected automated fix plan" in output

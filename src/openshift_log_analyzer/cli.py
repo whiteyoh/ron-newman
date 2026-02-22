@@ -1,9 +1,10 @@
 from __future__ import annotations
 
 import argparse
+import textwrap
 
 from . import analyze_log_file, render_human_readable_report
-from .ollama_agent import AgentPolicy, ExecutionMode, request_ollama_agent_analysis
+from .ollama_agent import AgentPolicy, ExecutionMode, WorkflowTrace, request_ollama_agent_analysis
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -36,7 +37,31 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument("--tenant", default="default", help="Tenant identifier for policy checks.")
     parser.add_argument("--namespace", default="default", help="Namespace identifier for policy checks.")
+    parser.add_argument(
+        "--interactive-agent",
+        action="store_true",
+        help="Stream workflow step outputs and request human approval before automated fixes.",
+    )
     return parser
+
+
+def _render_streamed_step(trace: WorkflowTrace) -> None:
+    status = "ok" if trace.success else "failed"
+    print(f"\n[{trace.step.value}] {status} ({trace.latency_ms}ms)")
+    print(textwrap.shorten(trace.detail.replace("\n", " "), width=180, placeholder="..."))
+
+
+def _request_human_approval(recommendation: str) -> bool:
+    print("\n--- Human Approval Required ---")
+    print("Agent recommendation preview:")
+    print(textwrap.shorten(recommendation.replace("\n", " "), width=200, placeholder="..."))
+    while True:
+        response = input("Apply automated fix plan? [y/N]: ").strip().lower()
+        if response in {"y", "yes"}:
+            return True
+        if response in {"", "n", "no"}:
+            return False
+        print("Please answer 'y' or 'n'.")
 
 
 def main() -> None:
@@ -57,6 +82,8 @@ def main() -> None:
                 namespace=args.namespace,
                 allowed_tools={"ollama.generate": ["*"]},
             ),
+            step_event_handler=_render_streamed_step if args.interactive_agent else None,
+            approval_callback=_request_human_approval if args.interactive_agent else None,
         )
         print(agent_analysis)
 
