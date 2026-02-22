@@ -6,6 +6,17 @@ A focused Python tool that does three things:
 2. Produces human-readable output.
 3. Optionally asks a local Ollama model to act as an SRE agent over your logs.
 
+## Agent architecture guarantees
+
+The Ollama-backed agent now uses a workflow engine and guardrails designed for operations teams:
+
+- **State machine / workflow engine**: explicit steps `CollectContext → Diagnose → Recommend → ExecuteFix → Verify`.
+- **Typed tool interfaces**: JSON-schema-backed request/response schemas with runtime validation for tool invocations.
+- **Observability**: per-step traces, latency metrics, and failure counters are emitted with every run.
+- **Policy layer**: tool permission checks are enforced by tenant/namespace scope.
+- **Test harness**: incident replay support validates agent behavior against past incident summaries.
+- **Human-in-the-loop gates**: choose between propose-only and apply modes.
+
 ## Installation
 
 ```bash
@@ -60,12 +71,25 @@ If Ollama is running elsewhere, set a custom URL:
 openshift-log-analyzer /path/to/openshift.log --ollama-agent --ollama-url http://192.168.1.20:11434
 ```
 
-What the agent section returns:
+### Human approval gates
 
-- Probable root causes
-- Immediate mitigation steps
-- 24-hour stabilization plan
-- Suggested `oc`/`kubectl` commands for verification
+- **Propose only (default):**
+
+  ```bash
+  openshift-log-analyzer /path/to/openshift.log --ollama-agent --agent-mode propose_changes
+  ```
+
+- **Apply mode:**
+
+  ```bash
+  openshift-log-analyzer /path/to/openshift.log --ollama-agent --agent-mode apply_changes
+  ```
+
+You can pass policy context for multi-tenant OpenShift checks:
+
+```bash
+openshift-log-analyzer /path/to/openshift.log --ollama-agent --tenant acme --namespace prod
+```
 
 ## What the report includes
 
@@ -73,6 +97,7 @@ What the agent section returns:
 - Most frequent pods
 - Most frequent namespaces
 - Notable error/failure lines
+- Agent traces and failure counts when `--ollama-agent` is enabled
 
 ## Run tests
 
