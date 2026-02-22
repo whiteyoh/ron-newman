@@ -91,6 +91,16 @@ You can pass policy context for multi-tenant OpenShift checks:
 openshift-log-analyzer /path/to/openshift.log --ollama-agent --tenant acme --namespace prod
 ```
 
+### Interactive agent interface (streaming + human input)
+
+For a step-by-step interface that streams each workflow result as it completes and asks the operator whether to continue with automated fixes, enable interactive mode:
+
+```bash
+openshift-log-analyzer /path/to/openshift.log --ollama-agent --agent-mode apply_changes --interactive-agent
+```
+
+In interactive mode, each workflow step is emitted immediately and the CLI prompts for a yes/no approval before the `ExecuteFix` action is applied.
+
 ## What the report includes
 
 - Log level breakdown (`INFO`, `WARN`, `ERROR`, etc.)

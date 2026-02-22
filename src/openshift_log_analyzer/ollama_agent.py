@@ -78,6 +78,8 @@ class OpenShiftAgentWorkflow:
 
     traces: list[WorkflowTrace] = field(default_factory=list)
     failure_counts: dict[str, int] = field(default_factory=dict)
+    step_event_handler: Callable[[WorkflowTrace], None] | None = None
+    approval_callback: Callable[[str], bool] | None = None
 
     def run(self) -> WorkflowOutcome:
         context = self._run_step(WorkflowStep.COLLECT_CONTEXT, self._collect_context)
@@ -106,7 +108,10 @@ class OpenShiftAgentWorkflow:
             detail = f"{step.value} failed: {exc}"
             self.failure_counts[step.value] = self.failure_counts.get(step.value, 0) + 1
         latency_ms = (perf_counter() - start) * 1000
-        self.traces.append(WorkflowTrace(step=step, latency_ms=round(latency_ms, 2), success=success, detail=detail))
+        trace = WorkflowTrace(step=step, latency_ms=round(latency_ms, 2), success=success, detail=detail)
+        self.traces.append(trace)
+        if self.step_event_handler:
+            self.step_event_handler(trace)
         return detail
 
     def _collect_context(self) -> str:
@@ -127,6 +132,8 @@ class OpenShiftAgentWorkflow:
         return "Recommendations prepared from diagnosis with OpenShift-safe mitigation sequencing."
 
     def _execute_fix(self, recommendation: str) -> str:
+        if self.approval_callback and not self.approval_callback(recommendation):
+            return "Human rejected automated fix plan. No changes were applied."
         return "Executed automated fix plan under approved mode."
 
     def _verify(self, execution_result: str) -> str:
@@ -232,6 +239,8 @@ def request_ollama_agent_analysis(
     timeout_seconds: int = 60,
     mode: ExecutionMode = ExecutionMode.PROPOSE_CHANGES,
     policy: AgentPolicy | None = None,
+    step_event_handler: Callable[[WorkflowTrace], None] | None = None,
+    approval_callback: Callable[[str], bool] | None = None,
 ) -> str:
     outcome = OpenShiftAgentWorkflow(
         summary=summary,
@@ -240,6 +249,8 @@ def request_ollama_agent_analysis(
         timeout_seconds=timeout_seconds,
         mode=mode,
         policy=policy or AgentPolicy(allowed_tools={"ollama.generate": ["*"]}),
+        step_event_handler=step_event_handler,
+        approval_callback=approval_callback,
     ).run()
     traces_json = json.dumps([trace.as_dict() for trace in outcome.traces], indent=2)
     return f"{outcome.analysis}\n\nObservability traces:\n{traces_json}\nFailure counts: {outcome.failure_counts}"
