@@ -95,7 +95,9 @@ The prototype now includes:
 
 ---
 
-## Additional improvements roadmap (next 10)
+## Next recommendations / roadmap items
+
+### Additional improvements roadmap (next 10)
 
 1. **Delete/select tool** for precise removal and editing of existing placed parts.
 2. **Plot visiting mode** so players can tour classmates' builds without edit permissions.
@@ -108,9 +110,7 @@ The prototype now includes:
 9. **Admin moderation dashboard** for live cleanup/restore and player reports.
 10. **Telemetry export hooks** for balancing economy, retention, and funnel metrics.
 
----
-
-## Suggested longer-term upgrades
+### Suggested longer-term upgrades
 
 - Add classroom-themed furniture bundles and seasonal events.
 - Add social mechanics (visit other plots, vote, school competitions).
