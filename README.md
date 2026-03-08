@@ -13,7 +13,14 @@ The prototype now includes:
   3. Second Floor
   4. Third Floor
   5. Rooftop
-- **Structure materials** with different spirit values and token costs:
+- **Server-authoritative plot protection**:
+  - Placement is blocked outside a player's own plot extents.
+  - Placement is blocked when overlapping existing build objects.
+- **Build UX upgrades**:
+  - Undo/redo stack per player (`U` and `Y`).
+  - Rotation (`C`) and structure resize (`Z`/`X`).
+  - Local visual ghost preview while aiming placement.
+- **Structure materials** with different spirit values and token costs (tier-gated inventory unlocks):
   - Brick
   - Plaster
   - ClassroomTile
@@ -24,13 +31,23 @@ The prototype now includes:
   - Blackboard
   - TrophyCase
   - PrefectBoard
+  - SpiritSign (supports filtered player text)
+- **Persistent inventory progression** based on Spirit unlock tiers.
 - **School Spirit + House Rating system** that increases as players decorate.
-- **Roleplay NPCs** (Teacher, Prefect, Caretaker) with interaction prompts.
-- **DataStore persistence** for tokens, spirit score, and placed parts.
+- **Leaderboard stats + session awards**:
+  - `leaderstats` for Spirit and HouseRating.
+  - Session token awards for spirit milestones.
+- **Roleplay NPC dialogue panel** with objectives/quests via UI.
+- **DataStore persistence** for tokens, spirit score, inventory tier, and placed parts.
+- **Save data versioning + migration** to support future schema evolution.
+- **Moderation-safe text filtering** pipeline for sign text.
+- **Performance safeguards**:
+  - Max part cap per plot.
+  - Reduced exploit risk via server validation checks.
 - **Monetization hooks** for:
   - Developer Products (token bundles)
   - Gamepass (Premium Builder)
-- **In-game HUD** showing theme, tokens, level, selected structure/prop, placement mode, spirit, and rating.
+- **In-game HUD** showing theme, tokens, level, selected structure/prop, placement mode, spirit, rating, tier, ghost info, and feedback.
 
 ---
 
@@ -59,7 +76,10 @@ The prototype now includes:
 
 - `Q / E`: Move down/up through building levels.
 - `1 / 2 / 3`: Select structure material.
-- `4 / 5 / 6`: Select prop.
+- `4 / 5 / 6 / 7`: Select prop.
+- `Z / X`: Resize structure footprint.
+- `C`: Rotate placement by 90°.
+- `U / Y`: Undo/redo last placement.
 - `F`: Place currently selected structure/prop.
 - `R`: Prompt Robux purchase for small token bundle.
 - `T`: Prompt Robux purchase for Premium Builder gamepass.
@@ -75,61 +95,18 @@ The prototype now includes:
 
 ---
 
-## How to get "developer status" for this project
-
-Depending on what you mean by developer status, these are the common Roblox paths:
-
-1. **Project collaborator status (team dev)**
-   - Experience owner adds you under **Creator Dashboard > Experience > Collaborators**.
-   - You are granted a role (e.g., edit scripts/build/upload assets).
-   - For group-owned experiences, assign the role via the group's roles/permissions.
-
-2. **Verified creator account readiness**
-   - Create Roblox account and verify email (and phone where available).
-   - Enable 2-Step Verification for account security.
-   - Complete ID verification if your workflow needs features gated by verification/age.
-
-3. **Monetization-ready developer (if earning Robux/USD is required)**
-   - Configure payout/tax details in Creator Dashboard where required.
-   - Enroll in Roblox programs needed for your region/use case (e.g., DevEx eligibility requirements).
-
----
-
-## What you need from Roblox before publishing
-
-Before setting the game to public, make sure you have:
-
-- **Experience metadata**
-  - Name, description, icon, and thumbnails.
-- **Policy compliance**
-  - Content aligns with Roblox Community Standards.
-  - Correct age/content questionnaire selections.
-- **Permissions and ownership**
-  - Correct owner (personal or group) and collaborator permissions.
-- **Monetization assets**
-  - Created Developer Products and Gamepasses in Creator Dashboard.
-  - IDs copied into `GameConfig.lua`.
-- **Operational checks**
-  - Live server test with 2+ players.
-  - Placement, save/load, and purchase prompt flows validated.
-- **Release configuration**
-  - Set discoverability/access (private/friends/public) intentionally.
-  - Confirm spawn, camera behavior, and mobile controls are acceptable.
-
----
-
 ## Additional improvements roadmap (next 10)
 
-1. **Plot bounds validation** to block building outside owned plot extents.
-2. **Server-side collision checks** to stop overlapping objects and exploit placement.
-3. **Undo/redo stack** per player for better building UX.
-4. **Rotate and resize controls** in build mode with visual ghost previews.
-5. **Persistent inventory system** for unlockable props/material tiers.
-6. **Leaderboard + session awards** tied to House Rating and Spirit gain.
-7. **NPC dialogue UI panel** instead of print logs, with quests/objectives.
-8. **Data versioning + migration layer** for safe updates to saved builds.
-9. **Moderation-safe text filtering pipeline** for any user-entered signs/names.
-10. **Performance pass** (streaming-friendly plots, part count limits, pooling).
+1. **Delete/select tool** for precise removal and editing of existing placed parts.
+2. **Plot visiting mode** so players can tour classmates' builds without edit permissions.
+3. **Blueprint save slots** (multiple named layouts per player).
+4. **Advanced snapping** (surface/edge snap + smart alignment guides).
+5. **Collaborative co-build permissions** for invited friends on a plot.
+6. **Quest progression tracking** with reward claims and daily objectives.
+7. **Build replay/timelapse mode** from saved placement history.
+8. **Config-driven seasonal events** for time-limited props and rewards.
+9. **Admin moderation dashboard** for live cleanup/restore and player reports.
+10. **Telemetry export hooks** for balancing economy, retention, and funnel metrics.
 
 ---
 
