@@ -55,21 +55,24 @@ The prototype now includes:
 
 ## Roblox Studio setup
 
-### Option A (recommended): keep Studio pointed at this repo with Rojo sync
+### Option A (recommended): serve with Rojo (live sync)
 
-This repo now includes `roblox-game/default.project.json`, so Roblox Studio can continuously sync against the filesystem source.
+This repo now has a **root Rojo project file** at `default.project.json` so you can run Rojo directly from the repository root.
 
 1. Install **Rojo** (CLI) and the **Rojo Studio plugin**.
-2. In a terminal, run:
-   - `cd roblox-game`
+2. From this repo root, run:
    - `rojo serve`
-3. In Roblox Studio, open your place, then start the Rojo plugin and connect to `localhost:34872`.
-4. In the Rojo tree, use `default.project.json` from this folder. It maps:
-   - `src/ReplicatedStorage` -> `ReplicatedStorage`
-   - `src/ServerScriptService` -> `ServerScriptService`
-   - `src/StarterGui` -> `StarterGui`
-   - `src/StarterPlayer/StarterPlayerScripts` -> `StarterPlayer/StarterPlayerScripts`
-5. Keep `rojo serve` running while editing. Changes in this repo will sync into Studio automatically.
+3. In Roblox Studio, open your place, start the Rojo plugin, and connect to `localhost:34872`.
+4. Select this repo's `default.project.json` when prompted by the plugin.
+5. Keep `rojo serve` running while editing; file changes sync into Studio automatically.
+
+Rojo mappings in `default.project.json`:
+- `roblox-game/src/ReplicatedStorage` -> `ReplicatedStorage`
+- `roblox-game/src/ServerScriptService` -> `ServerScriptService`
+- `roblox-game/src/StarterGui` -> `StarterGui`
+- `roblox-game/src/StarterPlayer/StarterPlayerScripts` -> `StarterPlayer/StarterPlayerScripts`
+
+> Note: `roblox-game/default.project.json` is still included for compatibility if you prefer running `cd roblox-game && rojo serve`.
 
 ### Option B: one-time manual import (no live sync)
 

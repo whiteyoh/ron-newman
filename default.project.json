@@ -1,0 +1,20 @@
+{
+  "name": "UKHighSchoolBuilder",
+  "tree": {
+    "$className": "DataModel",
+    "ReplicatedStorage": {
+      "$path": "roblox-game/src/ReplicatedStorage"
+    },
+    "ServerScriptService": {
+      "$path": "roblox-game/src/ServerScriptService"
+    },
+    "StarterGui": {
+      "$path": "roblox-game/src/StarterGui"
+    },
+    "StarterPlayer": {
+      "StarterPlayerScripts": {
+        "$path": "roblox-game/src/StarterPlayer/StarterPlayerScripts"
+      }
+    }
+  }
+}
