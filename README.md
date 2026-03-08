@@ -38,6 +38,8 @@ The prototype now includes:
   - `leaderstats` for Spirit and HouseRating.
   - Session token awards for spirit milestones.
 - **Roleplay NPC dialogue panel** with objectives/quests via UI.
+- **Delete/select build tool** for precise cleanup of your own placed parts.
+- **Plot visiting mode** to jump between active players' plots in-session.
 - **DataStore persistence** for tokens, spirit score, inventory tier, and placed parts.
 - **Save data versioning + migration** to support future schema evolution.
 - **Moderation-safe text filtering** pipeline for sign text.
@@ -83,6 +85,9 @@ The prototype now includes:
 - `F`: Place currently selected structure/prop.
 - `R`: Prompt Robux purchase for small token bundle.
 - `T`: Prompt Robux purchase for Premium Builder gamepass.
+- `G`: Select your placed part under cursor.
+- `Backspace`: Delete selected part (server-validated, with token refund).
+- `J / K`: Cycle plot visiting targets and teleport to view other players' builds.
 
 ---
 
@@ -99,8 +104,8 @@ The prototype now includes:
 
 ### Additional improvements roadmap (next 10)
 
-1. **Delete/select tool** for precise removal and editing of existing placed parts.
-2. **Plot visiting mode** so players can tour classmates' builds without edit permissions.
+1. ✅ **Delete/select tool** for precise removal and editing of existing placed parts.
+2. ✅ **Plot visiting mode** so players can tour classmates' builds without edit permissions.
 3. **Blueprint save slots** (multiple named layouts per player).
 4. **Advanced snapping** (surface/edge snap + smart alignment guides).
 5. **Collaborative co-build permissions** for invited friends on a plot.

@@ -35,6 +35,14 @@ local BuildFeedbackEvent = RemotesFolder:FindFirstChild("BuildFeedbackEvent") or
 BuildFeedbackEvent.Name = "BuildFeedbackEvent"
 BuildFeedbackEvent.Parent = RemotesFolder
 
+local DeleteRequest = RemotesFolder:FindFirstChild("DeleteRequest") or Instance.new("RemoteEvent")
+DeleteRequest.Name = "DeleteRequest"
+DeleteRequest.Parent = RemotesFolder
+
+local VisitPlotRequest = RemotesFolder:FindFirstChild("VisitPlotRequest") or Instance.new("RemoteEvent")
+VisitPlotRequest.Name = "VisitPlotRequest"
+VisitPlotRequest.Parent = RemotesFolder
+
 local plotsFolder = workspace:FindFirstChild("PlayerPlots")
 if not plotsFolder then
     plotsFolder = Instance.new("Folder")
@@ -79,6 +87,8 @@ local function serializePart(part)
         material = part.Material.Name,
         orientation = { part.Orientation.X, part.Orientation.Y, part.Orientation.Z },
         text = part:GetAttribute("UserText"),
+        spiritDelta = part:GetAttribute("SpiritDelta") or 0,
+        costPaid = part:GetAttribute("CostPaid") or 0,
     }
 end
 
@@ -168,6 +178,8 @@ local function createPartFromData(partData, parent)
     part.TopSurface = Enum.SurfaceType.Smooth
     part.BottomSurface = Enum.SurfaceType.Smooth
     part.Parent = parent
+    part:SetAttribute("SpiritDelta", tonumber(partData.spiritDelta) or 0)
+    part:SetAttribute("CostPaid", tonumber(partData.costPaid) or 0)
 
     if type(partData.text) == "string" and partData.text ~= "" then
         part:SetAttribute("UserText", partData.text)
@@ -398,6 +410,9 @@ local function spawnPlacedPart(state, catalogInfo, snappedPos, snappedSize, plac
         text = filteredText,
     }
 
+    partData.spiritDelta = catalogInfo.Spirit or 1
+    partData.costPaid = catalogInfo.Cost or 0
+
     return createPartFromData(partData, state.BuildParts)
 end
 
@@ -405,6 +420,14 @@ BuildStateRequest.OnServerInvoke = function(player)
     local state = playerState[player]
     if not state then
         return nil
+    end
+
+    local playersSummary = {}
+    for _, candidate in ipairs(Players:GetPlayers()) do
+        table.insert(playersSummary, {
+            userId = candidate.UserId,
+            name = candidate.Name,
+        })
     end
 
     return {
@@ -417,8 +440,65 @@ BuildStateRequest.OnServerInvoke = function(player)
         houseRating = state.HouseRating,
         inventoryTier = state.UnlockedTier,
         maxParts = GameConfig.MaxPlacedParts,
+        players = playersSummary,
     }
 end
+
+DeleteRequest.OnServerEvent:Connect(function(player, partName)
+    local state = playerState[player]
+    if not state or type(partName) ~= "string" then
+        return
+    end
+
+    local part = state.BuildParts:FindFirstChild(partName)
+    if not part or not part:IsA("Part") then
+        BuildFeedbackEvent:FireClient(player, "Select one of your placed parts to delete")
+        return
+    end
+
+    local spiritDelta = math.max(0, tonumber(part:GetAttribute("SpiritDelta")) or 0)
+    local refund = math.max(0, tonumber(part:GetAttribute("CostPaid")) or 0)
+
+    part:Destroy()
+    updateSpirit(state, -spiritDelta)
+    state.Tokens += refund
+    BuildFeedbackEvent:FireClient(player, string.format("Deleted part: +%d tokens refunded", refund))
+end)
+
+VisitPlotRequest.OnServerEvent:Connect(function(player, targetUserId)
+    local numericUserId = tonumber(targetUserId)
+    local sourceState = playerState[player]
+    if not sourceState then
+        return
+    end
+
+    local targetPlayer = nil
+    for _, candidate in ipairs(Players:GetPlayers()) do
+        if candidate.UserId == numericUserId then
+            targetPlayer = candidate
+            break
+        end
+    end
+
+    if not targetPlayer then
+        BuildFeedbackEvent:FireClient(player, "Plot owner is no longer online")
+        return
+    end
+
+    local targetState = playerState[targetPlayer]
+    if not targetState or not targetState.Baseplate then
+        return
+    end
+
+    local character = player.Character
+    local root = character and character:FindFirstChild("HumanoidRootPart")
+    if not root then
+        return
+    end
+
+    root.CFrame = CFrame.new(targetState.Baseplate.Position + Vector3.new(0, 6, 0))
+    BuildFeedbackEvent:FireClient(player, string.format("Visiting %s's plot", targetPlayer.Name))
+end)
 
 BuildActionRequest.OnServerEvent:Connect(function(player, action)
     local state = playerState[player]

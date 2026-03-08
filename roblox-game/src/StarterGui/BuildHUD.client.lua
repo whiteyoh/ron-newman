@@ -15,8 +15,8 @@ screenGui.Parent = playerGui
 
 local panel = Instance.new("Frame")
 panel.Name = "Panel"
-panel.Size = UDim2.new(0, 460, 0, 360)
-panel.Position = UDim2.new(0, 16, 1, -376)
+panel.Size = UDim2.new(0, 500, 0, 390)
+panel.Position = UDim2.new(0, 16, 1, -406)
 panel.BackgroundColor3 = Color3.fromRGB(36, 44, 62)
 panel.BackgroundTransparency = 0.1
 panel.Parent = screenGui
@@ -49,14 +49,16 @@ createLabel("ModeLabel", 5, "Placement Mode: Structure")
 createLabel("SpiritLabel", 6, "School Spirit: 0 | House Rating: 1/5")
 createLabel("TierLabel", 7, "Inventory Tier: 1")
 createLabel("GhostLabel", 8, "Ghost Size: 8x8x8 | Rotation: 0")
-createLabel("ControlsLabel", 9, "Q/E level | 1-3 structures | 4-7 props | F place")
-createLabel("BuildToolsLabel", 10, "Z/X resize | C rotate | U undo | Y redo")
-createLabel("StoreLabel", 11, "R buy Tokens (Robux) | T Premium Pass")
+createLabel("SelectionLabel", 9, "Selected Part: None")
+createLabel("ControlsLabel", 10, "Q/E level | 1-3 structures | 4-7 props | F place")
+createLabel("BuildToolsLabel", 11, "Z/X resize | C rotate | U undo | Y redo")
+createLabel("EditToolsLabel", 12, "G select part | Backspace delete | J/K visit plots")
+createLabel("StoreLabel", 13, "R buy Tokens (Robux) | T Premium Pass")
 
 local signInput = Instance.new("TextBox")
 signInput.Name = "SignInput"
 signInput.Size = UDim2.new(1, -20, 0, 28)
-signInput.Position = UDim2.new(0, 10, 0, 8 + (12 * 25))
+signInput.Position = UDim2.new(0, 10, 0, 8 + (14 * 25))
 signInput.BackgroundColor3 = Color3.fromRGB(23, 29, 42)
 signInput.TextColor3 = Color3.fromRGB(231, 238, 252)
 signInput.PlaceholderText = "Sign text (used for SpiritSign prop, filtered on server)"
@@ -69,7 +71,7 @@ signInput.Parent = panel
 local feedbackLabel = Instance.new("TextLabel")
 feedbackLabel.Name = "FeedbackLabel"
 feedbackLabel.Size = UDim2.new(1, -20, 0, 24)
-feedbackLabel.Position = UDim2.new(0, 10, 0, 8 + (13 * 25))
+feedbackLabel.Position = UDim2.new(0, 10, 0, 8 + (15 * 25))
 feedbackLabel.BackgroundTransparency = 1
 feedbackLabel.TextXAlignment = Enum.TextXAlignment.Left
 feedbackLabel.TextColor3 = Color3.fromRGB(255, 215, 114)
