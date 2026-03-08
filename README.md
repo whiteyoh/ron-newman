@@ -1,116 +1,56 @@
-# OpenShift Log Analyzer
+# UK High School Builder (Roblox)
 
-A focused Python tool that does three things:
+A Roblox Studio building game prototype where each player builds a house across **5 vertical levels** with a **UK high school** theme.
 
-1. Analyzes OpenShift logs.
-2. Produces human-readable output.
-3. Optionally asks a local Ollama model to act as an SRE agent over your logs.
+## Gameplay goals
 
-## Agent architecture guarantees
+- Every player gets their own plot.
+- Building is snapped to a grid.
+- Players can build on:
+  1. Ground Floor
+  2. First Floor
+  3. Second Floor
+  4. Third Floor
+  5. Rooftop
+- Theme styling uses school-like colors/materials (brick, plaster, classroom tile).
+- Robux spending is supported via:
+  - Developer Products (buy more build tokens)
+  - Gamepass (Premium Builder perks)
 
-The Ollama-backed agent now uses a workflow engine and guardrails designed for operations teams:
+## Roblox Studio setup
 
-- **State machine / workflow engine**: explicit steps `CollectContext → Diagnose → Recommend → ExecuteFix → Verify`.
-- **Typed tool interfaces**: JSON-schema-backed request/response schemas with runtime validation for tool invocations.
-- **Observability**: per-step traces, latency metrics, and failure counters are emitted with every run.
-- **Policy layer**: tool permission checks are enforced by tenant/namespace scope.
-- **Test harness**: incident replay support validates agent behavior against past incident summaries.
-- **Human-in-the-loop gates**: choose between propose-only and apply modes.
+1. Open your place in Roblox Studio.
+2. Create these services/folders if missing:
+   - `ReplicatedStorage/Shared`
+   - `ServerScriptService`
+   - `StarterPlayer/StarterPlayerScripts`
+   - `StarterGui`
+3. Copy scripts from this repo:
+   - `roblox-game/src/ReplicatedStorage/Shared/GameConfig.lua`
+   - `roblox-game/src/ServerScriptService/HouseService.server.lua`
+   - `roblox-game/src/ServerScriptService/MonetizationService.server.lua`
+   - `roblox-game/src/StarterPlayer/StarterPlayerScripts/BuildController.client.lua`
+   - `roblox-game/src/StarterGui/BuildHUD.client.lua`
+4. In `GameConfig.lua`, replace all placeholder IDs (`0`) for developer products/gamepasses with your real Roblox IDs.
+5. Press **Play** in Studio and test multiplayer behavior.
 
-## Installation
+## Controls
 
-```bash
-python -m venv .venv
-source .venv/bin/activate
-pip install -e .[dev]
-```
+- `Q / E`: Move down/up through building levels.
+- `1 / 2 / 3`: Select material.
+- `F`: Place a build part.
+- `R`: Prompt Robux purchase for small token bundle.
+- `T`: Prompt Robux purchase for Premium Builder gamepass.
 
-## Usage
+## Notes on monetization
 
-Analyze a log file and print a readable report:
+- Robux payments must be configured in your game creator dashboard.
+- `MarketplaceService.ProcessReceipt` grants token boosts on successful purchases.
+- Premium pass ownership is checked with `UserOwnsGamePassAsync`.
 
-```bash
-openshift-log-analyzer /path/to/openshift.log
-```
+## Suggested next upgrades
 
-Optional:
-
-```bash
-openshift-log-analyzer /path/to/openshift.log --top 10
-```
-
-`--top` controls how many pods/namespaces/error lines are listed.
-
-## Use a local Ollama model as an OpenShift log agent
-
-You can have Ollama generate an operator-style action plan based on the analyzer output.
-
-1. Start Ollama locally.
-
-   ```bash
-   ollama serve
-   ```
-
-2. Pull a local model (example: `llama3.2`).
-
-   ```bash
-   ollama pull llama3.2
-   ```
-
-3. Run the analyzer with the Ollama agent enabled.
-
-   ```bash
-   openshift-log-analyzer /path/to/openshift.log --ollama-agent --ollama-model llama3.2
-   ```
-
-By default, the tool sends the report to `http://127.0.0.1:11434/api/generate`.
-
-If Ollama is running elsewhere, set a custom URL:
-
-```bash
-openshift-log-analyzer /path/to/openshift.log --ollama-agent --ollama-url http://192.168.1.20:11434
-```
-
-### Human approval gates
-
-- **Propose only (default):**
-
-  ```bash
-  openshift-log-analyzer /path/to/openshift.log --ollama-agent --agent-mode propose_changes
-  ```
-
-- **Apply mode:**
-
-  ```bash
-  openshift-log-analyzer /path/to/openshift.log --ollama-agent --agent-mode apply_changes
-  ```
-
-You can pass policy context for multi-tenant OpenShift checks:
-
-```bash
-openshift-log-analyzer /path/to/openshift.log --ollama-agent --tenant acme --namespace prod
-```
-
-### Interactive agent interface (streaming + human input)
-
-For a step-by-step interface that streams each workflow result as it completes and asks the operator whether to continue with automated fixes, enable interactive mode:
-
-```bash
-openshift-log-analyzer /path/to/openshift.log --ollama-agent --agent-mode apply_changes --interactive-agent
-```
-
-In interactive mode, each workflow step is emitted immediately and the CLI prompts for a yes/no approval before the `ExecuteFix` action is applied.
-
-## What the report includes
-
-- Log level breakdown (`INFO`, `WARN`, `ERROR`, etc.)
-- Most frequent pods
-- Most frequent namespaces
-- Notable error/failure lines
-- Agent traces and failure counts when `--ollama-agent` is enabled
-
-## Run tests
-
-```bash
-pytest
-```
+- Add classroom-themed furniture and props.
+- Save/load player builds with DataStore.
+- Add house rating tied to school spirit score.
+- Add roleplay NPCs (teacher, prefect, caretaker).
