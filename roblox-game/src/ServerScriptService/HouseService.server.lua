@@ -1,8 +1,11 @@
+local DataStoreService = game:GetService("DataStoreService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Shared = ReplicatedStorage:WaitForChild("Shared")
 local GameConfig = require(Shared:WaitForChild("GameConfig"))
+
+local BUILD_DATASTORE = DataStoreService:GetDataStore("PlayerBuilds_v1")
 
 local RemotesFolder = ReplicatedStorage:FindFirstChild("Remotes")
 if not RemotesFolder then
@@ -42,6 +45,65 @@ local function withinAnyLevel(y)
     return false, nil
 end
 
+local function calculateHouseRating(spiritScore)
+    return math.clamp(math.floor(spiritScore / 20) + 1, 1, 5)
+end
+
+local function serializePart(part)
+    return {
+        name = part.Name,
+        position = { part.Position.X, part.Position.Y, part.Position.Z },
+        size = { part.Size.X, part.Size.Y, part.Size.Z },
+        color = { part.Color.R, part.Color.G, part.Color.B },
+        material = part.Material.Name,
+    }
+end
+
+local function materialFromName(materialName)
+    local ok, material = pcall(function()
+        return Enum.Material[materialName]
+    end)
+
+    if ok and material then
+        return material
+    end
+
+    return Enum.Material.SmoothPlastic
+end
+
+local function spawnRoleplayNPC(plot, basePosition)
+    local npcFolder = Instance.new("Folder")
+    npcFolder.Name = "RoleplayNPCs"
+    npcFolder.Parent = plot
+
+    for _, npc in ipairs(GameConfig.RoleplayNPCs) do
+        local body = Instance.new("Part")
+        body.Name = npc.Name
+        body.Size = Vector3.new(2, 5, 2)
+        body.Position = basePosition + npc.PositionOffset
+        body.Anchored = true
+        body.Material = Enum.Material.SmoothPlastic
+        body.Color = npc.Color
+        body.Parent = npcFolder
+
+        local prompt = Instance.new("ProximityPrompt")
+        prompt.ActionText = "Talk"
+        prompt.ObjectText = npc.Title
+        prompt.HoldDuration = 0
+        prompt.MaxActivationDistance = 10
+        prompt.Parent = body
+
+        prompt.Triggered:Connect(function(player)
+            print(string.format("[RoleplayNPC] %s -> %s: %s", player.Name, npc.Title, npc.Dialogue))
+        end)
+    end
+end
+
+local function updateSpirit(state, delta)
+    state.SpiritScore = math.max(0, state.SpiritScore + delta)
+    state.HouseRating = calculateHouseRating(state.SpiritScore)
+end
+
 local function createPlotForPlayer(player)
     local plot = Instance.new("Model")
     plot.Name = player.Name .. "_Plot"
@@ -74,12 +136,78 @@ local function createPlotForPlayer(player)
 
     playerState[player] = {
         Plot = plot,
+        Baseplate = baseplate,
         BuildParts = builds,
         Tokens = 50,
+        SpiritScore = 0,
+        HouseRating = 1,
     }
+
+    spawnRoleplayNPC(plot, baseplate.Position)
+end
+
+local function restoreParts(parts, parent)
+    for _, partData in ipairs(parts or {}) do
+        local part = Instance.new("Part")
+        part.Name = partData.name or "Build_Restore"
+        part.Position = Vector3.new(partData.position[1], partData.position[2], partData.position[3])
+        part.Size = Vector3.new(partData.size[1], partData.size[2], partData.size[3])
+        part.Color = Color3.new(partData.color[1], partData.color[2], partData.color[3])
+        part.Material = materialFromName(partData.material)
+        part.Anchored = true
+        part.TopSurface = Enum.SurfaceType.Smooth
+        part.BottomSurface = Enum.SurfaceType.Smooth
+        part.Parent = parent
+    end
+end
+
+local function savePlayerBuild(player)
+    local state = playerState[player]
+    if not state then
+        return
+    end
+
+    local buildParts = {}
+    for _, part in ipairs(state.BuildParts:GetChildren()) do
+        if part:IsA("Part") then
+            table.insert(buildParts, serializePart(part))
+        end
+    end
+
+    local payload = {
+        tokens = state.Tokens,
+        spiritScore = state.SpiritScore,
+        buildParts = buildParts,
+    }
+
+    pcall(function()
+        BUILD_DATASTORE:SetAsync(tostring(player.UserId), payload)
+    end)
+end
+
+local function loadPlayerBuild(player)
+    local state = playerState[player]
+    if not state then
+        return
+    end
+
+    local success, data = pcall(function()
+        return BUILD_DATASTORE:GetAsync(tostring(player.UserId))
+    end)
+
+    if not success or type(data) ~= "table" then
+        return
+    end
+
+    state.Tokens = tonumber(data.tokens) or state.Tokens
+    state.SpiritScore = tonumber(data.spiritScore) or 0
+    state.HouseRating = calculateHouseRating(state.SpiritScore)
+    restoreParts(data.buildParts, state.BuildParts)
 end
 
 local function removePlot(player)
+    savePlayerBuild(player)
+
     local state = playerState[player]
     if state and state.Plot then
         state.Plot:Destroy()
@@ -97,7 +225,10 @@ BuildStateRequest.OnServerInvoke = function(player)
         tokens = state.Tokens,
         theme = GameConfig.Theme,
         materialCatalog = GameConfig.MaterialCatalog,
+        propCatalog = GameConfig.PropCatalog,
         levels = GameConfig.Levels,
+        spiritScore = state.SpiritScore,
+        houseRating = state.HouseRating,
     }
 end
 
@@ -112,15 +243,29 @@ PlaceRequest.OnServerEvent:Connect(function(player, payload)
     end
 
     local materialKey = payload.material
+    local propKey = payload.prop
     local position = payload.position
     local size = payload.size
+    local placementType = payload.placementType or "Structure"
 
-    if typeof(position) ~= "Vector3" or typeof(size) ~= "Vector3" then
+    if typeof(position) ~= "Vector3" then
         return
     end
 
-    local materialInfo = GameConfig.MaterialCatalog[materialKey]
-    if not materialInfo then
+    local catalogInfo = nil
+    if placementType == "Prop" then
+        catalogInfo = GameConfig.PropCatalog[propKey]
+        if catalogInfo then
+            size = catalogInfo.Size
+        end
+    else
+        if typeof(size) ~= "Vector3" then
+            return
+        end
+        catalogInfo = GameConfig.MaterialCatalog[materialKey]
+    end
+
+    if not catalogInfo then
         return
     end
 
@@ -132,7 +277,7 @@ PlaceRequest.OnServerEvent:Connect(function(player, payload)
         return
     end
 
-    local cost = materialInfo.Cost
+    local cost = catalogInfo.Cost or 0
     if state.Tokens < cost then
         return
     end
@@ -140,20 +285,32 @@ PlaceRequest.OnServerEvent:Connect(function(player, payload)
     state.Tokens -= cost
 
     local part = Instance.new("Part")
-    part.Name = string.format("Build_%d", levelIndex)
+    part.Name = string.format("%s_%d", placementType, levelIndex)
     part.Size = snappedSize
     part.Position = snappedPos
-    part.Material = materialInfo.Material
-    part.Color = materialInfo.Color
+    part.Material = catalogInfo.Material
+    part.Color = catalogInfo.Color
     part.Anchored = true
     part.TopSurface = Enum.SurfaceType.Smooth
     part.BottomSurface = Enum.SurfaceType.Smooth
     part.Parent = state.BuildParts
+
+    updateSpirit(state, catalogInfo.Spirit or 1)
 end)
 
-Players.PlayerAdded:Connect(createPlotForPlayer)
+Players.PlayerAdded:Connect(function(player)
+    createPlotForPlayer(player)
+    loadPlayerBuild(player)
+end)
 Players.PlayerRemoving:Connect(removePlot)
+
+game:BindToClose(function()
+    for _, player in ipairs(Players:GetPlayers()) do
+        savePlayerBuild(player)
+    end
+end)
 
 for _, player in ipairs(Players:GetPlayers()) do
     createPlotForPlayer(player)
+    loadPlayerBuild(player)
 end

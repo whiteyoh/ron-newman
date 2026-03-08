@@ -14,11 +14,42 @@ GameConfig.GridSize = 4
 GameConfig.PlotSize = Vector3.new(100, 80, 100)
 
 GameConfig.MaterialCatalog = {
-    Brick = { Material = Enum.Material.Brick, Color = Color3.fromRGB(151, 108, 74), Cost = 0 },
-    Plaster = { Material = Enum.Material.SmoothPlastic, Color = Color3.fromRGB(226, 231, 236), Cost = 0 },
-    ClassroomTile = { Material = Enum.Material.Slate, Color = Color3.fromRGB(86, 97, 112), Cost = 0 },
-    PremiumGlass = { Material = Enum.Material.Glass, Color = Color3.fromRGB(197, 232, 255), Cost = 5 },
-    NeonTrim = { Material = Enum.Material.Neon, Color = Color3.fromRGB(255, 229, 120), Cost = 10 },
+    Brick = { Material = Enum.Material.Brick, Color = Color3.fromRGB(151, 108, 74), Cost = 0, Spirit = 1 },
+    Plaster = { Material = Enum.Material.SmoothPlastic, Color = Color3.fromRGB(226, 231, 236), Cost = 0, Spirit = 1 },
+    ClassroomTile = { Material = Enum.Material.Slate, Color = Color3.fromRGB(86, 97, 112), Cost = 0, Spirit = 2 },
+    PremiumGlass = { Material = Enum.Material.Glass, Color = Color3.fromRGB(197, 232, 255), Cost = 5, Spirit = 3 },
+    NeonTrim = { Material = Enum.Material.Neon, Color = Color3.fromRGB(255, 229, 120), Cost = 10, Spirit = 4 },
+}
+
+GameConfig.PropCatalog = {
+    StudentDesk = { Material = Enum.Material.Wood, Color = Color3.fromRGB(140, 96, 60), Size = Vector3.new(8, 4, 4), Cost = 2, Spirit = 3 },
+    Blackboard = { Material = Enum.Material.Slate, Color = Color3.fromRGB(26, 51, 33), Size = Vector3.new(12, 8, 1), Cost = 3, Spirit = 4 },
+    TrophyCase = { Material = Enum.Material.Metal, Color = Color3.fromRGB(214, 177, 73), Size = Vector3.new(4, 8, 4), Cost = 5, Spirit = 6 },
+    PrefectBoard = { Material = Enum.Material.SmoothPlastic, Color = Color3.fromRGB(49, 63, 95), Size = Vector3.new(8, 8, 1), Cost = 3, Spirit = 5 },
+}
+
+GameConfig.RoleplayNPCs = {
+    {
+        Name = "TeacherNPC",
+        Title = "Teacher",
+        Dialogue = "Keep your classroom tidy and your spirit score high.",
+        PositionOffset = Vector3.new(-16, 3, -16),
+        Color = Color3.fromRGB(209, 176, 147),
+    },
+    {
+        Name = "PrefectNPC",
+        Title = "Prefect",
+        Dialogue = "Top house rating gets the honor board spotlight!",
+        PositionOffset = Vector3.new(0, 3, -16),
+        Color = Color3.fromRGB(123, 160, 207),
+    },
+    {
+        Name = "CaretakerNPC",
+        Title = "Caretaker",
+        Dialogue = "No running in the corridors. Decorate responsibly!",
+        PositionOffset = Vector3.new(16, 3, -16),
+        Color = Color3.fromRGB(117, 137, 111),
+    },
 }
 
 GameConfig.DeveloperProducts = {
