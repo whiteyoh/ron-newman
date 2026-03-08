@@ -11,7 +11,9 @@ local MonetizationStateRequest = Remotes:WaitForChild("MonetizationStateRequest"
 local PurchaseRequest = Remotes:WaitForChild("PurchaseRequest")
 
 local selectedMaterial = "Brick"
+local selectedProp = "StudentDesk"
 local selectedLevel = 1
+local placementType = "Structure"
 local ghostSize = Vector3.new(8, 8, 8)
 
 local function getMouseWorldPosition()
@@ -33,7 +35,10 @@ local function refreshHUD()
             panel.ThemeLabel.Text = "Theme: " .. tostring(buildState.theme)
             panel.TokensLabel.Text = string.format("Tokens: %s (+%s)", tostring(buildState.tokens), tostring(monetizationState.tokenBoost))
             panel.LevelLabel.Text = "Current Level: " .. tostring(buildState.levels[selectedLevel].Name)
-            panel.MaterialLabel.Text = "Material: " .. selectedMaterial
+            panel.MaterialLabel.Text = "Structure: " .. selectedMaterial
+            panel.PropLabel.Text = "Prop: " .. selectedProp
+            panel.ModeLabel.Text = "Placement Mode: " .. placementType
+            panel.SpiritLabel.Text = string.format("School Spirit: %d | House Rating: %d/5", buildState.spiritScore, buildState.houseRating)
         end
     end
 end
@@ -41,11 +46,19 @@ end
 local function placeCurrentPart()
     local worldPos = getMouseWorldPosition()
 
-    PlaceRequest:FireServer({
-        material = selectedMaterial,
+    local payload = {
+        placementType = placementType,
         position = Vector3.new(worldPos.X, (selectedLevel - 1) * 16 + 4, worldPos.Z),
-        size = ghostSize,
-    })
+    }
+
+    if placementType == "Prop" then
+        payload.prop = selectedProp
+    else
+        payload.material = selectedMaterial
+        payload.size = ghostSize
+    end
+
+    PlaceRequest:FireServer(payload)
 
     refreshHUD()
 end
@@ -63,12 +76,27 @@ UserInputService.InputBegan:Connect(function(input, processed)
         refreshHUD()
     elseif input.KeyCode == Enum.KeyCode.One then
         selectedMaterial = "Brick"
+        placementType = "Structure"
         refreshHUD()
     elseif input.KeyCode == Enum.KeyCode.Two then
         selectedMaterial = "Plaster"
+        placementType = "Structure"
         refreshHUD()
     elseif input.KeyCode == Enum.KeyCode.Three then
         selectedMaterial = "ClassroomTile"
+        placementType = "Structure"
+        refreshHUD()
+    elseif input.KeyCode == Enum.KeyCode.Four then
+        selectedProp = "StudentDesk"
+        placementType = "Prop"
+        refreshHUD()
+    elseif input.KeyCode == Enum.KeyCode.Five then
+        selectedProp = "Blackboard"
+        placementType = "Prop"
+        refreshHUD()
+    elseif input.KeyCode == Enum.KeyCode.Six then
+        selectedProp = "TrophyCase"
+        placementType = "Prop"
         refreshHUD()
     elseif input.KeyCode == Enum.KeyCode.F then
         placeCurrentPart()
