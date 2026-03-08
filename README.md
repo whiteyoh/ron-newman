@@ -55,6 +55,24 @@ The prototype now includes:
 
 ## Roblox Studio setup
 
+### Option A (recommended): keep Studio pointed at this repo with Rojo sync
+
+This repo now includes `roblox-game/default.project.json`, so Roblox Studio can continuously sync against the filesystem source.
+
+1. Install **Rojo** (CLI) and the **Rojo Studio plugin**.
+2. In a terminal, run:
+   - `cd roblox-game`
+   - `rojo serve`
+3. In Roblox Studio, open your place, then start the Rojo plugin and connect to `localhost:34872`.
+4. In the Rojo tree, use `default.project.json` from this folder. It maps:
+   - `src/ReplicatedStorage` -> `ReplicatedStorage`
+   - `src/ServerScriptService` -> `ServerScriptService`
+   - `src/StarterGui` -> `StarterGui`
+   - `src/StarterPlayer/StarterPlayerScripts` -> `StarterPlayer/StarterPlayerScripts`
+5. Keep `rojo serve` running while editing. Changes in this repo will sync into Studio automatically.
+
+### Option B: one-time manual import (no live sync)
+
 1. Open your place in Roblox Studio.
 2. Create these services/folders if missing:
    - `ReplicatedStorage/Shared`
@@ -62,15 +80,46 @@ The prototype now includes:
    - `ServerScriptService`
    - `StarterPlayer/StarterPlayerScripts`
    - `StarterGui`
-3. Copy scripts from this repo:
+3. Copy scripts from this repo into matching services:
    - `roblox-game/src/ReplicatedStorage/Shared/GameConfig.lua`
    - `roblox-game/src/ServerScriptService/HouseService.server.lua`
    - `roblox-game/src/ServerScriptService/MonetizationService.server.lua`
    - `roblox-game/src/StarterPlayer/StarterPlayerScripts/BuildController.client.lua`
    - `roblox-game/src/StarterGui/BuildHUD.client.lua`
-4. In `GameConfig.lua`, replace all placeholder IDs (`0`) for developer products/gamepasses with your real Roblox IDs.
-5. Enable **Studio API Services** in Game Settings if you are testing DataStore behavior in Studio.
-6. Use **Test > Start Server** with multiple players to validate multiplayer placement and purchases.
+
+### Required Studio settings/checklist
+
+1. In `GameConfig.lua`, replace all placeholder IDs (`0`) for developer products/gamepasses with your real Roblox IDs.
+2. Enable **Studio API Services** in Game Settings for DataStore testing in Studio.
+3. Use **Test > Start Server** with multiple players to validate multiplayer placement and purchases.
+
+---
+
+## Roblox IDs you must provide
+
+Set these in `roblox-game/src/ReplicatedStorage/Shared/GameConfig.lua`:
+
+- `GameConfig.DeveloperProducts.BuildTokensSmall`
+- `GameConfig.DeveloperProducts.BuildTokensLarge`
+- `GameConfig.Gamepasses.PremiumBuilder`
+
+### Where to get each ID (Creator Dashboard)
+
+1. Open **https://create.roblox.com/** and choose the same experience/place you are testing in Studio.
+2. For **developer product IDs**:
+   - Go to **Monetization > Developer Products**.
+   - Create products for "BuildTokensSmall" and "BuildTokensLarge" (or reuse existing ones).
+   - Open each product and copy its numeric **Product ID**.
+   - Paste into:
+     - `BuildTokensSmall` -> `GameConfig.DeveloperProducts.BuildTokensSmall`
+     - `BuildTokensLarge` -> `GameConfig.DeveloperProducts.BuildTokensLarge`
+3. For the **gamepass ID**:
+   - Go to **Monetization > Passes**.
+   - Create/select your Premium Builder pass.
+   - Open it and copy the numeric **Pass ID**.
+   - Paste into `GameConfig.Gamepasses.PremiumBuilder`.
+
+> Tip: IDs are numeric only. Do not paste full URLs.
 
 ---
 
