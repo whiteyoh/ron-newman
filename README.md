@@ -1,72 +1,175 @@
-# OpenShift 4.16 Must-Gather Incident Analyzer
+# UK High School Builder (Roblox)
 
-A Python tool that rewrites this repository around a new use case: **analyzing an OpenShift 4.16 must-gather bundle for a specific incident date and producing a clear root-cause-analysis report**.
+A Roblox Studio building game prototype where each player builds a house across **5 vertical levels** with a **UK high school** theme.
 
-## What it does
+## Current feature set (implemented)
 
-- Accepts a must-gather **directory** or compressed **tar/tgz archive**.
-- Unpacks the archive automatically when needed.
-- Filters log and text evidence to a **specific date**.
-- Produces:
-  - a concise **terminal summary**, and
-  - a standalone **HTML report** designed to be easy for humans to read.
-- Highlights:
-  - likely root-cause candidates,
-  - hotspot namespaces, nodes, and pods,
-  - timeline evidence for the requested day,
-  - recommended next investigation steps.
+The prototype now includes:
 
-## Supported use case
+- **Per-player build plots** created automatically at join.
+- **Grid-snapped building** with level boundaries enforced across:
+  1. Ground Floor
+  2. First Floor
+  3. Second Floor
+  4. Third Floor
+  5. Rooftop
+- **Server-authoritative plot protection**:
+  - Placement is blocked outside a player's own plot extents.
+  - Placement is blocked when overlapping existing build objects.
+- **Build UX upgrades**:
+  - Undo/redo stack per player (`U` and `Y`).
+  - Rotation (`C`) and structure resize (`Z`/`X`).
+  - Local visual ghost preview while aiming placement.
+- **Structure materials** with different spirit values and token costs (tier-gated inventory unlocks):
+  - Brick
+  - Plaster
+  - ClassroomTile
+  - PremiumGlass
+  - NeonTrim
+- **Placeable school props**:
+  - StudentDesk
+  - Blackboard
+  - TrophyCase
+  - PrefectBoard
+  - SpiritSign (supports filtered player text)
+- **Persistent inventory progression** based on Spirit unlock tiers.
+- **School Spirit + House Rating system** that increases as players decorate.
+- **Leaderboard stats + session awards**:
+  - `leaderstats` for Spirit and HouseRating.
+  - Session token awards for spirit milestones.
+- **Roleplay NPC dialogue panel** with objectives/quests via UI.
+- **Delete/select build tool** for precise cleanup of your own placed parts.
+- **Plot visiting mode** to jump between active players' plots in-session.
+- **DataStore persistence** for tokens, spirit score, inventory tier, and placed parts.
+- **Save data versioning + migration** to support future schema evolution.
+- **Moderation-safe text filtering** pipeline for sign text.
+- **Performance safeguards**:
+  - Max part cap per plot.
+  - Reduced exploit risk via server validation checks.
+- **Monetization hooks** for:
+  - Developer Products (token bundles)
+  - Gamepass (Premium Builder)
+- **In-game HUD** showing theme, tokens, level, selected structure/prop, placement mode, spirit, rating, tier, ghost info, and feedback.
 
-This project is now aimed at incident review workflows such as:
+---
 
-> “Analyze this OpenShift 4.16 must-gather for 2026-03-15 and tell me the most likely root cause of the cluster incident.”
+## Roblox Studio setup
 
-## Install
+### Option A (recommended): serve with Rojo (live sync)
 
-```bash
-python -m venv .venv
-source .venv/bin/activate
-pip install -e .[dev]
-```
+This repo now has a **root Rojo project file** at `default.project.json` so you can run Rojo directly from the repository root.
 
-## Usage
+1. Install **Rojo** (CLI) and the **Rojo Studio plugin**.
+2. From this repo root, run:
+   - `rojo serve`
+3. In Roblox Studio, open your place, start the Rojo plugin, and connect to `localhost:34872`.
+4. Select this repo's `default.project.json` when prompted by the plugin.
+5. Keep `rojo serve` running while editing; file changes sync into Studio automatically.
 
-### Terminal-only report
+Rojo mappings in `default.project.json`:
+- `roblox-game/src/ReplicatedStorage` -> `ReplicatedStorage`
+- `roblox-game/src/ServerScriptService` -> `ServerScriptService`
+- `roblox-game/src/StarterGui` -> `StarterGui`
+- `roblox-game/src/StarterPlayer/StarterPlayerScripts` -> `StarterPlayer/StarterPlayerScripts`
 
-```bash
-openshift-must-gather-analyzer ./must-gather.tar.gz --incident-date 2026-03-15
-```
+> Note: `roblox-game/default.project.json` is still included for compatibility if you prefer running `cd roblox-game && rojo serve`.
 
-### Terminal + HTML report
+### Option B: one-time manual import (no live sync)
 
-```bash
-openshift-must-gather-analyzer ./must-gather.tgz \
-  --incident-date 2026-03-15 \
-  --html-output report.html
-```
+1. Open your place in Roblox Studio.
+2. Create these services/folders if missing:
+   - `ReplicatedStorage/Shared`
+   - `ReplicatedStorage/Remotes`
+   - `ServerScriptService`
+   - `StarterPlayer/StarterPlayerScripts`
+   - `StarterGui`
+3. Copy scripts from this repo into matching services:
+   - `roblox-game/src/ReplicatedStorage/Shared/GameConfig.lua`
+   - `roblox-game/src/ServerScriptService/HouseService.server.lua`
+   - `roblox-game/src/ServerScriptService/MonetizationService.server.lua`
+   - `roblox-game/src/StarterPlayer/StarterPlayerScripts/BuildController.client.lua`
+   - `roblox-game/src/StarterGui/BuildHUD.client.lua`
 
-## Output overview
+### Required Studio settings/checklist
 
-The text report includes:
+1. In `GameConfig.lua`, replace all placeholder IDs (`0`) for developer products/gamepasses with your real Roblox IDs.
+2. Enable **Studio API Services** in Game Settings for DataStore testing in Studio.
+3. Use **Test > Start Server** with multiple players to validate multiplayer placement and purchases.
 
-- executive summary of likely root causes,
-- severity breakdown,
-- busiest namespaces and nodes,
-- dated timeline highlights,
-- recommended next steps.
+---
 
-The HTML report includes:
+## Roblox IDs you must provide
 
-- an executive summary section,
-- evidence-backed root-cause cards,
-- hotspot panels for namespaces, nodes, and pods,
-- an evidence timeline table.
+Set these in `roblox-game/src/ReplicatedStorage/Shared/GameConfig.lua`:
 
-## Development
+- `GameConfig.DeveloperProducts.BuildTokensSmall`
+- `GameConfig.DeveloperProducts.BuildTokensLarge`
+- `GameConfig.Gamepasses.PremiumBuilder`
 
-Run tests with:
+### Where to get each ID (Creator Dashboard)
 
-```bash
-pytest
-```
+1. Open **https://create.roblox.com/** and choose the same experience/place you are testing in Studio.
+2. For **developer product IDs**:
+   - Go to **Monetization > Developer Products**.
+   - Create products for "BuildTokensSmall" and "BuildTokensLarge" (or reuse existing ones).
+   - Open each product and copy its numeric **Product ID**.
+   - Paste into:
+     - `BuildTokensSmall` -> `GameConfig.DeveloperProducts.BuildTokensSmall`
+     - `BuildTokensLarge` -> `GameConfig.DeveloperProducts.BuildTokensLarge`
+3. For the **gamepass ID**:
+   - Go to **Monetization > Passes**.
+   - Create/select your Premium Builder pass.
+   - Open it and copy the numeric **Pass ID**.
+   - Paste into `GameConfig.Gamepasses.PremiumBuilder`.
+
+> Tip: IDs are numeric only. Do not paste full URLs.
+
+---
+
+## Controls
+
+- `Q / E`: Move down/up through building levels.
+- `1 / 2 / 3`: Select structure material.
+- `4 / 5 / 6 / 7`: Select prop.
+- `Z / X`: Resize structure footprint.
+- `C`: Rotate placement by 90°.
+- `U / Y`: Undo/redo last placement.
+- `F`: Place currently selected structure/prop.
+- `R`: Prompt Robux purchase for small token bundle.
+- `T`: Prompt Robux purchase for Premium Builder gamepass.
+- `G`: Select your placed part under cursor.
+- `Backspace`: Delete selected part (server-validated, with token refund).
+- `J / K`: Cycle plot visiting targets and teleport to view other players' builds.
+
+---
+
+## Monetization notes
+
+- Robux payments must be configured in Creator Dashboard.
+- `MarketplaceService.ProcessReceipt` grants token boosts on successful developer product purchases.
+- `UserOwnsGamePassAsync` is used to check Premium Builder ownership.
+- Keep product IDs and gamepass IDs in `GameConfig.lua` only, so they are easy to rotate per environment.
+
+---
+
+## Next recommendations / roadmap items
+
+### Additional improvements roadmap (next 10)
+
+1. ✅ **Delete/select tool** for precise removal and editing of existing placed parts.
+2. ✅ **Plot visiting mode** so players can tour classmates' builds without edit permissions.
+3. **Blueprint save slots** (multiple named layouts per player).
+4. **Advanced snapping** (surface/edge snap + smart alignment guides).
+5. **Collaborative co-build permissions** for invited friends on a plot.
+6. **Quest progression tracking** with reward claims and daily objectives.
+7. **Build replay/timelapse mode** from saved placement history.
+8. **Config-driven seasonal events** for time-limited props and rewards.
+9. **Admin moderation dashboard** for live cleanup/restore and player reports.
+10. **Telemetry export hooks** for balancing economy, retention, and funnel metrics.
+
+### Suggested longer-term upgrades
+
+- Add classroom-themed furniture bundles and seasonal events.
+- Add social mechanics (visit other plots, vote, school competitions).
+- Add admin tools for live ops (boost events, cleanup, balancing).
+- Add analytics events for placement flow and monetization conversion.
