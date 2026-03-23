@@ -23,7 +23,7 @@ def test_analyze_must_gather_archive_for_specific_incident_date(tmp_path: Path) 
         encoding="utf-8",
     )
 
-    archive = tmp_path / "must-gather.tgz"
+    archive = tmp_path / "must-gather.tar.gz"
     with tarfile.open(archive, "w:gz") as tar:
         tar.add(bundle_root, arcname="must-gather")
 

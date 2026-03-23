@@ -111,7 +111,7 @@ def _prepare_input(source: Path) -> tuple[Path, TemporaryDirectory | None]:
         return Path(temp_dir.name), temp_dir
     if source.is_file():
         return source.parent, None
-    raise ValueError(f"Invalid must-gather input: {source}. Provide a directory, single text file, or a tar/tgz archive.")
+    raise ValueError(f"Invalid must-gather input: {source}. Provide a directory, single text file, or a .tar, .tgz, or .tar.gz archive.")
 
 
 def analyze_log_file(file_path: str | Path, *, incident_date: str, top_n: int = 5) -> LogSummary:
