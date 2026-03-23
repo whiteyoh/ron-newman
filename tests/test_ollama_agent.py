@@ -31,8 +31,8 @@ class _FakeResponse:
 
 def test_request_ollama_agent_analysis_runs_workflow_and_emits_observability(monkeypatch, tmp_path: Path) -> None:
     log_file = tmp_path / "cluster.log"
-    log_file.write_text("ERROR namespace=foo kube-apiserver unavailable\n", encoding="utf-8")
-    summary = analyze_log_file(log_file)
+    log_file.write_text("2026-03-15T10:00:00Z ERROR namespace=foo kube-apiserver unavailable\n", encoding="utf-8")
+    summary = analyze_log_file(log_file, incident_date="2026-03-15")
 
     seen: dict[str, str] = {}
 
@@ -68,8 +68,8 @@ def test_request_ollama_agent_analysis_runs_workflow_and_emits_observability(mon
 
 def test_request_ollama_agent_analysis_enforces_policy(tmp_path: Path) -> None:
     log_file = tmp_path / "cluster.log"
-    log_file.write_text("ERROR namespace=foo kube-apiserver unavailable\n", encoding="utf-8")
-    summary = analyze_log_file(log_file)
+    log_file.write_text("2026-03-15T10:00:00Z ERROR namespace=foo kube-apiserver unavailable\n", encoding="utf-8")
+    summary = analyze_log_file(log_file, incident_date="2026-03-15")
 
     output = request_ollama_agent_analysis(
         summary=summary,
@@ -83,8 +83,8 @@ def test_request_ollama_agent_analysis_enforces_policy(tmp_path: Path) -> None:
 
 def test_tool_schema_and_replay_harness(tmp_path: Path) -> None:
     log_file = tmp_path / "cluster.log"
-    log_file.write_text("ERROR namespace=foo kube-apiserver unavailable\n", encoding="utf-8")
-    summary = analyze_log_file(log_file)
+    log_file.write_text("2026-03-15T10:00:00Z ERROR namespace=foo kube-apiserver unavailable\n", encoding="utf-8")
+    summary = analyze_log_file(log_file, incident_date="2026-03-15")
 
     schemas = get_tool_interface_schemas()
     assert "ollama.generate.request" in schemas
@@ -103,8 +103,8 @@ def test_tool_schema_and_replay_harness(tmp_path: Path) -> None:
 
 def test_workflow_step_events_and_human_rejection(monkeypatch, tmp_path: Path) -> None:
     log_file = tmp_path / "cluster.log"
-    log_file.write_text("ERROR namespace=foo kube-apiserver unavailable\n", encoding="utf-8")
-    summary = analyze_log_file(log_file)
+    log_file.write_text("2026-03-15T10:00:00Z ERROR namespace=foo kube-apiserver unavailable\n", encoding="utf-8")
+    summary = analyze_log_file(log_file, incident_date="2026-03-15")
 
     def fake_urlopen(req, timeout: int = 60):
         return _FakeResponse({"response": "agent diagnosis"})
