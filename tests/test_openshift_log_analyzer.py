@@ -1,3 +1,4 @@
+import gzip
 import tarfile
 from pathlib import Path
 
@@ -61,3 +62,18 @@ def test_reports_are_human_readable_and_include_html_sections(tmp_path: Path) ->
 def test_analyze_log_file_rejects_invalid_path() -> None:
     with pytest.raises(ValueError, match="Invalid must-gather input"):
         analyze_log_file("/tmp/does-not-exist.log", incident_date="2026-03-15")
+
+
+def test_analyze_log_file_unpacks_gzip_logs_before_processing(tmp_path: Path) -> None:
+    compressed_log = tmp_path / "events.log.gz"
+    with gzip.open(compressed_log, "wt", encoding="utf-8") as handle:
+        handle.write(
+            "2026-03-15T10:01:00Z ERROR namespace=openshift-kube-apiserver node=master-0 pod=kube-apiserver-master-0 kube-apiserver unavailable with status=503\n"
+        )
+
+    summary = analyze_log_file(compressed_log, incident_date="2026-03-15")
+
+    assert summary.extracted_dir is not None
+    assert summary.total_files_scanned == 1
+    assert summary.matched_lines == 1
+    assert summary.timeline[0].source == "events.log"
