@@ -116,7 +116,7 @@ class OpenShiftAgentWorkflow:
 
     def _collect_context(self) -> str:
         report = render_human_readable_report(self.summary)
-        return f"Collected analyzer context for {self.summary.source_path.name}.\n\n{report}"
+        return f"Collected analyzer context for {self.summary.file_path.name}.\n\n{report}"
 
     def _diagnose(self, context: str) -> str:
         prompt = _build_operator_prompt(self.summary)
