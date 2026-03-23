@@ -8,6 +8,8 @@ from pathlib import Path
 import re
 import tarfile
 from tempfile import TemporaryDirectory
+import gzip
+import shutil
 from typing import Iterable
 
 DATE_TOKEN_PATTERN = re.compile(r"(20\d{2}[-/]\d{2}[-/]\d{2})")
@@ -95,22 +97,38 @@ def _normalize_level(level: str) -> str:
     return "WARN" if level == "WARNING" else level
 
 
+BINARY_SUFFIXES = {".png", ".jpg", ".jpeg", ".gif", ".pdf", ".bin", ".xz", ".bz2"}
+COMPRESSED_TEXT_SUFFIXES = {".gz"}
+
+
 def _iter_text_files(root: Path) -> Iterable[Path]:
     for path in root.rglob("*"):
-        if path.is_file() and path.suffix.lower() not in {".png", ".jpg", ".jpeg", ".gif", ".pdf", ".bin", ".gz", ".xz", ".bz2"}:
+        if path.is_file() and path.suffix.lower() not in BINARY_SUFFIXES | COMPRESSED_TEXT_SUFFIXES:
             yield path
 
 
-def _prepare_input(source: Path) -> tuple[Path, TemporaryDirectory | None]:
+def _decompress_gzip_file(source: Path, destination: Path) -> Path:
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    target = destination.with_suffix("") if destination.suffix.lower() == ".gz" else destination
+    with gzip.open(source, "rb") as compressed, target.open("wb") as unpacked:
+        shutil.copyfileobj(compressed, unpacked)
+    return target
+
+
+def _prepare_input(source: Path) -> tuple[Path, TemporaryDirectory | None, Path | None]:
     if source.is_dir():
-        return source, None
+        return source, None, None
     if source.is_file() and tarfile.is_tarfile(source):
         temp_dir = TemporaryDirectory(prefix="must-gather-")
         with tarfile.open(source) as archive:
             archive.extractall(temp_dir.name)
-        return Path(temp_dir.name), temp_dir
+        return Path(temp_dir.name), temp_dir, None
+    if source.is_file() and source.suffix.lower() == ".gz":
+        temp_dir = TemporaryDirectory(prefix="must-gather-")
+        unpacked_file = _decompress_gzip_file(source, Path(temp_dir.name) / source.name)
+        return Path(temp_dir.name), temp_dir, unpacked_file
     if source.is_file():
-        return source.parent, None
+        return source.parent, None, source
     raise ValueError(f"Invalid must-gather input: {source}. Provide a directory, single text file, or a .tar, .tgz, or .tar.gz archive.")
 
 
@@ -120,7 +138,7 @@ def analyze_log_file(file_path: str | Path, *, incident_date: str, top_n: int = 
         raise ValueError(f"Invalid must-gather input: {source}")
 
     normalized_date = _normalize_incident_date(incident_date)
-    root, temp_dir = _prepare_input(source)
+    root, temp_dir, prepared_file = _prepare_input(source)
 
     level_counts: Counter[str] = Counter()
     namespace_counts: Counter[str] = Counter()
@@ -131,7 +149,7 @@ def analyze_log_file(file_path: str | Path, *, incident_date: str, top_n: int = 
     timeline: list[Evidence] = []
 
     files_scanned = 0
-    candidate_files = [source] if source.is_file() and not tarfile.is_tarfile(source) else list(_iter_text_files(root))
+    candidate_files = [prepared_file] if prepared_file is not None else list(_iter_text_files(root))
     for text_file in candidate_files:
         files_scanned += 1
         try:
