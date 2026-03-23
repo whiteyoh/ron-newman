@@ -9,9 +9,9 @@ from . import analyze_log_file, render_html_report, render_human_readable_report
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="openshift-must-gather-analyzer",
-        description="Analyze an OpenShift 4.16 must-gather archive for a specific incident date and produce human-readable output.",
+        description="Analyze an OpenShift 4.16 must-gather directory or archive (.tar, .tgz, .tar.gz) for a specific incident date and produce human-readable output.",
     )
-    parser.add_argument("bundle", help="Path to a must-gather directory or tar/tgz archive")
+    parser.add_argument("bundle", help="Path to a must-gather directory or .tar/.tgz/.tar.gz archive")
     parser.add_argument("--incident-date", required=True, help="Incident date to analyze (YYYY-MM-DD)")
     parser.add_argument("--top", type=int, default=5, help="Top N namespaces, nodes, pods, and root-cause candidates to show")
     parser.add_argument(

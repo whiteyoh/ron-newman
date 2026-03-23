@@ -4,7 +4,7 @@ Analyze OpenShift 4.16 must-gather bundles for a specific incident date and prod
 
 ## What this project does
 
-The analyzer scans a must-gather directory, a single text log, or a tar/tgz archive, filters evidence down to the incident date you specify, and then summarizes the most likely failure patterns.
+The analyzer scans a must-gather directory, a single text log, or a tar archive such as `.tar`, `.tgz`, or `.tar.gz`, filters evidence down to the incident date you specify, and then summarizes the most likely failure patterns.
 
 Core capabilities include:
 
@@ -52,10 +52,10 @@ pip install .
 
 ## Command-line usage
 
-The CLI accepts a must-gather directory, a tar/tgz archive, or a single text log file.
+The CLI accepts a must-gather directory, a `.tar`, `.tgz`, or `.tar.gz` archive, or a single text log file.
 
 ```bash
-openshift-must-gather-analyzer /path/to/must-gather.tgz --incident-date 2026-03-15
+openshift-must-gather-analyzer /path/to/must-gather.tar.gz --incident-date 2026-03-15
 ```
 
 ### Common options
@@ -67,7 +67,7 @@ openshift-must-gather-analyzer /path/to/must-gather.tgz --incident-date 2026-03-
 Example with HTML output:
 
 ```bash
-openshift-must-gather-analyzer ./must-gather.tgz \
+openshift-must-gather-analyzer ./must-gather.tar.gz \
   --incident-date 2026-03-15 \
   --top 10 \
   --html-output report.html
@@ -83,7 +83,7 @@ from openshift_log_analyzer import (
     request_ollama_agent_analysis,
 )
 
-summary = analyze_log_file("must-gather.tgz", incident_date="2026-03-15", top_n=5)
+summary = analyze_log_file("must-gather.tar.gz", incident_date="2026-03-15", top_n=5)
 print(render_human_readable_report(summary))
 
 html = render_html_report(summary)
