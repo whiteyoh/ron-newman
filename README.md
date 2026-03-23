@@ -1,175 +1,126 @@
-# UK High School Builder (Roblox)
+# OpenShift Must-Gather Analyzer
 
-A Roblox Studio building game prototype where each player builds a house across **5 vertical levels** with a **UK high school** theme.
+Analyze OpenShift 4.16 must-gather bundles for a specific incident date and produce concise root-cause summaries, timeline evidence, hotspot rankings, and optional AI-assisted diagnostics. The project is a Python package with a CLI for local investigation workflows. It is not a Roblox project.
 
-## Current feature set (implemented)
+## What this project does
 
-The prototype now includes:
+The analyzer scans a must-gather directory, a single text log, or a tar/tgz archive, filters evidence down to the incident date you specify, and then summarizes the most likely failure patterns.
 
-- **Per-player build plots** created automatically at join.
-- **Grid-snapped building** with level boundaries enforced across:
-  1. Ground Floor
-  2. First Floor
-  3. Second Floor
-  4. Third Floor
-  5. Rooftop
-- **Server-authoritative plot protection**:
-  - Placement is blocked outside a player's own plot extents.
-  - Placement is blocked when overlapping existing build objects.
-- **Build UX upgrades**:
-  - Undo/redo stack per player (`U` and `Y`).
-  - Rotation (`C`) and structure resize (`Z`/`X`).
-  - Local visual ghost preview while aiming placement.
-- **Structure materials** with different spirit values and token costs (tier-gated inventory unlocks):
-  - Brick
-  - Plaster
-  - ClassroomTile
-  - PremiumGlass
-  - NeonTrim
-- **Placeable school props**:
-  - StudentDesk
-  - Blackboard
-  - TrophyCase
-  - PrefectBoard
-  - SpiritSign (supports filtered player text)
-- **Persistent inventory progression** based on Spirit unlock tiers.
-- **School Spirit + House Rating system** that increases as players decorate.
-- **Leaderboard stats + session awards**:
-  - `leaderstats` for Spirit and HouseRating.
-  - Session token awards for spirit milestones.
-- **Roleplay NPC dialogue panel** with objectives/quests via UI.
-- **Delete/select build tool** for precise cleanup of your own placed parts.
-- **Plot visiting mode** to jump between active players' plots in-session.
-- **DataStore persistence** for tokens, spirit score, inventory tier, and placed parts.
-- **Save data versioning + migration** to support future schema evolution.
-- **Moderation-safe text filtering** pipeline for sign text.
-- **Performance safeguards**:
-  - Max part cap per plot.
-  - Reduced exploit risk via server validation checks.
-- **Monetization hooks** for:
-  - Developer Products (token bundles)
-  - Gamepass (Premium Builder)
-- **In-game HUD** showing theme, tokens, level, selected structure/prop, placement mode, spirit, rating, tier, ghost info, and feedback.
+Core capabilities include:
 
----
+- Incident-date filtering for must-gather content.
+- Root-cause candidate detection for:
+  - API availability degradation
+  - etcd health and quorum instability
+  - node resource pressure
+  - operator degradation
+  - network instability
+- Ranked summaries for namespaces, nodes, and pods with the most signals.
+- Human-readable text reporting for incident review.
+- Standalone HTML report rendering for sharing findings.
+- Optional Ollama-backed agent workflow for diagnosis, recommendations, execution-gate simulation, and verification traces.
+- Policy checks around tool usage in the Ollama agent workflow.
+- Incident replay harness for testing repeatable analysis behavior.
 
-## Roblox Studio setup
+## Repository layout
 
-### Option A (recommended): serve with Rojo (live sync)
+- `src/openshift_log_analyzer/analyzer.py` — core parsing, evidence extraction, root-cause ranking, and report generation.
+- `src/openshift_log_analyzer/cli.py` — command-line entry point.
+- `src/openshift_log_analyzer/ollama_agent.py` — Ollama workflow orchestration, policy enforcement, replay harness, and observability traces.
+- `tests/` — unit tests for must-gather analysis, report rendering, and the Ollama agent workflow.
 
-This repo now has a **root Rojo project file** at `default.project.json` so you can run Rojo directly from the repository root.
+## Requirements
 
-1. Install **Rojo** (CLI) and the **Rojo Studio plugin**.
-2. From this repo root, run:
-   - `rojo serve`
-3. In Roblox Studio, open your place, start the Rojo plugin, and connect to `localhost:34872`.
-4. Select this repo's `default.project.json` when prompted by the plugin.
-5. Keep `rojo serve` running while editing; file changes sync into Studio automatically.
+- Python 3.10+
+- Optional: a local Ollama instance if you want AI-assisted analysis
 
-Rojo mappings in `default.project.json`:
-- `roblox-game/src/ReplicatedStorage` -> `ReplicatedStorage`
-- `roblox-game/src/ServerScriptService` -> `ServerScriptService`
-- `roblox-game/src/StarterGui` -> `StarterGui`
-- `roblox-game/src/StarterPlayer/StarterPlayerScripts` -> `StarterPlayer/StarterPlayerScripts`
+## Installation
 
-> Note: `roblox-game/default.project.json` is still included for compatibility if you prefer running `cd roblox-game && rojo serve`.
+### Local development install
 
-### Option B: one-time manual import (no live sync)
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install -e .[dev]
+```
 
-1. Open your place in Roblox Studio.
-2. Create these services/folders if missing:
-   - `ReplicatedStorage/Shared`
-   - `ReplicatedStorage/Remotes`
-   - `ServerScriptService`
-   - `StarterPlayer/StarterPlayerScripts`
-   - `StarterGui`
-3. Copy scripts from this repo into matching services:
-   - `roblox-game/src/ReplicatedStorage/Shared/GameConfig.lua`
-   - `roblox-game/src/ServerScriptService/HouseService.server.lua`
-   - `roblox-game/src/ServerScriptService/MonetizationService.server.lua`
-   - `roblox-game/src/StarterPlayer/StarterPlayerScripts/BuildController.client.lua`
-   - `roblox-game/src/StarterGui/BuildHUD.client.lua`
+### Standard install
 
-### Required Studio settings/checklist
+```bash
+pip install .
+```
 
-1. In `GameConfig.lua`, replace all placeholder IDs (`0`) for developer products/gamepasses with your real Roblox IDs.
-2. Enable **Studio API Services** in Game Settings for DataStore testing in Studio.
-3. Use **Test > Start Server** with multiple players to validate multiplayer placement and purchases.
+## Command-line usage
 
----
+The CLI accepts a must-gather directory, a tar/tgz archive, or a single text log file.
 
-## Roblox IDs you must provide
+```bash
+openshift-must-gather-analyzer /path/to/must-gather.tgz --incident-date 2026-03-15
+```
 
-Set these in `roblox-game/src/ReplicatedStorage/Shared/GameConfig.lua`:
+### Common options
 
-- `GameConfig.DeveloperProducts.BuildTokensSmall`
-- `GameConfig.DeveloperProducts.BuildTokensLarge`
-- `GameConfig.Gamepasses.PremiumBuilder`
+- `--incident-date YYYY-MM-DD` — required incident date filter.
+- `--top N` — number of top namespaces, nodes, pods, and cause candidates to show.
+- `--html-output PATH` — write a standalone HTML report in addition to printing the text report.
 
-### Where to get each ID (Creator Dashboard)
+Example with HTML output:
 
-1. Open **https://create.roblox.com/** and choose the same experience/place you are testing in Studio.
-2. For **developer product IDs**:
-   - Go to **Monetization > Developer Products**.
-   - Create products for "BuildTokensSmall" and "BuildTokensLarge" (or reuse existing ones).
-   - Open each product and copy its numeric **Product ID**.
-   - Paste into:
-     - `BuildTokensSmall` -> `GameConfig.DeveloperProducts.BuildTokensSmall`
-     - `BuildTokensLarge` -> `GameConfig.DeveloperProducts.BuildTokensLarge`
-3. For the **gamepass ID**:
-   - Go to **Monetization > Passes**.
-   - Create/select your Premium Builder pass.
-   - Open it and copy the numeric **Pass ID**.
-   - Paste into `GameConfig.Gamepasses.PremiumBuilder`.
+```bash
+openshift-must-gather-analyzer ./must-gather.tgz \
+  --incident-date 2026-03-15 \
+  --top 10 \
+  --html-output report.html
+```
 
-> Tip: IDs are numeric only. Do not paste full URLs.
+## Python API usage
 
----
+```python
+from openshift_log_analyzer import (
+    analyze_log_file,
+    render_human_readable_report,
+    render_html_report,
+    request_ollama_agent_analysis,
+)
 
-## Controls
+summary = analyze_log_file("must-gather.tgz", incident_date="2026-03-15", top_n=5)
+print(render_human_readable_report(summary))
 
-- `Q / E`: Move down/up through building levels.
-- `1 / 2 / 3`: Select structure material.
-- `4 / 5 / 6 / 7`: Select prop.
-- `Z / X`: Resize structure footprint.
-- `C`: Rotate placement by 90°.
-- `U / Y`: Undo/redo last placement.
-- `F`: Place currently selected structure/prop.
-- `R`: Prompt Robux purchase for small token bundle.
-- `T`: Prompt Robux purchase for Premium Builder gamepass.
-- `G`: Select your placed part under cursor.
-- `Backspace`: Delete selected part (server-validated, with token refund).
-- `J / K`: Cycle plot visiting targets and teleport to view other players' builds.
+html = render_html_report(summary)
 
----
+agent_output = request_ollama_agent_analysis(
+    summary=summary,
+    model="llama3.2",
+    base_url="http://127.0.0.1:11434",
+)
+print(agent_output)
+```
 
-## Monetization notes
+## Ollama agent workflow
 
-- Robux payments must be configured in Creator Dashboard.
-- `MarketplaceService.ProcessReceipt` grants token boosts on successful developer product purchases.
-- `UserOwnsGamePassAsync` is used to check Premium Builder ownership.
-- Keep product IDs and gamepass IDs in `GameConfig.lua` only, so they are easy to rotate per environment.
+If you use the Ollama integration, the workflow is structured around these stages:
 
----
+1. Collect context from the analyzer summary.
+2. Diagnose the incident with an Ollama model.
+3. Recommend mitigation sequencing.
+4. Execute a simulated fix stage:
+   - propose-only mode keeps a human approval gate active
+   - apply mode can be blocked by an approval callback
+5. Verify stabilization guidance and emit observability traces.
 
-## Next recommendations / roadmap items
+### Notes for Ollama usage
 
-### Additional improvements roadmap (next 10)
+- The default local endpoint pattern is `http://127.0.0.1:11434`.
+- The workflow validates request payload shape before calling Ollama.
+- Policy enforcement can deny `ollama.generate` if the configured tenant/namespace is not allowed.
+- If Ollama is unavailable, the workflow returns a clear connection error in the analysis output.
 
-1. ✅ **Delete/select tool** for precise removal and editing of existing placed parts.
-2. ✅ **Plot visiting mode** so players can tour classmates' builds without edit permissions.
-3. **Blueprint save slots** (multiple named layouts per player).
-4. **Advanced snapping** (surface/edge snap + smart alignment guides).
-5. **Collaborative co-build permissions** for invited friends on a plot.
-6. **Quest progression tracking** with reward claims and daily objectives.
-7. **Build replay/timelapse mode** from saved placement history.
-8. **Config-driven seasonal events** for time-limited props and rewards.
-9. **Admin moderation dashboard** for live cleanup/restore and player reports.
-10. **Telemetry export hooks** for balancing economy, retention, and funnel metrics.
+## Running tests
 
-### Suggested longer-term upgrades
+```bash
+pytest
+```
 
-- Add classroom-themed furniture bundles and seasonal events.
-- Add social mechanics (visit other plots, vote, school competitions).
-- Add admin tools for live ops (boost events, cleanup, balancing).
-- Add analytics events for placement flow and monetization conversion.
+## Current focus
+
+This repository is focused on OpenShift must-gather incident analysis and reporting. Any prior Roblox-oriented README content has been removed from this document so the project description now matches the Python package, CLI, and tests in this repository.
