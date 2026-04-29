@@ -139,6 +139,7 @@ Optional challenge:
 - `src/levels.py` — implementation for each level.
 - `tests/test_tools.py` — unit tests for deterministic helpers.
 - `examples/level1` ... `examples/level8` — level-specific notes.
+- `examples/STAGES_ALIGNMENT_README.md` — detailed mapping of each example to the 8 workshop stages.
 
 ---
 
