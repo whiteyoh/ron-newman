@@ -1,17 +1,14 @@
-# Level 4 Demo
-
-## Install
-No separate install required beyond Python 3.10+.
+# Level 4: Retrieval + Grounding
 
 ## Setup
-From repository root:
 
+```bash
+export OPENAI_API_KEY="your_key_here"
 python app.py
+```
 
-## Usage
-1. Open <http://127.0.0.1:8000>.
-2. Click **Level 4**.
-3. Watch the HTML output panel for this level's behavior.
+Open <http://127.0.0.1:8000> and click **Level 4**.
 
-## What this level demonstrates
-See the dashboard label and streamed trace for the competence behavior specific to Level 4.
+## AI behavior demonstrated
+
+This level runs a live LLM-backed workflow from `app.py` and prints the execution trace in the dashboard.
