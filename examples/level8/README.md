@@ -1,13 +1,25 @@
 # Level 8: Self-improving Workflow
 
-## Setup
+## Scenario this level demonstrates
 
-```bash
-export OPENAI_API_KEY="your_key_here"
-python app.py
-```
+Automatic quality selection by scoring candidate outputs and choosing the best one.
 
-Open <http://127.0.0.1:8000> and click **Level 8**.
+## Tangible things this example can handle
+
+- Generating two draft variants.
+- Scoring both variants for clarity/actionability and selecting the better one.
+
+## How to trigger this example
+
+1. Start the app:
+   
+   ```bash
+   export OPENAI_API_KEY="your_key_here"
+   python app.py
+   ```
+2. Open <http://127.0.0.1:8000>.
+3. Click **Level 8**.
+4. Review the trace output shown in the dashboard.
 
 ## AI behavior demonstrated
 
