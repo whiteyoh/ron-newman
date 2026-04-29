@@ -1,17 +1,14 @@
-# Level 5 Demo
-
-## Install
-No separate install required beyond Python 3.10+.
+# Level 5: Multi-step Reasoning
 
 ## Setup
-From repository root:
 
+```bash
+export OPENAI_API_KEY="your_key_here"
 python app.py
+```
 
-## Usage
-1. Open <http://127.0.0.1:8000>.
-2. Click **Level 5**.
-3. Watch the HTML output panel for this level's behavior.
+Open <http://127.0.0.1:8000> and click **Level 5**.
 
-## What this level demonstrates
-See the dashboard label and streamed trace for the competence behavior specific to Level 5.
+## AI behavior demonstrated
+
+This level runs a live LLM-backed workflow from `app.py` and prints the execution trace in the dashboard.
