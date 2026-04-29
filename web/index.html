@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>8 Levels of AI Competence Demo</title>
+    <style>
+      body { font-family: Arial, sans-serif; margin: 1.5rem; background: #0f172a; color: #e2e8f0; }
+      .grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(220px,1fr)); gap: 0.75rem; }
+      button { padding: 0.65rem; background: #1d4ed8; color: white; border: 0; border-radius: 8px; cursor: pointer; }
+      button:hover { background: #2563eb; }
+      #log { white-space: pre-wrap; background: #111827; border: 1px solid #334155; border-radius: 8px; padding: 1rem; min-height: 280px; margin-top: 1rem; }
+      .muted { color: #94a3b8; }
+    </style>
+  </head>
+  <body>
+    <h1>Yegge-Inspired 8 Levels of AI Competence</h1>
+    <p class="muted">Click a level to run a visible demonstration. Output streams below for human-friendly interpretation.</p>
+    <div class="grid" id="buttons"></div>
+    <div id="log">Select a level to begin.</div>
+    <script src="main.js"></script>
+  </body>
+</html>

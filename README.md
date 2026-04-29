@@ -1,126 +1,30 @@
-# OpenShift Must-Gather Analyzer
+# Yegge AI Competence Ladder Demo
 
-Analyze OpenShift 4.16 must-gather bundles for a specific incident date and produce concise root-cause summaries, timeline evidence, hotspot rankings, and optional AI-assisted diagnostics. The project is a Python package with a CLI for local investigation workflows. It is not a Roblox project.
+This repository was rebuilt as a focused educational demo for **8 levels of AI competence** inspired by Steve Yegge's framing.
 
 ## What this project does
 
-The analyzer scans a must-gather directory, a single text log, or a tar archive such as `.tar`, `.tgz`, or `.tar.gz`, filters evidence down to the incident date you specify, and then summarizes the most likely failure patterns.
+- Runs a tiny local web app.
+- Lets you execute 8 staged examples (one per competence level).
+- Streams human-readable output to an HTML dashboard.
+- Keeps each level isolated in its own folder with setup/install/usage docs.
 
-Core capabilities include:
-
-- Incident-date filtering for must-gather content.
-- Root-cause candidate detection for:
-  - API availability degradation
-  - etcd health and quorum instability
-  - node resource pressure
-  - operator degradation
-  - network instability
-- Ranked summaries for namespaces, nodes, and pods with the most signals.
-- Human-readable text reporting for incident review.
-- Standalone HTML report rendering for sharing findings.
-- Optional Ollama-backed agent workflow for diagnosis, recommendations, execution-gate simulation, and verification traces.
-- Policy checks around tool usage in the Ollama agent workflow.
-- Incident replay harness for testing repeatable analysis behavior.
-
-## Repository layout
-
-- `src/openshift_log_analyzer/analyzer.py` — core parsing, evidence extraction, root-cause ranking, and report generation.
-- `src/openshift_log_analyzer/cli.py` — command-line entry point.
-- `src/openshift_log_analyzer/ollama_agent.py` — Ollama workflow orchestration, policy enforcement, replay harness, and observability traces.
-- `tests/` — unit tests for must-gather analysis, report rendering, and the Ollama agent workflow.
-
-## Requirements
-
-- Python 3.10+
-- Optional: a local Ollama instance if you want AI-assisted analysis
-
-## Installation
-
-### Local development install
+## Quick start
 
 ```bash
-python -m venv .venv
-source .venv/bin/activate
-pip install -e .[dev]
+python app.py
 ```
 
-### Standard install
+Open: <http://127.0.0.1:8000>
 
-```bash
-pip install .
-```
+## Project layout
 
-## Command-line usage
+- `app.py` — lightweight web server + JSON endpoints
+- `web/index.html` — dashboard UI
+- `web/main.js` — runner + renderer for demo output
+- `examples/level1` ... `examples/level8` — one folder per level, each with a clear README
 
-The CLI accepts a must-gather directory, a `.tar`, `.tgz`, or `.tar.gz` archive, or a single text log file.
+## Notes
 
-```bash
-openshift-must-gather-analyzer /path/to/must-gather.tar.gz --incident-date 2026-03-15
-```
-
-### Common options
-
-- `--incident-date YYYY-MM-DD` — required incident date filter.
-- `--top N` — number of top namespaces, nodes, pods, and cause candidates to show.
-- `--html-output PATH` — write a standalone HTML report in addition to printing the text report.
-
-Example with HTML output:
-
-```bash
-openshift-must-gather-analyzer ./must-gather.tar.gz \
-  --incident-date 2026-03-15 \
-  --top 10 \
-  --html-output report.html
-```
-
-## Python API usage
-
-```python
-from openshift_log_analyzer import (
-    analyze_log_file,
-    render_human_readable_report,
-    render_html_report,
-    request_ollama_agent_analysis,
-)
-
-summary = analyze_log_file("must-gather.tar.gz", incident_date="2026-03-15", top_n=5)
-print(render_human_readable_report(summary))
-
-html = render_html_report(summary)
-
-agent_output = request_ollama_agent_analysis(
-    summary=summary,
-    model="llama3.2",
-    base_url="http://127.0.0.1:11434",
-)
-print(agent_output)
-```
-
-## Ollama agent workflow
-
-If you use the Ollama integration, the workflow is structured around these stages:
-
-1. Collect context from the analyzer summary.
-2. Diagnose the incident with an Ollama model.
-3. Recommend mitigation sequencing.
-4. Execute a simulated fix stage:
-   - propose-only mode keeps a human approval gate active
-   - apply mode can be blocked by an approval callback
-5. Verify stabilization guidance and emit observability traces.
-
-### Notes for Ollama usage
-
-- The default local endpoint pattern is `http://127.0.0.1:11434`.
-- The workflow validates request payload shape before calling Ollama.
-- Policy enforcement can deny `ollama.generate` if the configured tenant/namespace is not allowed.
-- If Ollama is unavailable, the workflow returns a clear connection error in the analysis output.
-
-## Running tests
-
-```bash
-pytest
-```
-
-## Current focus
-
-This repository is focused on OpenShift must-gather incident analysis and reporting. Any prior Roblox-oriented README content has been removed from this document so the project description now matches the Python package, CLI, and tests in this repository.
+This is intentionally pedagogical, not benchmark science. The point is to provide
+clear, demonstrable behavior at each level that a human can watch and understand.
