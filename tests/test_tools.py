@@ -1,0 +1,27 @@
+import pytest
+
+from src.levels import use_case_prompt
+from src.tools import calculator_tool, retrieve_local_facts
+
+
+def test_calculator_tool_multiplies():
+    assert calculator_tool("17*43") == "731"
+
+
+def test_calculator_tool_rejects_unsafe_input():
+    with pytest.raises(ValueError):
+        calculator_tool("__import__('os').system('echo bad')")
+
+
+def test_retrieve_local_facts_known_key():
+    assert retrieve_local_facts("Which port does Redis use?") == "Redis default port is 6379."
+
+
+def test_retrieve_local_facts_unknown_key():
+    assert retrieve_local_facts("What is Kafka default port?") == "No matching fact found in local knowledge base."
+
+
+def test_use_case_prompt_prefixes_text():
+    result = use_case_prompt("Draft a response")
+    assert "Use case for all levels" in result
+    assert result.endswith("Draft a response")
