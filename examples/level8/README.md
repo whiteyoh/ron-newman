@@ -1,26 +1,20 @@
-# Level 8: Self-improving Workflow
+# Level 8
 
-## Scenario this level demonstrates
+## Shared use case
 
-Automatic quality selection by scoring candidate outputs and choosing the best one.
-
-## Tangible things this example can handle
-
-- Generating two draft variants.
-- Scoring both variants for clarity/actionability and selecting the better one.
+This example uses the same global use case as all other levels: **improving customer support response quality for a SaaS product**.
 
 ## How to trigger this example
 
-1. Start the app:
-   
+1. Export your API key and start the app:
    ```bash
    export OPENAI_API_KEY="your_key_here"
    python app.py
    ```
 2. Open <http://127.0.0.1:8000>.
 3. Click **Level 8**.
-4. Review the trace output shown in the dashboard.
+4. Review the execution trace shown in the dashboard.
 
-## AI behavior demonstrated
+## What this level specifically demonstrates
 
-This level runs a live LLM-backed workflow from `app.py` and prints the execution trace in the dashboard.
+See the level title/description in the app UI and root `README.md` for the exact behavior focus for this level.
