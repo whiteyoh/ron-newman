@@ -52,16 +52,7 @@ jobs:
             exit 1
           fi
 
-          python - <<'PYOUT'
-          import json
-          from pathlib import Path
-          payload = json.loads(Path('/tmp/level1.json').read_text())
-          lines = payload.get('lines', [])
-          model_line = next((line for line in lines if str(line).startswith('Model completion: ')), None)
-          if not model_line:
-              raise SystemExit('Missing model completion in /api/run/1 response')
-          print('OpenAI action output sample:', model_line)
-          PYOUT
+          python -c "import json; from pathlib import Path; payload=json.loads(Path('/tmp/level1.json').read_text()); lines=payload.get('lines', []); model_line=next((line for line in lines if str(line).startswith('Model completion: ')), None); assert model_line, 'Missing model completion in /api/run/1 response'; print('OpenAI action output sample:', model_line)"
 
       - name: Start app and verify API responds
         run: |
