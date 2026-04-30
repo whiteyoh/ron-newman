@@ -8,6 +8,25 @@ def test_calculator_tool_multiplies():
     assert calculator_tool("17*43") == "731"
 
 
+def test_calculator_tool_power_operator():
+    assert calculator_tool("2**8") == "256"
+
+
+def test_calculator_tool_division_by_zero():
+    with pytest.raises(ValueError, match="division by zero"):
+        calculator_tool("1/0")
+
+
+def test_calculator_tool_malformed_expression():
+    with pytest.raises(ValueError, match="malformed expression"):
+        calculator_tool("1+(")
+
+
+def test_calculator_tool_very_large_input_rejected():
+    with pytest.raises(ValueError, match="expression too long"):
+        calculator_tool("1" * 201)
+
+
 def test_calculator_tool_rejects_unsafe_input():
     with pytest.raises(ValueError):
         calculator_tool("__import__('os').system('echo bad')")

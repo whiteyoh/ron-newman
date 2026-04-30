@@ -1,6 +1,16 @@
 import json
 import os
+from dataclasses import dataclass
+from typing import Any
+from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
+
+
+@dataclass
+class AIClientError(Exception):
+    message: str
+    code: str
+    status: int = 500
 
 
 class AIClient:
@@ -14,7 +24,7 @@ class AIClient:
 
     def chat(self, system: str, user: str, temperature: float = 0.2) -> str:
         if not self.available():
-            raise RuntimeError("OPENAI_API_KEY is not set")
+            raise AIClientError("OPENAI_API_KEY is not set", code="missing_api_key", status=503)
 
         payload = {
             "model": self.model,
@@ -33,6 +43,17 @@ class AIClient:
                 "Content-Type": "application/json",
             },
         )
-        with urlopen(request, timeout=30) as response:
-            body = json.loads(response.read().decode("utf-8"))
-        return body["choices"][0]["message"]["content"].strip()
+        try:
+            with urlopen(request, timeout=30) as response:
+                body: dict[str, Any] = json.loads(response.read().decode("utf-8"))
+        except HTTPError as err:
+            raise AIClientError(f"upstream HTTP error: {err.code}", code="upstream_http", status=502) from err
+        except URLError as err:
+            raise AIClientError(f"connection error: {err.reason}", code="upstream_connection", status=502) from err
+        except TimeoutError as err:
+            raise AIClientError("upstream timeout", code="upstream_timeout", status=504) from err
+
+        try:
+            return body["choices"][0]["message"]["content"].strip()
+        except (KeyError, IndexError, TypeError, AttributeError) as err:
+            raise AIClientError("unexpected upstream response shape", code="upstream_schema", status=502) from err
