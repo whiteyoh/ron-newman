@@ -19,7 +19,7 @@ Wondering where to begin?
 
 Here’s the truth: you *are* clever enough. That’s exactly why this repository is laid out in **8 clear stages**, with practical examples at every step.
 
-This pack is designed to take your AI understanding to the next level, showing you eight layers of applied AI in a way that’s tangible and useful.
+This Glitch pack is designed to take your AI understanding to the next level, showing you eight layers of applied AI in a way that’s tangible and useful.
 
 By the end, you’ll have:
 
