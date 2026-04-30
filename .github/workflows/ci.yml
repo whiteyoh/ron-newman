@@ -6,10 +6,16 @@ on:
     branches: ["**"]
   pull_request:
 
+permissions:
+  contents: read
+
 jobs:
   test-and-smoke-run:
     runs-on: ubuntu-latest
     timeout-minutes: 15
+
+    env:
+      OPENAI_KEY_FOR_SMOKE_TEST: ${{ secrets.OPENAI_API_KEY || secrets.OPENAI_SECRET }}
 
     steps:
       - name: Checkout repository
@@ -30,9 +36,9 @@ jobs:
 
 
       - name: Verify OpenAI key can produce model output
-        if: ${{ (secrets.OPENAI_API_KEY != '') || (secrets.OPENAI_SECRET != '') }}
+        if: ${{ env.OPENAI_KEY_FOR_SMOKE_TEST != '' }}
         env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY || secrets.OPENAI_SECRET }}
+          OPENAI_API_KEY: ${{ env.OPENAI_KEY_FOR_SMOKE_TEST }}
           OPENAI_MODEL: gpt-4o-mini
         run: |
           PORT=18001 python app.py > app-openai.log 2>&1 &
