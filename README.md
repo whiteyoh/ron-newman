@@ -1,4 +1,4 @@
-# The AI Competence Ladder
+# This Workshop
 
 The world is full of advice on how you *should* use AI—what tools to use, why your approach is wrong, and what you should pick instead.
 
