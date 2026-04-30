@@ -1,6 +1,6 @@
-# Glitch — intelligently artificial
+![Glitch logo](assets/glitch-logo.svg)
 
-This workshop is for people who are curious about AI and want to understand how real AI systems are built—from simple prompts to reliable production workflows.
+The Glitch workshop is for people who are curious about AI and want to understand how real AI systems are built—from simple prompts to reliable production workflows.
 
 If you’ve ever wondered:
 
@@ -8,11 +8,11 @@ If you’ve ever wondered:
 - When to use tools, retrieval, or agent-like workflows.
 - How to move from demo-quality AI to production-quality AI.
 
-this workshop is for you.
+the Glitch workshop is for you.
 
 ---
 
-## What this workshop is
+## What the Glitch workshop is
 
 A practical learning experience that walks through **8 levels of AI capability** using one shared scenario:
 
@@ -57,7 +57,7 @@ Recommended total: **2.5–4 hours**.
 
 ---
 
-## Who this workshop is for
+## Who the Glitch workshop is for
 
 Great for:
 
@@ -83,7 +83,7 @@ Then open: <http://127.0.0.1:8000> and work through Levels 1–8.
 
 ## Why this matters
 
-This workshop helps people move beyond AI hype and make practical decisions.
+The Glitch workshop helps people move beyond AI hype and make practical decisions.
 
 You’ll leave with a shared framework to answer:
 

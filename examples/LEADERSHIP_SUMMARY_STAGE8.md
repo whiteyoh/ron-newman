@@ -1,4 +1,4 @@
-# Leadership Summary: Why This Program Maps to Yegge’s 8 Layers of AI Competence
+![Glitch logo](../assets/glitch-logo.svg)
 
 ## Executive Brief
 This repository presents a workshop-first AI maturity program for leaders, product teams, and engineers, explicitly aligned to **Yegge’s 8 layers of AI competence**.

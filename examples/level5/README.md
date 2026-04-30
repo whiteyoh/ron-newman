@@ -1,4 +1,4 @@
-# Glitch — intelligently artificial
+![Glitch logo](../../assets/glitch-logo.svg)
 
 ## Shared use case
 
