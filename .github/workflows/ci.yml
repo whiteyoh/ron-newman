@@ -33,7 +33,7 @@ jobs:
         if: ${{ (secrets.OPENAI_API_KEY != '') || (secrets.OPENAI_SECRET != '') }}
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY || secrets.OPENAI_SECRET }}
-          OPENAI_MODEL: gpt-4.1-mini
+          OPENAI_MODEL: gpt-4o-mini
         run: |
           PORT=18001 python app.py > app-openai.log 2>&1 &
           APP_PID=$!
