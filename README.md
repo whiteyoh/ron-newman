@@ -8,6 +8,23 @@ The workshop uses one shared scenario throughout all activities:
 
 ---
 
+
+## Readme guide
+
+If you're browsing this repository for the first time, use this index to jump directly to the documentation for each workshop track.
+
+- [Root workshop overview](README.md) — Start here for setup, workshop flow, and facilitation notes.
+- [Stages alignment reference](examples/STAGES_ALIGNMENT_README.md) — Explains how each stage maps to the Level 1–8 progression.
+- [Level 1 README](examples/level1/README.md) — Intro prompt-first baseline and what to observe.
+- [Level 2 README](examples/level2/README.md) — Instruction-following improvements over baseline prompting.
+- [Level 3 README](examples/level3/README.md) — Tool-use patterns and decision boundaries.
+- [Level 4 README](examples/level4/README.md) — Retrieval and grounding behavior for better reliability.
+- [Level 5 README](examples/level5/README.md) — Multi-step planning workflow details.
+- [Level 6 README](examples/level6/README.md) — Agentic loop behavior and loop-safety considerations.
+- [Level 7 README](examples/level7/README.md) — Multi-agent collaboration structure and trade-offs.
+- [Level 8 README](examples/level8/README.md) — Self-improving workflow mechanics and guardrails.
+- [Leadership summary for Stage 8](examples/LEADERSHIP_SUMMARY_STAGE8.md) — Executive-oriented summary of the most advanced stage.
+
 ## Workshop outcomes
 
 By the end of this workshop, participants will be able to:
