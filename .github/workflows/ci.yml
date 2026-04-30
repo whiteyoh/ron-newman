@@ -30,15 +30,15 @@ jobs:
 
       - name: Start app and verify API responds
         run: |
-          python app.py > app.log 2>&1 &
+          PORT=18000 python app.py > app.log 2>&1 &
           APP_PID=$!
           trap 'kill $APP_PID' EXIT
 
           for i in {1..20}; do
-            if curl -fsS http://127.0.0.1:8000/api/levels > /tmp/levels.json; then
+            if curl -fsS http://127.0.0.1:18000/api/levels > /tmp/levels.json; then
               break
             fi
             sleep 1
           done
 
-          test -s /tmp/levels.json
+          test -s /tmp/levels.json || (echo "Smoke test failed; app.log:" && cat app.log && exit 1)
