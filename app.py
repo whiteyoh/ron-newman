@@ -6,6 +6,7 @@ import logging
 from pathlib import Path
 import time
 from urllib.parse import urlparse
+import os
 import uuid
 
 from src.ai_client import AIClient, AIClientError
@@ -98,6 +99,7 @@ class Handler(SimpleHTTPRequestHandler):
 
 
 if __name__ == "__main__":
-    host, port = "127.0.0.1", 8000
+    host = os.getenv("HOST", "127.0.0.1")
+    port = int(os.getenv("PORT", "8000"))
     print(f"Serving demo at http://{host}:{port}")
     ThreadingHTTPServer((host, port), Handler).serve_forever()
