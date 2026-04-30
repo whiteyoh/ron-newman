@@ -15,42 +15,83 @@ jobs:
     timeout-minutes: 15
 
     env:
-      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY || secrets.OPENAI_SECRET }}
+      PYTHONUNBUFFERED: "1"
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
+      # Move secrets into env here
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      OPENAI_SECRET: ${{ secrets.OPENAI_SECRET }}
       OPENAI_MODEL: gpt-4o-mini
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v5
         with:
           python-version: "3.11"
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
+
+          if [ -f requirements.txt ]; then
+            python -m pip install -r requirements.txt
+          fi
+
           python -m pip install pytest
 
       - name: Run tests
         run: python -m pytest -q
 
       - name: Verify OpenAI key can produce model output
-        if: ${{ env.OPENAI_API_KEY != '' }}
+        if: ${{ env.OPENAI_API_KEY != '' || env.OPENAI_SECRET != '' }}
         run: |
+          set -euo pipefail
+
+          # If OPENAI_API_KEY is not set, fall back to OPENAI_SECRET
+          if [ -z "${OPENAI_API_KEY:-}" ] && [ -n "${OPENAI_SECRET:-}" ]; then
+            export OPENAI_API_KEY="$OPENAI_SECRET"
+          fi
+
           PORT=18001 python app.py > app-openai.log 2>&1 &
           APP_PID=$!
-          trap 'kill $APP_PID' EXIT
+          trap 'kill $APP_PID 2>/dev/null || true' EXIT
+
+          APP_READY=0
 
           for i in {1..20}; do
-            if curl -fsS http://127.0.0.1:18001/api/run/1 > /tmp/level1.json 2>/dev/null; then
+            if curl -fsS http://127.0.0.1:18001/api/levels > /tmp/levels-openai.json 2>/dev/null; then
+              APP_READY=1
               break
             fi
+
+            if ! kill -0 "$APP_PID" 2>/dev/null; then
+              echo "App exited before becoming ready. app-openai.log:"
+              cat app-openai.log
+              exit 1
+            fi
+
             sleep 1
           done
 
-          if ! test -s /tmp/level1.json; then
-            echo "OpenAI smoke test failed after waiting for startup. app-openai.log:"
+          if [ "$APP_READY" -ne 1 ]; then
+            echo "App did not become ready. app-openai.log:"
+            cat app-openai.log
+            exit 1
+          fi
+
+          HTTP_STATUS=$(curl -sS -o /tmp/level1.json -w "%{http_code}" http://127.0.0.1:18001/api/run/1)
+
+          if [ "$HTTP_STATUS" -lt 200 ] || [ "$HTTP_STATUS" -ge 300 ]; then
+            echo "OpenAI smoke test failed."
+            echo "HTTP status: $HTTP_STATUS"
+            echo ""
+            echo "Response body from /api/run/1:"
+            cat /tmp/level1.json || true
+            echo ""
+            echo "app-openai.log:"
             cat app-openai.log
             exit 1
           fi
@@ -59,18 +100,30 @@ jobs:
 
       - name: Start app and verify API responds
         run: |
+          set -euo pipefail
+
           PORT=18000 python app.py > app.log 2>&1 &
           APP_PID=$!
-          trap 'kill $APP_PID' EXIT
+          trap 'kill $APP_PID 2>/dev/null || true' EXIT
+
+          APP_READY=0
 
           for i in {1..20}; do
             if curl -fsS http://127.0.0.1:18000/api/levels > /tmp/levels.json 2>/dev/null; then
+              APP_READY=1
               break
             fi
+
+            if ! kill -0 "$APP_PID" 2>/dev/null; then
+              echo "App exited before becoming ready. app.log:"
+              cat app.log
+              exit 1
+            fi
+
             sleep 1
           done
 
-          if ! test -s /tmp/levels.json; then
+          if [ "$APP_READY" -ne 1 ]; then
             echo "Smoke test failed after waiting for startup. app.log:"
             cat app.log
             exit 1
