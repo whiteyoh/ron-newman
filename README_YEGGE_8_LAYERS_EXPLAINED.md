@@ -1,4 +1,4 @@
-# Glitch — intelligently artificial
+![Glitch logo](assets/glitch-logo.svg)
 
 If you’re new to AI systems, think of **Yegge’s 8 layers** like levels in a game:
 
@@ -6,7 +6,7 @@ If you’re new to AI systems, think of **Yegge’s 8 layers** like levels in a 
 - Then you gradually add instructions, tools, memory, planning, and teamwork.
 - By Layer 8, the system can improve itself (safely) over time.
 
-This guide explains each layer in plain language with practical workshop context.
+This guide explains each layer in plain language with practical Glitch workshop context.
 
 ---
 
@@ -109,7 +109,7 @@ A smart production strategy is to use the **lowest layer that reliably meets you
 
 ## Workshop tie-in
 
-In this workshop, all layers are demonstrated using one shared scenario:
+In the Glitch workshop, all layers are demonstrated using one shared scenario:
 
 > Improving customer support response quality for a SaaS product.
 
