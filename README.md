@@ -1,10 +1,10 @@
 # The AI Competence Ladder
 
-What if you could watch an AI system grow up—one deliberate step at a time?
+What if you could step into the control room while an AI goes from “sounds smart” to “handles real customers without breaking trust”?
 
-Inside this repository is a single story told across multiple chapters: a SaaS support team trying to turn inconsistent AI replies into reliable, production-ready outcomes. You won’t just read theory—you’ll trace the evolution from simple autocomplete to multi-agent collaboration and self-improving workflows.
+This repo is a narrative lab: one SaaS support team, eight escalating chapters, and the exact decisions that turn chaotic model outputs into calm, production-grade performance. You’ll see the stumbles, the fixes, the architecture shifts, and the moment simple prompts evolve into coordinated agents that learn from their own mistakes.
 
-If you’ve ever felt the gap between *“cool demo”* and *“real system”*, this is your map.
+If you’ve ever shipped a flashy AI demo and then wondered, *“Okay… but how do we make this actually reliable?”* — this is where that question gets answered.
 
 ---
 
