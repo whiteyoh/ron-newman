@@ -1,4 +1,4 @@
-# Level 7
+# Glitch — intelligently artificial
 
 ## Shared use case
 

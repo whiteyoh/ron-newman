@@ -1,4 +1,4 @@
-# Yegge’s 8 Layers of AI — A Beginner-Friendly Guide
+# Glitch — intelligently artificial
 
 If you’re new to AI systems, think of **Yegge’s 8 layers** like levels in a game:
 

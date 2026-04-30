@@ -1,4 +1,4 @@
-# Examples-to-Stages Alignment Guide
+# Glitch — intelligently artificial
 
 This document explains how each example (`examples/level1` through `examples/level8`) maps to the workshop's eight stages of AI capability.
 
