@@ -1,6 +1,25 @@
 # Leadership Summary: Why This Program Meets All 8 AI Capability Stages
 
 ## Executive Brief
+This tool was created by **Ron Newman** as a workshop-first AI maturity program for leaders, product teams, and engineers.
+
+### Purpose of the entire tool
+The purpose is to provide a **single, hands-on environment** that shows how AI systems evolve from basic prompting to governed, self-improving operations. It is designed to help teams:
+
+- understand capability progression,
+- compare quality/cost/risk trade-offs,
+- and choose the right production control pattern for their current maturity.
+
+### The 8 stages at a glance
+1. **Autocomplete** — baseline text continuation.
+2. **Instruction Following** — constrained output compliance.
+3. **Tool Use** — deterministic helper integration.
+4. **Retrieval + Grounding** — evidence-based responses.
+5. **Multi-step Reasoning** — plan-then-execute decomposition.
+6. **Agentic Loop** — critique-and-revise iteration.
+7. **Multi-agent Collaboration** — role-specialized synthesis.
+8. **Self-improving Workflow** — metric-scored candidate selection.
+
 This program is a deliberate capability maturation model, not a set of isolated demonstrations. It moves from unconstrained generation to instrumented, score-driven improvement through eight progressively stronger control patterns.
 
 Each stage introduces a distinct operating mechanism that increases one or more of the following:
