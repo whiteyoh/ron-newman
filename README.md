@@ -71,7 +71,7 @@ Use your shell profile (`~/.bashrc`, `~/.zshrc`, etc.) or export in your current
 
 ```bash
 export OPENAI_API_KEY="your_api_key_here"
-export OPENAI_MODEL="gpt-4.1-mini"   # optional override
+export OPENAI_MODEL="gpt-4o-mini"    # optional override
 export OPENAI_BASE_URL="https://api.openai.com/v1"   # optional override
 ```
 
