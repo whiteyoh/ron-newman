@@ -24,3 +24,9 @@ def test_ai_client_connection_error(monkeypatch):
     with pytest.raises(AIClientError) as err:
         client.chat("s", "u")
     assert err.value.code == "upstream_connection"
+
+
+def test_ai_client_default_model(monkeypatch):
+    monkeypatch.delenv("OPENAI_MODEL", raising=False)
+    client = AIClient()
+    assert client.model == "gpt-4.1-mini"
