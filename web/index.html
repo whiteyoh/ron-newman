@@ -11,12 +11,21 @@
       button:hover { background: #2563eb; }
       #log { white-space: pre-wrap; background: #111827; border: 1px solid #334155; border-radius: 8px; padding: 1rem; min-height: 280px; margin-top: 1rem; }
       .muted { color: #94a3b8; }
+      .status { margin: 0.8rem 0; padding: 0.75rem; border-radius: 8px; border: 1px solid #334155; background: #0b1220; display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+      .pill { font-weight: 700; padding: 0.2rem 0.5rem; border-radius: 9999px; }
+      .pill.ok { background: #14532d; color: #86efac; }
+      .pill.err { background: #7f1d1d; color: #fecaca; }
+      #meta { color: #cbd5e1; font-size: 0.9rem; }
     </style>
   </head>
   <body>
     <h1><img src="../assets/glitch-logo.svg" alt="Glitch logo" style="max-width: 340px; width: 100%; height: auto;" /></h1>
     <p class="muted">Click a level to run a visible demonstration. Output streams below for human-friendly interpretation.</p>
     <div class="grid" id="buttons"></div>
+    <div class="status">
+      <div id="api-state"><span class="pill">Waiting</span></div>
+      <div id="meta">Run a level to verify the API path, model, and request id.</div>
+    </div>
     <div id="log">Select a level to begin.</div>
     <script src="main.js"></script>
   </body>

@@ -74,7 +74,14 @@ class Handler(SimpleHTTPRequestHandler):
             level = int(level_text)
             if level not in LEVELS:
                 raise ValueError("out of range")
-            payload = run_level(level, AIClient())
+            client = AIClient()
+            payload = run_level(level, client)
+            payload["backend"] = {
+                "provider": "OpenAI",
+                "configured": client.available(),
+                "model": client.model,
+                "base_url": client.base_url,
+            }
             payload["request_id"] = request_id
             status = 200
             self._send_json(status, payload)
