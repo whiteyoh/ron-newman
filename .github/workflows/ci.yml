@@ -28,6 +28,41 @@ jobs:
       - name: Run tests
         run: python -m pytest -q
 
+
+      - name: Verify OpenAI key can produce model output
+        if: ${{ secrets.OPENAI_API_KEY != '' }}
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_MODEL: gpt-4.1-mini
+        run: |
+          PORT=18001 python app.py > app-openai.log 2>&1 &
+          APP_PID=$!
+          trap 'kill $APP_PID' EXIT
+
+          for i in {1..20}; do
+            if curl -fsS http://127.0.0.1:18001/api/run/1 > /tmp/level1.json 2>/dev/null; then
+              break
+            fi
+            sleep 1
+          done
+
+          if ! test -s /tmp/level1.json; then
+            echo "OpenAI smoke test failed after waiting for startup. app-openai.log:"
+            cat app-openai.log
+            exit 1
+          fi
+
+          python - <<'PYOUT'
+import json
+from pathlib import Path
+payload = json.loads(Path('/tmp/level1.json').read_text())
+lines = payload.get('lines', [])
+model_line = next((line for line in lines if str(line).startswith('Model completion: ')), None)
+if not model_line:
+    raise SystemExit('Missing model completion in /api/run/1 response')
+print('OpenAI action output sample:', model_line)
+PYOUT
+
       - name: Start app and verify API responds
         run: |
           PORT=18000 python app.py > app.log 2>&1 &
