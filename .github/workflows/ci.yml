@@ -35,10 +35,14 @@ jobs:
           trap 'kill $APP_PID' EXIT
 
           for i in {1..20}; do
-            if curl -fsS http://127.0.0.1:18000/api/levels > /tmp/levels.json; then
+            if curl -fsS http://127.0.0.1:18000/api/levels > /tmp/levels.json 2>/dev/null; then
               break
             fi
             sleep 1
           done
 
-          test -s /tmp/levels.json || (echo "Smoke test failed; app.log:" && cat app.log && exit 1)
+          if ! test -s /tmp/levels.json; then
+            echo "Smoke test failed after waiting for startup. app.log:"
+            cat app.log
+            exit 1
+          fi
