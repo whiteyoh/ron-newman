@@ -1,10 +1,29 @@
 # The AI Competence Ladder
 
-What if you could step into the control room while an AI goes from “sounds smart” to “handles real customers without breaking trust”?
+The world is full of advice on how you *should* use AI—what tools to use, why your approach is wrong, and what you should pick instead.
 
-This repo is a narrative lab: one SaaS support team, eight escalating chapters, and the exact decisions that turn chaotic model outputs into calm, production-grade performance. You’ll see the stumbles, the fixes, the architecture shifts, and the moment simple prompts evolve into coordinated agents that learn from their own mistakes.
+If I’m honest, none of that matters as much as this: understanding the layers of AI, and how **you** can use those principles to change the world around you.
 
-If you’ve ever shipped a flashy AI demo and then wondered, *“Okay… but how do we make this actually reliable?”* — this is where that question gets answered.
+You don’t need to be a genius to start. You just need curiosity:
+
+- Curiosity about how AI works
+- Curiosity about how it makes decisions
+- Curiosity about how to apply it in real life
+
+Worried you aren’t clever enough?
+Wondering where to begin?
+
+Here’s the truth: you *are* clever enough. That’s exactly why this repository is laid out in **8 clear stages**, with practical examples at every step.
+
+This pack is designed to take your AI understanding to the next level, showing you eight layers of applied AI in a way that’s tangible and useful.
+
+By the end, you’ll have:
+
+- A stronger mental model for how AI systems mature
+- A framework to test your own understanding
+- A practical way to assess the maturity of AI systems you work with
+
+Good luck—you’ve got this.
 
 ---
 
@@ -28,13 +47,3 @@ Follow the climb level-by-level in the shared customer support scenario:
 6. [Level 6 README](examples/level6/README.md)
 7. [Level 7 README](examples/level7/README.md)
 8. [Level 8 README](examples/level8/README.md)
-
----
-
-## Why jump in?
-
-Because every team experimenting with AI eventually hits the same question:
-
-> “What do we build next to make this truly dependable?”
-
-This repo gives you a practical answer—one level at a time.
