@@ -99,3 +99,4 @@ The CI workflow (`.github/workflows/ci.yml`) runs the same sequence automaticall
 3. Install dependencies
 4. Run tests
 5. Launch `app.py` and verify `GET /api/levels` responds
+6. If `OPENAI_API_KEY` is set in repository secrets, call `GET /api/run/1` and print the model completion line in Actions logs
