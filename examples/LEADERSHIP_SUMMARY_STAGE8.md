@@ -1,7 +1,7 @@
-# Leadership Summary: Why This Program Meets All 8 AI Capability Stages
+# Leadership Summary: Why This Program Maps to Yegge’s 8 Layers of AI Competence
 
 ## Executive Brief
-This tool was created by **Ron Newman** as a workshop-first AI maturity program for leaders, product teams, and engineers.
+This repository presents a workshop-first AI maturity program for leaders, product teams, and engineers, explicitly aligned to **Yegge’s 8 layers of AI competence**.
 
 ### Purpose of the entire tool
 The purpose is to provide a **single, hands-on environment** that shows how AI systems evolve from basic prompting to governed, self-improving operations. It is designed to help teams:
@@ -10,7 +10,7 @@ The purpose is to provide a **single, hands-on environment** that shows how AI s
 - compare quality/cost/risk trade-offs,
 - and choose the right production control pattern for their current maturity.
 
-### The 8 stages at a glance
+### Yegge’s 8 layers of AI competence at a glance
 1. **Autocomplete** — baseline text continuation.
 2. **Instruction Following** — constrained output compliance.
 3. **Tool Use** — deterministic helper integration.
@@ -22,7 +22,7 @@ The purpose is to provide a **single, hands-on environment** that shows how AI s
 
 This program is a deliberate capability maturation model, not a set of isolated demonstrations. It moves from unconstrained generation to instrumented, score-driven improvement through eight progressively stronger control patterns.
 
-Each stage introduces a distinct operating mechanism that increases one or more of the following:
+Each layer introduces a distinct operating mechanism that increases one or more of the following:
 
 - **Reliability** (fewer ungrounded or inconsistent outputs)
 - **Governance** (clearer policy and process control)
@@ -33,9 +33,9 @@ The result is a practical blueprint for enterprise AI adoption where risk contro
 
 ---
 
-## Stage-by-Stage Qualification and Leadership Value
+## Layer-by-Layer Qualification and Leadership Value
 
-### Stage 1 — Autocomplete
+### Layer 1 — Autocomplete
 **Operating mechanism:** Natural continuation from prompt context.
 
 **Qualification evidence:** The workflow asks for short free-form continuation with no retrieval, tools, decomposition, or review loop.
@@ -44,16 +44,16 @@ The result is a practical blueprint for enterprise AI adoption where risk contro
 
 ---
 
-### Stage 2 — Instruction Following
+### Layer 2 — Instruction Following
 **Operating mechanism:** Constraint compliance under explicit instruction.
 
 **Qualification evidence:** The workflow imposes strict format constraints (for example, exact word-count behavior) and evaluates whether the model obeys those instructions.
 
-**Leadership value:** Improves consistency and policy adherence relative to Stage 1; introduces the concept of controllable output contracts.
+**Leadership value:** Improves consistency and policy adherence relative to Layer 1; introduces the concept of controllable output contracts.
 
 ---
 
-### Stage 3 — Tool Use
+### Layer 3 — Tool Use
 **Operating mechanism:** Delegation of deterministic sub-tasks to external tools.
 
 **Qualification evidence:** Arithmetic is executed through a calculator tool and then integrated into the response pipeline.
@@ -62,7 +62,7 @@ The result is a practical blueprint for enterprise AI adoption where risk contro
 
 ---
 
-### Stage 4 — Retrieval + Grounding
+### Layer 4 — Retrieval + Grounding
 **Operating mechanism:** Evidence-constrained response generation.
 
 **Qualification evidence:** Answers are conditioned on retrieved local facts and explicitly instructed to return "unknown" where evidence is insufficient.
@@ -71,7 +71,7 @@ The result is a practical blueprint for enterprise AI adoption where risk contro
 
 ---
 
-### Stage 5 — Multi-step Reasoning
+### Layer 5 — Multi-step Reasoning
 **Operating mechanism:** Separation of planning from execution.
 
 **Qualification evidence:** The workflow first generates a concise plan, then executes that plan into a structured deliverable.
@@ -80,7 +80,7 @@ The result is a practical blueprint for enterprise AI adoption where risk contro
 
 ---
 
-### Stage 6 — Agentic Loop
+### Layer 6 — Agentic Loop
 **Operating mechanism:** Iterative refinement through critique and revision.
 
 **Qualification evidence:** The sequence is explicit and bounded: draft → critique → revise.
@@ -89,7 +89,7 @@ The result is a practical blueprint for enterprise AI adoption where risk contro
 
 ---
 
-### Stage 7 — Multi-agent Collaboration
+### Layer 7 — Multi-agent Collaboration
 **Operating mechanism:** Role-specialized decomposition with coordinated synthesis.
 
 **Qualification evidence:** Distinct specialist roles (research, planning, critique, coordination) contribute in sequence prior to final recommendation.
@@ -98,7 +98,7 @@ The result is a practical blueprint for enterprise AI adoption where risk contro
 
 ---
 
-### Stage 8 — Self-improving Workflow
+### Layer 8 — Self-improving Workflow
 **Operating mechanism:** Metric-based candidate generation and selection.
 
 **Qualification evidence:** Multiple drafts are scored against defined criteria, and the higher-scoring candidate is selected programmatically.
@@ -107,16 +107,16 @@ The result is a practical blueprint for enterprise AI adoption where risk contro
 
 ---
 
-## Cross-Stage Control Maturity Model
-From a governance standpoint, the stages map cleanly to four maturity bands:
+## Cross-Layer Control Maturity Model
+From a governance standpoint, the layers map cleanly to four maturity bands:
 
-- **Stages 1–2: Generation Control**
+- **Layers 1–2: Generation Control**
   - Language capability and instruction adherence
-- **Stages 3–4: Reliability Control**
+- **Layers 3–4: Reliability Control**
   - Deterministic computation and evidence grounding
-- **Stages 5–6: Process Control**
+- **Layers 5–6: Process Control**
   - Structured execution and iterative quality refinement
-- **Stages 7–8: System Control**
+- **Layers 7–8: System Control**
   - Distributed role intelligence and score-driven optimization
 
 This hierarchy reflects a coherent operating model for responsible AI scale-up.
@@ -129,10 +129,10 @@ This hierarchy reflects a coherent operating model for responsible AI scale-up.
    Start with control primitives (instructions, tools, grounding), then scale into process and system-level optimization.
 
 2. **Risk can be reduced incrementally.**
-   Each stage adds a practical safeguard rather than requiring a full-platform rewrite.
+   Each layer adds a practical safeguard rather than requiring a full-platform rewrite.
 
 3. **Performance management becomes measurable.**
-   Later stages introduce explicit quality signals that support KPI tracking, regression detection, and continuous improvement.
+   Later layers introduce explicit quality signals that support KPI tracking, regression detection, and continuous improvement.
 
 4. **Operating confidence increases with observability.**
    Intermediate artifacts (plans, critiques, scores, role outputs) make behavior inspectable and easier to govern.
@@ -140,6 +140,6 @@ This hierarchy reflects a coherent operating model for responsible AI scale-up.
 ---
 
 ## Final Determination
-The program satisfies all eight capability stages with clear architectural separation between each stage, observable control mechanisms, and progressively stronger quality assurance behavior.
+The program satisfies all eight layers with clear architectural separation between each layer, observable control mechanisms, and progressively stronger quality assurance behavior.
 
 For executive decision-making, this should be treated as a **production-relevant maturity framework**: a practical path from basic language assistance to governed, self-improving AI operations.
