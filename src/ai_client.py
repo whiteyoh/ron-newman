@@ -18,7 +18,8 @@ class AIClient:
         self.api_key = os.getenv("OPENAI_API_KEY", "").strip()
         self.base_url = os.getenv("OPENAI_BASE_URL", "https://api.openai.com/v1").rstrip("/")
         # Keep a broadly available default model for CI/service accounts.
-        self.model = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
+        # gpt-4.1-mini is generally enabled on newer projects/accounts.
+        self.model = os.getenv("OPENAI_MODEL", "gpt-4.1-mini")
 
     def available(self) -> bool:
         return bool(self.api_key)
