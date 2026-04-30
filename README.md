@@ -51,3 +51,51 @@ Follow the climb level-by-level in the shared customer support scenario:
 6. [Level 6 README](examples/level6/README.md)
 7. [Level 7 README](examples/level7/README.md)
 8. [Level 8 README](examples/level8/README.md)
+
+
+---
+
+## Local Run + OpenAI Token Setup
+
+### 1) Prerequisites
+- Python 3.11+ installed
+- `pip` available
+
+### 2) Create an OpenAI API token
+1. Sign in to the OpenAI platform.
+2. Open the API keys page and create a new secret key.
+3. Copy the key and store it securely (you will not be able to view the full key again later).
+
+### 3) Configure environment variables
+Use your shell profile (`~/.bashrc`, `~/.zshrc`, etc.) or export in your current terminal:
+
+```bash
+export OPENAI_API_KEY="your_api_key_here"
+export OPENAI_MODEL="gpt-4.1-mini"   # optional override
+export OPENAI_BASE_URL="https://api.openai.com/v1"   # optional override
+```
+
+### 4) Install test/runtime tooling
+```bash
+python -m pip install --upgrade pip
+python -m pip install pytest
+```
+
+### 5) Run checks before starting the app
+```bash
+python -m pytest -q
+```
+
+### 6) Run the app
+```bash
+python app.py
+```
+Then open `http://127.0.0.1:8000`.
+
+### 7) What GitHub Actions runs
+The CI workflow (`.github/workflows/ci.yml`) runs the same sequence automatically:
+1. Checkout code
+2. Set up Python
+3. Install dependencies
+4. Run tests
+5. Launch `app.py` and verify `GET /api/levels` responds
