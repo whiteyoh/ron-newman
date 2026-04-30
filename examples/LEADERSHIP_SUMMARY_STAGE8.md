@@ -143,3 +143,6 @@ This hierarchy reflects a coherent operating model for responsible AI scale-up.
 The program satisfies all eight layers with clear architectural separation between each layer, observable control mechanisms, and progressively stronger quality assurance behavior.
 
 For executive decision-making, this should be treated as a **production-relevant maturity framework**: a practical path from basic language assistance to governed, self-improving AI operations.
+
+*This document is part of the Glitch project.*
+

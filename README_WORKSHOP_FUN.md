@@ -1,4 +1,4 @@
-# Welcome to the AI Competence Ladder Workshop
+# Glitch — intelligently artificial
 
 This workshop is for people who are curious about AI and want to understand how real AI systems are built—from simple prompts to reliable production workflows.
 
