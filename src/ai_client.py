@@ -17,7 +17,8 @@ class AIClient:
     def __init__(self) -> None:
         self.api_key = os.getenv("OPENAI_API_KEY", "").strip()
         self.base_url = os.getenv("OPENAI_BASE_URL", "https://api.openai.com/v1").rstrip("/")
-        self.model = os.getenv("OPENAI_MODEL", "gpt-4.1-mini")
+        # Keep a broadly available default model for CI/service accounts.
+        self.model = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
 
     def available(self) -> bool:
         return bool(self.api_key)
@@ -47,7 +48,15 @@ class AIClient:
             with urlopen(request, timeout=30) as response:
                 body: dict[str, Any] = json.loads(response.read().decode("utf-8"))
         except HTTPError as err:
-            raise AIClientError(f"upstream HTTP error: {err.code}", code="upstream_http", status=502) from err
+            detail = ""
+            try:
+                detail = err.read().decode("utf-8", errors="ignore").strip()
+            except Exception:
+                detail = ""
+            message = f"upstream HTTP error: {err.code}"
+            if detail:
+                message = f"{message} ({detail[:300]})"
+            raise AIClientError(message, code="upstream_http", status=502) from err
         except URLError as err:
             raise AIClientError(f"connection error: {err.reason}", code="upstream_connection", status=502) from err
         except TimeoutError as err:
