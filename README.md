@@ -1,4 +1,10 @@
-# This Workshop
+# Glitch — intelligently artificial
+
+![Glitch logo](assets/glitch-logo.svg)
+
+## Meet Glitch
+
+![Robotic person mascot](assets/robotic-person.svg)
 
 The world is full of advice on how you *should* use AI—what tools to use, why your approach is wrong, and what you should pick instead.
 
