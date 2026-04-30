@@ -2,49 +2,46 @@
 
 This document captures practical next steps to improve this project's reliability, safety, and usability.
 
-## 1) Remove `eval` from the calculator tool
-- `src/tools.py` currently evaluates expressions with `eval`, even with restricted builtins.
-- Replace it with a safe expression parser (for example `ast.parse` with strict node allowlisting) or a small math expression library.
-- Add tests for edge cases like power operator use, malformed expressions, division by zero, and very large inputs.
+## Completed in this iteration
 
-## 2) Add robust error handling for OpenAI API calls
-- `src/ai_client.py` uses `urllib` directly and assumes a successful response shape.
-- Handle common failure modes explicitly:
-  - Non-2xx HTTP status codes
-  - Timeouts and connection errors
-  - Missing/changed response fields
-- Return structured errors to callers so `app.py` can map failures to clean API responses.
+1. Replaced calculator `eval` execution with a safe `ast`-based evaluator and added malformed/div-by-zero/large-input tests.
+2. Added explicit OpenAI client failure handling with structured `AIClientError` responses.
+3. Added a `POST /api/run` endpoint and improved API error/status mapping with request IDs.
+4. Expanded typing discipline in touched modules and added broader tests for levels/API/client failure paths.
+5. Added `.env.example` and a single `make test` entrypoint for local verification consistency.
+6. Added baseline observability with structured request logs, timing, selected level, status, and request IDs.
 
-## 3) Improve API endpoint design and status codes
-- `app.py` uses GET for `/api/run/<level>` even though it triggers model execution.
-- Consider switching execution to POST (`/api/run`) with JSON payload `{ "level": n }`.
-- Return clear status codes:
-  - 400 for bad input
-  - 503 when AI client is unavailable (missing key)
-  - 500 for internal errors
+## New suggestions (next wave)
 
-## 4) Add type hints and static checks across modules
-- Several modules have partial typing; tighten all public functions.
-- Add a static checker (e.g., `mypy` or `pyright`) and enforce it in CI.
-- This will reduce runtime surprises, especially around JSON payload handling.
+## 1) Add real static type checking in CI
+- Add `mypy` configuration (strict for `src/`, lenient for tests at first).
+- Gate pull requests on `mypy` + `pytest` in CI.
+- Add stub packages where needed for `http.server` interactions.
 
-## 5) Expand test coverage beyond unit utility functions
-- Current tests focus on tools and one prompt utility.
-- Add tests for:
-  - `run_level` behavior across all levels
-  - API handler behavior for `/api/levels` and `/api/run/*`
-  - AI client failure-path behavior with mocked HTTP responses
+## 2) Introduce request validation objects
+- For `POST /api/run`, validate payload via a small schema layer (e.g., dataclass validator or `pydantic`).
+- Return machine-readable validation errors (`field`, `message`, `code`) for client UX.
 
-## 6) Add developer onboarding + quickstart consistency checks
-- Add a short "local setup" section with exact commands and expected output.
-- Include `.env.example` documenting `OPENAI_API_KEY`, `OPENAI_BASE_URL`, and `OPENAI_MODEL`.
-- Add a single `make test` or `just test` entrypoint for consistent local verification.
+## 3) Harden calculator resource limits
+- Add max AST depth / max exponent size limits to prevent expensive arithmetic operations.
+- Add fuzz tests against pathological arithmetic payloads.
 
-## 7) Improve observability
-- Add structured logging for incoming requests, selected level, execution time, and errors.
-- Add request IDs in responses for easier debugging.
-- Avoid logging secrets or user prompt content by default.
+## 4) Add API integration tests with a live test server
+- Start the HTTP server in-process during tests and assert full request/response behavior.
+- Cover `/api/levels`, `/api/run/<level>`, and `POST /api/run` with invalid and valid payloads.
 
-## 8) Optional: package polish for educational use
-- Add architecture diagram(s) showing the flow among frontend, app server, level runner, tools, and model API.
-- Add a short "limitations" section for each level so readers know what each stage intentionally does *not* solve.
+## 5) Add architecture and boundaries docs
+- Add a one-page architecture diagram showing frontend ↔ API ↔ level runner ↔ tool layer ↔ model API.
+- Document trust boundaries and which components handle untrusted input.
+
+## 6) Add per-level limitations and expected behavior docs
+- For each level README, add a short "What this level does not solve" section.
+- Include one failure example and one success example per level.
+
+## 7) Add lightweight metrics hooks
+- Track success/error counters per endpoint and level.
+- Add a simple `/api/health` + `/api/metrics` endpoint (even if text-only) for local debugging.
+
+## 8) Improve developer experience
+- Add a `make run` target and `make lint` target.
+- Add a concise troubleshooting section in README with common errors and fixes.
