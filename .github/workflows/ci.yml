@@ -30,10 +30,10 @@ jobs:
 
 
       - name: Verify OpenAI key can produce model output
-        if: ${{ (secrets.OPENAI_API_KEY != '') || (secrets.OPENAI_SECRET != '') }}
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY || secrets.OPENAI_SECRET }}
           OPENAI_MODEL: gpt-4.1-mini
+        if: ${{ env.OPENAI_API_KEY != '' }}
         run: |
           PORT=18001 python app.py > app-openai.log 2>&1 &
           APP_PID=$!
