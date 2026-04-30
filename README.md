@@ -9,6 +9,30 @@ The workshop uses one shared scenario throughout all activities:
 ---
 
 
+## Why this pack was created (Yegge's 8 levels summary)
+
+This workshop pack was created to make **Steve Yegge's 8-level AI capability ladder** concrete for teams that need to move from experimentation to production. Instead of discussing "agents" abstractly, the pack lets participants see each capability jump in the same customer-support scenario and compare quality, reliability, cost, and risk.
+
+### The 8 levels at a glance
+
+1. **Level 1 — Autocomplete:** Next-token continuation with minimal control; fast but inconsistent for business outcomes.
+2. **Level 2 — Instruction Following:** Better constrained responses when given explicit goals, style, and guardrails.
+3. **Level 3 — Tool Use:** Model can call deterministic tools (calculators, policy checks, lookups) to improve correctness.
+4. **Level 4 — Retrieval + Grounding:** Responses are grounded in provided docs/knowledge to reduce hallucinations.
+5. **Level 5 — Multi-step Reasoning:** The system plans and executes sequences of steps rather than one-shot answers.
+6. **Level 6 — Agentic Loop:** Iterative observe-plan-act loops with stop criteria improve difficult-task completion.
+7. **Level 7 — Multi-agent Collaboration:** Specialized agents coordinate (e.g., researcher, writer, critic) for higher-quality outputs.
+8. **Level 8 — Self-improving Workflow:** The workflow evaluates itself, learns from feedback, and safely improves over time.
+
+### Why this matters for teams
+
+- It gives a **shared language** for product, engineering, and leadership discussions.
+- It turns architecture decisions into **visible trade-offs** (quality vs. latency vs. cost vs. operational risk).
+- It helps teams choose the **minimum effective level** instead of overbuilding agentic complexity too early.
+- It provides a practical path to discuss **governance and guardrails** before deploying advanced automation.
+
+---
+
 ## Readme guide
 
 If you're browsing this repository for the first time, use this index to jump directly to the documentation for each workshop track.
