@@ -1,113 +1,100 @@
-# 🎉 Welcome to the AI Competence Ladder Workshop
+# Welcome to the AI Competence Ladder Workshop
 
-You’re about to take a fast, hands-on tour from **basic prompting** to **self-improving AI workflows** — all in one practical scenario.
+This workshop is for people who are curious about AI and want to understand how real AI systems are built—from simple prompts to reliable production workflows.
 
 If you’ve ever wondered:
 
-- “Why is this AI response amazing once… and weird the next time?”
-- “When should we use tools, retrieval, or agents?”
-- “How do we scale AI responsibly without chaos?”
+- Why an AI answer is great one time and off the next.
+- When to use tools, retrieval, or agent-like workflows.
+- How to move from demo-quality AI to production-quality AI.
 
-…this workshop is for you.
+this workshop is for you.
 
 ---
 
-## 🚀 What this workshop is
+## What this workshop is
 
-A practical learning lab that walks through **8 levels of AI system capability** using a shared use case:
+A practical learning experience that walks through **8 levels of AI capability** using one shared scenario:
 
 > Improving customer support response quality for a SaaS product.
 
-Because every level uses the same business scenario, you can clearly see what each architectural upgrade changes.
+Using one scenario across all levels makes it easy to see what each architecture adds and why it matters.
 
 ---
 
-## 🧠 What you’ll learn
+## What you’ll learn
 
 By the end, you’ll be able to:
 
 - Explain the difference between Levels 1–8 in plain language.
 - Compare quality, reliability, speed, and cost across levels.
-- Spot common failure modes (hallucination, brittle steps, over-engineering).
-- Recommend a right-sized architecture for real production needs.
+- Identify common failure modes (hallucinations, brittle flows, over-engineering).
+- Choose a right-sized architecture for a real production use case.
 
 ---
 
-## 🧩 The 8-level adventure (quick view)
+## The 8 levels (quick view)
 
 1. **Autocomplete** – fast but inconsistent.
 2. **Instruction Following** – clearer structure.
-3. **Tool Use** – reliable calculations/lookups.
-4. **Retrieval + Grounding** – better factuality.
-5. **Multi-step Reasoning** – better decomposition.
-6. **Agentic Loop** – iterative improvement.
-7. **Multi-agent Collaboration** – role-based quality lift.
+3. **Tool Use** – reliable calculations and lookups.
+4. **Retrieval + Grounding** – better factual accuracy.
+5. **Multi-step Reasoning** – stronger decomposition.
+6. **Agentic Loop** – iterative refinement.
+7. **Multi-agent Collaboration** – role-based quality improvements.
 8. **Self-improving Workflow** – feedback-driven evolution.
 
 ---
 
-## ⏱️ Suggested workshop flow
+## Workshop flow
 
 - **Intro + setup:** 20 min
-- **Levels 1–4 walkthrough:** 60 min
-- **Levels 5–8 walkthrough:** 60 min
-- **Debrief + group design:** 30–60 min
+- **Levels 1–4:** 60 min
+- **Levels 5–8:** 60 min
+- **Debrief + design discussion:** 30–60 min
 
 Recommended total: **2.5–4 hours**.
 
 ---
 
-## 👥 Who should attend
+## Who this workshop is for
 
 Great for:
 
-- Product managers
-- Engineers
-- Analysts
-- Technical educators
-- AI champions inside teams
+- Students learning how modern AI systems work
+- Curious builders and self-learners
+- Early-career professionals exploring AI product design
+- Teams building AI features for real users
 
-Prerequisite: basic comfort with Python + web apps.
+Prerequisite: basic comfort with Python and web apps.
 
 ---
 
-## 🛠️ Quick start
+## Quick start
 
 ```bash
 export OPENAI_API_KEY="your_key_here"
 python app.py
 ```
 
-Then open: <http://127.0.0.1:8000> and click through Levels 1–8.
+Then open: <http://127.0.0.1:8000> and work through Levels 1–8.
 
 ---
 
-## 🎯 Why this is worth your time
+## Why this matters
 
-This is not “AI hype theater.” It’s a **decision-making toolkit**.
+This workshop helps people move beyond AI hype and make practical decisions.
 
-You’ll leave with a shared language to answer:
+You’ll leave with a shared framework to answer:
 
 - What level do we actually need?
 - What are we overbuilding?
-- Where are the biggest reliability gains per unit cost?
-- What governance is required before production?
+- Where are the biggest reliability gains for the effort?
+- What should be in place before production rollout?
 
 ---
 
-## 🥳 Bonus: make it fun in your session
+## Outcome
 
-Try these facilitation twists:
-
-- **Prediction game:** Before each level, ask the room what should improve.
-- **Failure hunt:** Ask each group to find one weakness and propose a guardrail.
-- **Architecture showdown:** Teams pitch their “minimum viable reliable level.”
-
----
-
-## ✅ Outcome you can trust
-
-The biggest takeaway: teams stop arguing in abstractions (“we need agents!”) and start making **evidence-based design choices**.
-
-Welcome to the workshop — let’s build AI systems that are not just clever, but dependable.
+The core outcome is simple: teams stop arguing in abstractions and start making evidence-based architecture decisions.
 
