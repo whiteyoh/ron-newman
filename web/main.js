@@ -8,10 +8,20 @@ const confirmBtn = document.getElementById('confirm-btn');
 
 const entry = document.getElementById('entry');
 const app = document.getElementById('app');
-document.getElementById('start-btn').onclick = () => {
+const startBtn = document.getElementById('start-btn');
+
+function enterDemo() {
   entry.classList.add('hidden');
   app.classList.remove('hidden');
-};
+}
+
+startBtn.addEventListener('click', enterDemo);
+startBtn.addEventListener('keydown', (event) => {
+  if (event.key === 'Enter' || event.key === ' ') {
+    event.preventDefault();
+    enterDemo();
+  }
+});
 
 let selectedUseCase = null;
 let confirmedUseCase = null;
