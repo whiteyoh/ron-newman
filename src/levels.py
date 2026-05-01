@@ -1,7 +1,7 @@
-import json
 from typing import Any
 
 from src.constants import DEFAULT_USE_CASE_KEY, LEVELS, USE_CASE_OPTIONS
+from src.agent_runtime import run_constrained_agent_loop
 from src.tools import calculator_tool, retrieve_local_facts
 
 
@@ -69,45 +69,24 @@ def run_level(
             "Design a practical support workflow for teachers creating lessons and revision plans.",
             use_case,
         )
-        planner_request = (
-            "You are ActionPlannerAgent. Build a short action plan in JSON with this schema: "
-            "{\"steps\":[{\"action\":\"research|calculate|draft\",\"input\":\"...\"}]}. "
-            "Use 3-5 steps and only the listed actions."
+        run = run_constrained_agent_loop(
+            client=client,
+            objective=objective,
+            retrieve_fn=retrieve_local_facts,
+            calculate_fn=calculator_tool,
+            max_iterations=5,
         )
-        raw_plan = client.chat(planner_request, objective)
-        try:
-            plan = json.loads(raw_plan)
-            steps = plan.get("steps", []) if isinstance(plan, dict) else []
-        except json.JSONDecodeError:
-            steps = []
-
-        if not steps:
-            steps = [
-                {"action": "research", "input": "What should a Year 10 revision workshop include?"},
-                {"action": "calculate", "input": "2*60"},
-                {"action": "draft", "input": "Create a concise workshop recommendation."},
-            ]
-
-        tool_outputs: list[str] = []
-        for idx, step in enumerate(steps[:5], start=1):
-            action = str(step.get("action", "")).lower()
-            raw_input = str(step.get("input", ""))
-            if action == "research":
-                result = retrieve_local_facts(raw_input)
-            elif action == "calculate":
-                try:
-                    result = calculator_tool(raw_input)
-                except ValueError as err:
-                    result = f"tool error: {err}"
-            else:
-                result = client.chat("Draft a concise output for this instruction.", raw_input)
-            tool_outputs.append(f"Step {idx} [{action}] input={raw_input} => {result}")
-
-        final = client.chat(
-            "You are Coordinator. Produce final recommendation using the executed steps.",
-            "\n".join(tool_outputs),
-        )
-        lines = ["ActionPlanner raw plan:", raw_plan, "Executed steps:"] + tool_outputs + ["Coordinator output:", final]
+        lines = ["Objective:", objective, "Agent iteration trace:"]
+        for step in run["trace"]:
+            lines.extend(
+                [
+                    f"Iteration {step.iteration}",
+                    f"Chosen action: {step.action}",
+                    f"Reason: {step.reason}",
+                    f"Tool observation: {step.observation}",
+                ]
+            )
+        lines.extend(["Final answer:", run["final_answer"]])
     else:
         seed = use_case_prompt("Draft guidance for writing effective lesson and revision plans.", use_case)
         candidate = client.chat("Write an initial concise draft.", seed)
