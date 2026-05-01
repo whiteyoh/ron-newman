@@ -26,7 +26,7 @@
           radial-gradient(circle at 10% 10%, rgba(104, 231, 255, 0.18), transparent 30%),
           radial-gradient(circle at 90% 0%, rgba(143, 141, 255, 0.2), transparent 32%),
           linear-gradient(160deg, #040611, #0b1430 50%, #050816);
-        padding: 2rem;
+        padding: 1rem;
       }
       .hidden { display: none !important; }
       .shell { max-width: 1100px; margin: 0 auto; }
@@ -39,8 +39,8 @@
         backdrop-filter: blur(16px);
         box-shadow: 0 18px 40px rgba(0,0,0,0.35);
       }
-      .grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(260px,1fr)); gap: 0.9rem; }
-      .choices { display: grid; grid-template-columns: repeat(auto-fit,minmax(280px,1fr)); gap: 0.8rem; margin-top: 0.8rem; }
+      .grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(220px,1fr)); gap: 0.65rem; }
+      .choices { display: grid; grid-template-columns: repeat(auto-fit,minmax(240px,1fr)); gap: 0.8rem; margin-top: 0.8rem; }
       button {
         padding: 0.75rem 0.9rem;
         background: linear-gradient(135deg, #4062ff, #6f64ff);
@@ -55,7 +55,7 @@
       .option { text-align: left; background: var(--panel-strong); }
       .option.active { outline: 2px solid var(--accent); background: rgba(50, 67, 153, 0.9); }
       .option strong { display: block; margin-bottom: 0.3rem; text-transform: capitalize; }
-      #log { background: rgba(5, 12, 29, 0.75); border: 1px solid rgba(255,255,255,0.14); border-radius: 14px; padding: 1rem; min-height: 300px; margin-top: 1rem; display: flex; flex-direction: column; gap: 0.5rem; overflow-y: auto; }
+      #log { background: rgba(5, 12, 29, 0.75); border: 1px solid rgba(255,255,255,0.14); border-radius: 14px; padding: 1rem; min-height: 300px; max-height: 44vh; margin-top: 1rem; display: flex; flex-direction: column; gap: 0.5rem; overflow-y: auto; }
       .msg { max-width: 85%; padding: 0.65rem 0.8rem; border-radius: 0.85rem; line-height: 1.35; white-space: pre-wrap; word-break: break-word; }
       .msg.system { align-self: center; background: rgba(255,255,255,0.08); color: #d7dffc; font-size: 0.92rem; }
       .msg.user { align-self: flex-end; background: rgba(85,111,255,0.9); color: #eef2ff; }
@@ -71,6 +71,16 @@
       .modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.55); display: flex; align-items: center; justify-content: center; z-index: 50; padding: 1rem; }
       .modal { width: min(680px, 100%); max-height: 80vh; overflow-y: auto; background: rgba(11, 19, 43, 0.98); border: 1px solid rgba(255,255,255,0.2); border-radius: 16px; padding: 1rem; box-shadow: 0 24px 60px rgba(0,0,0,0.45); }
       .modal header { display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
+      .thinking { display: inline-flex; align-items: center; gap: 0.5rem; }
+      .robot-spinner { width: 24px; height: 24px; animation: spin 1.3s linear infinite; }
+      @keyframes spin { from { transform: rotate(0deg);} to { transform: rotate(360deg);} }
+      .footer { text-align: center; padding: 0.85rem 1rem 0.5rem; font-size: 0.9rem; color: var(--muted); }
+      @media (max-width: 768px) {
+        body { padding: 0.75rem; }
+        .card { padding: 1rem; border-radius: 14px; }
+        #log { min-height: 40vh; max-height: 52vh; }
+        .msg { max-width: 95%; }
+      }
     </style>
   </head>
   <body>
@@ -101,6 +111,7 @@
       </div>
       <div id="log">Select and confirm a use case to begin.</div>
     </section>
+    <footer class="footer">Built with Glitch · Mobile-friendly demo mode enabled.</footer>
     </div>
     <div id="use-case-modal" class="modal-backdrop hidden">
       <div class="modal">
