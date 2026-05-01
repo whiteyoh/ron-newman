@@ -51,6 +51,14 @@ function appendMessage(role, text) {
   log.scrollTop = log.scrollHeight;
 }
 
+function renderThinkingMessage(message = 'Glitch is thinking...') {
+  const item = document.createElement('div');
+  item.className = 'msg ai';
+  item.innerHTML = `<span class="thinking"><img src="assets/robotic-person.svg" alt="Thinking" class="robot-spinner" />${message}</span>`;
+  log.appendChild(item);
+  log.scrollTop = log.scrollHeight;
+}
+
 function inferRole(line) {
   const l = line.toLowerCase();
   if (l.includes('prompt:') || l.includes('instruction:') || l.includes('question:') || l.includes('goal:') || l.includes('task expression:')) return 'user';
@@ -95,7 +103,7 @@ async function runLevel(level){
 
   apiState.innerHTML = '<span class="pill">Running…</span>';
   log.innerHTML = '';
-  appendMessage('system', 'Working...');
+  renderThinkingMessage('Glitch is thinking...');
 
   const res = await fetch('/api/run', {
     method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ level, use_case: confirmedUseCase, use_case_context: selectedUseCaseContext })
