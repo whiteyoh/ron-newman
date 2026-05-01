@@ -11,7 +11,7 @@ LEVELS = {
 
 USE_CASE_OPTIONS = {
     "saas_product": "Use case for all levels: resolve SaaS customer support tickets with clear, policy-aligned responses.",
-    "uk_year10_teacher": "Use case for all levels: resolve school support tickets from a UK Year 10 teacher (lesson planning, explanations, and assessment help).",
+    "uk_year10_teacher": "Use case for all levels: help a UK Year 10 teacher create lesson plans. Keep a human in the loop by asking them to choose one of five subjects (English, Maths, Science, History, Geography) and any other necessary constraints before generating the plan.",
     "year10_exam_student": "Use case for all levels: support a Year 10 student with exam-prep requests only (revision plans, concept explanations, and practice support).",
 }
 
