@@ -1,8 +1,8 @@
 ![Glitch logo](../../assets/glitch-logo.svg)
 
-## Shared use case
+## Scenario use case
 
-This example uses the same global use case as all other levels: **improving customer support response quality for a SaaS product**.
+This example maps to its scenario entry in `examples/SCENARIO_USE_CASES.md` (Given / When / Then) so each level has a clear, behavior-based use case.
 
 ## How to trigger this example
 

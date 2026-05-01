@@ -109,9 +109,9 @@ A smart production strategy is to use the **lowest layer that reliably meets you
 
 ## Workshop tie-in
 
-In the Glitch workshop, all layers are demonstrated using one shared scenario:
+In the Glitch workshop, all layers are demonstrated using a set of scenario-driven use cases:
 
-> Improving customer support response quality for a SaaS product.
+See `examples/SCENARIO_USE_CASES.md` for the full Given/When/Then catalog across Levels 1–8.
 
 That makes it easier to compare trade-offs at each layer:
 

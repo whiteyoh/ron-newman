@@ -14,11 +14,11 @@ the Glitch workshop is for you.
 
 ## What the Glitch workshop is
 
-A practical learning experience that walks through **8 levels of AI capability** using one shared scenario:
+A practical learning experience that walks through **8 levels of AI capability** using a set of scenario-driven use cases:
 
-> Improving customer support response quality for a SaaS product.
+See `examples/SCENARIO_USE_CASES.md` for the full Given/When/Then catalog across Levels 1–8.
 
-Using one scenario across all levels makes it easy to see what each architecture adds and why it matters.
+Using scenario-based progression across all levels makes it easy to see what each architecture adds and why it matters.
 
 ---
 

@@ -36,12 +36,13 @@ Good luck—you’ve got this.
 - **Workshop overview (main guide):** [README_WORKSHOP_FUN.md](README_WORKSHOP_FUN.md)
 - **Yegge’s 8 layers explained (beginner-friendly):** [README_YEGGE_8_LAYERS_EXPLAINED.md](README_YEGGE_8_LAYERS_EXPLAINED.md)
 - **How examples align to capability stages:** [examples/STAGES_ALIGNMENT_README.md](examples/STAGES_ALIGNMENT_README.md)
+- **Scenario use cases (Given / When / Then):** [examples/SCENARIO_USE_CASES.md](examples/SCENARIO_USE_CASES.md)
 
 ---
 
 ## The 8 Example Chapters
 
-Follow the climb level-by-level in the shared customer support scenario:
+Follow the climb level-by-level across the scenario use cases:
 
 1. [Level 1 README](examples/level1/README.md)
 2. [Level 2 README](examples/level2/README.md)
