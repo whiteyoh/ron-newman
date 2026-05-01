@@ -38,13 +38,24 @@ async function runLevel(level){
 }
 
 async function init(){
-  const levels = await (await fetch('/api/levels')).json();
-  Object.entries(levels.levels).forEach(([k,v]) => {
-    const btn = document.createElement('button');
-    btn.textContent = `Level ${k}: ${v.name}`;
-    btn.onclick = () => runLevel(k);
-    buttons.appendChild(btn);
-  });
+  try {
+    const response = await fetch('/api/levels');
+    const levels = await response.json();
+
+    if (!response.ok || !levels.levels) {
+      log.textContent = `Could not load levels (${response.status}).`;
+      return;
+    }
+
+    Object.entries(levels.levels).forEach(([k,v]) => {
+      const btn = document.createElement('button');
+      btn.textContent = `Level ${k}: ${v.name}`;
+      btn.onclick = () => runLevel(k);
+      buttons.appendChild(btn);
+    });
+  } catch (err) {
+    log.textContent = `Could not load levels: ${err.message}`;
+  }
 }
 
 init();

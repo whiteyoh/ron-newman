@@ -49,6 +49,10 @@ class Handler(SimpleHTTPRequestHandler):
             level_text = path.split("/")[-1]
             return self._execute_level(level_text, request_id, path, start)
 
+        if path.startswith("/assets/"):
+            self.path = path
+            return SimpleHTTPRequestHandler.do_GET(self)
+
         return super().do_GET()
 
     def do_POST(self):
