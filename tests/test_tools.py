@@ -42,8 +42,8 @@ def test_retrieve_local_facts_unknown_key():
 
 def test_use_case_prompt_includes_human_revision_and_clarification_requirements():
     result = use_case_prompt("Draft a response")
-    assert "what to revise and how to revise it" in result
-    assert "if key details are missing, ask follow-up questions" in result
+    assert "Revision-guide output must focus on actual revision guidance" in result
+    assert "The chat should ask clarifying questions when needed before drafting" in result
 
 
 def test_use_case_prompt_prefixes_text():
