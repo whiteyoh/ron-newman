@@ -10,7 +10,7 @@ LEVELS = {
 }
 
 USE_CASE_OPTIONS = {
-    "uk_year10_teacher": "Use case for all levels: help a UK Year 10 teacher create engaging lesson plans. Keep a human in the loop by asking them to choose one of five subjects (English, Maths, Science, History, Geography), learning objectives, and class constraints before generating the plan.",
+    "uk_year10_teacher": "Use case for all levels: help a UK Year 10 teacher create engaging lesson plans. Keep a human in the loop by asking which specific lesson/topic they want, the lesson length, and any class constraints before generating a proper lesson plan suggestion focused on the selected topic.",
     "year10_exam_student": "Use case for all levels: support a Year 10 student with exam-prep requests only (revision plans, concept explanations, and practice support).",
     "curriculum_designer": "Use case for all levels: help a school curriculum designer produce downloadable schemes of work, lesson sequences, and revision resources aligned to Year 10 outcomes.",
 }
