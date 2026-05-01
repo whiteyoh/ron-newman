@@ -10,7 +10,7 @@ import os
 import uuid
 
 from src.ai_client import AIClient, AIClientError
-from src.constants import LEVELS
+from src.constants import LEVELS, USE_CASE_OPTIONS
 from src.levels import run_level
 
 ROOT = Path(__file__).parent
@@ -45,6 +45,12 @@ class Handler(SimpleHTTPRequestHandler):
             logger.info("request_id=%s path=%s status=200 duration_ms=%.2f", request_id, path, (time.perf_counter() - start) * 1000)
             return
 
+
+        if path == "/api/use-cases":
+            self._send_json(200, {"request_id": request_id, "use_cases": USE_CASE_OPTIONS})
+            logger.info("request_id=%s path=%s status=200 duration_ms=%.2f", request_id, path, (time.perf_counter() - start) * 1000)
+            return
+
         if path.startswith("/api/run/"):
             level_text = path.split("/")[-1]
             return self._execute_level(level_text, request_id, path, start)
@@ -67,19 +73,20 @@ class Handler(SimpleHTTPRequestHandler):
             length = int(self.headers.get("Content-Length", "0"))
             data = json.loads(self.rfile.read(length).decode("utf-8"))
             level = data.get("level")
+            use_case_key = data.get("use_case", "saas_product")
         except Exception:
             self._send_json(400, {"request_id": request_id, "error": "invalid JSON payload"})
             return
 
-        self._execute_level(str(level), request_id, path, start)
+        self._execute_level(str(level), request_id, path, start, str(use_case_key))
 
-    def _execute_level(self, level_text: str, request_id: str, path: str, start: float):
+    def _execute_level(self, level_text: str, request_id: str, path: str, start: float, use_case_key: str = "saas_product"):
         try:
             level = int(level_text)
             if level not in LEVELS:
                 raise ValueError("out of range")
             client = AIClient()
-            payload = run_level(level, client)
+            payload = run_level(level, client, use_case_key=use_case_key)
             payload["backend"] = {
                 "provider": "OpenAI",
                 "configured": client.available(),

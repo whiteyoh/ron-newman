@@ -9,6 +9,10 @@ LEVELS = {
     8: {"name": "Self-improving Workflow", "desc": "Scores outputs and keeps the best improved candidate."},
 }
 
-GLOBAL_USE_CASE = (
-    "Use case for all levels: improve customer support response quality for a SaaS product."
-)
+USE_CASE_OPTIONS = {
+    "saas_product": "Use case for all levels: improve customer support response quality for a SaaS product.",
+    "uk_year10_teacher": "Use case for all levels: help a UK Year 10 school teacher design lessons, explanations, and assessment support.",
+    "year10_exam_student": "Use case for all levels: help a Year 10 student prepare effectively for upcoming exams.",
+}
+
+DEFAULT_USE_CASE_KEY = "saas_product"
