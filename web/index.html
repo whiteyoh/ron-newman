@@ -54,6 +54,7 @@
       button:disabled { opacity: 0.55; cursor: not-allowed; }
       .option { text-align: left; background: var(--panel-strong); }
       .option.active { outline: 2px solid var(--accent); background: rgba(50, 67, 153, 0.9); }
+      .option strong { display: block; margin-bottom: 0.3rem; text-transform: capitalize; }
       #log { background: rgba(5, 12, 29, 0.75); border: 1px solid rgba(255,255,255,0.14); border-radius: 14px; padding: 1rem; min-height: 300px; margin-top: 1rem; display: flex; flex-direction: column; gap: 0.5rem; overflow-y: auto; }
       .msg { max-width: 85%; padding: 0.65rem 0.8rem; border-radius: 0.85rem; line-height: 1.35; white-space: pre-wrap; word-break: break-word; }
       .msg.system { align-self: center; background: rgba(255,255,255,0.08); color: #d7dffc; font-size: 0.92rem; }
@@ -67,6 +68,9 @@
       .toolbar { display: flex; gap: 0.7rem; flex-wrap: wrap; margin-top: 0.85rem; }
       .ghost { background: transparent; border: 1px solid rgba(255,255,255,0.2); }
       #meta { color: #d0daf7; font-size: 0.9rem; }
+      .modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.55); display: flex; align-items: center; justify-content: center; z-index: 50; padding: 1rem; }
+      .modal { width: min(680px, 100%); max-height: 80vh; overflow-y: auto; background: rgba(11, 19, 43, 0.98); border: 1px solid rgba(255,255,255,0.2); border-radius: 16px; padding: 1rem; box-shadow: 0 24px 60px rgba(0,0,0,0.45); }
+      .modal header { display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
     </style>
   </head>
   <body>
@@ -96,6 +100,15 @@
       </div>
       <div id="log">Select and confirm a use case to begin.</div>
     </section>
+    </div>
+    <div id="use-case-modal" class="modal-backdrop hidden">
+      <div class="modal">
+        <header>
+          <h3 id="modal-title">Use case context</h3>
+          <button id="modal-close" class="ghost">Close</button>
+        </header>
+        <p id="modal-body" class="muted"></p>
+      </div>
     </div>
     <script src="main.js"></script>
   </body>

@@ -10,8 +10,19 @@ def use_case_prompt(text: str, use_case: str | None = None) -> str:
     return f"{use_case}\n{text}"
 
 
-def run_level(level: int, client, use_case_key: str = DEFAULT_USE_CASE_KEY) -> dict[str, Any]:
+def run_level(
+    level: int,
+    client,
+    use_case_key: str = DEFAULT_USE_CASE_KEY,
+    use_case_context: str | None = None,
+) -> dict[str, Any]:
     use_case = USE_CASE_OPTIONS.get(use_case_key, USE_CASE_OPTIONS[DEFAULT_USE_CASE_KEY])
+    if use_case_context and use_case_context.strip():
+        use_case = (
+            f"{use_case}\n"
+            f"Confirmed context from user: {use_case_context.strip()}\n"
+            "Use this confirmed context directly and do not ask clarifying questions."
+        )
     intro = [f"Running Level {level}: {LEVELS[level]['name']}", LEVELS[level]["desc"], use_case]
 
     if not client.available():

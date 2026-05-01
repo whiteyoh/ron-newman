@@ -40,10 +40,10 @@ def test_retrieve_local_facts_unknown_key():
     assert retrieve_local_facts("What is Kafka default port?") == "No matching fact found in local knowledge base."
 
 
-def test_use_case_prompt_includes_human_revision_and_clarification_requirements():
+def test_use_case_prompt_includes_human_revision_requirements():
     result = use_case_prompt("Draft a response")
-    assert "Revision-guide output must focus on actual revision guidance" in result
-    assert "The chat should ask clarifying questions when needed before drafting" in result
+    assert "classroom-ready lesson and revision plans" in result
+    assert "do not ask follow-up questions" in result
 
 
 def test_use_case_prompt_prefixes_text():

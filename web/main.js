@@ -6,6 +6,10 @@ const useCaseOptions = document.getElementById('use-case-options');
 const selectionLabel = document.getElementById('selection-label');
 const confirmBtn = document.getElementById('confirm-btn');
 const downloadArtifactBtn = document.getElementById('download-artifact');
+const useCaseModal = document.getElementById('use-case-modal');
+const modalTitle = document.getElementById('modal-title');
+const modalBody = document.getElementById('modal-body');
+const modalCloseBtn = document.getElementById('modal-close');
 
 const entry = document.getElementById('entry');
 const app = document.getElementById('app');
@@ -22,6 +26,7 @@ startBtn.addEventListener('click', enterDemo);
 
 let selectedUseCase = null;
 let confirmedUseCase = null;
+let selectedUseCaseContext = '';
 
 function sleep(ms){ return new Promise(r => setTimeout(r, ms)); }
 
@@ -93,7 +98,7 @@ async function runLevel(level){
   appendMessage('system', 'Working...');
 
   const res = await fetch('/api/run', {
-    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ level, use_case: confirmedUseCase })
+    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ level, use_case: confirmedUseCase, use_case_context: selectedUseCaseContext })
   });
   const data = await res.json();
 
@@ -118,14 +123,30 @@ async function runLevel(level){
 function renderUseCases(data) {
   useCaseOptions.textContent = '';
   Object.entries(data).forEach(([key, text], index) => {
+    const [summary] = text.split('.');
+    const shortSummary = `${summary}.`;
     const option = document.createElement('button');
     option.className = 'option';
-    option.textContent = `${index + 1}. ${text}`;
+    option.innerHTML = `
+      <strong>${index + 1}. ${key.replaceAll('_', ' ')}</strong>
+      <div class="muted">${shortSummary}</div>
+      <div style="margin-top:0.5rem; display:flex; gap:0.5rem;">
+        <span class="pill">Select</span>
+        <span class="pill ghost modal-trigger">More context</span>
+      </div>
+    `;
+    option.querySelector('.modal-trigger').addEventListener('click', (event) => {
+      event.stopPropagation();
+      modalTitle.textContent = `Use case context: ${key.replaceAll('_', ' ')}`;
+      modalBody.textContent = text;
+      useCaseModal.classList.remove('hidden');
+    });
     option.onclick = () => {
       selectedUseCase = key;
+      selectedUseCaseContext = prompt('Add any context (topic, lesson length, student constraints). This will be used directly.') || '';
       confirmedUseCase = null;
       confirmBtn.disabled = false;
-      selectionLabel.textContent = `Selected (not confirmed): ${text}`;
+      selectionLabel.textContent = `Selected (not confirmed): ${key.replaceAll('_', ' ')}${selectedUseCaseContext ? ` | context: ${selectedUseCaseContext}` : ''}`;
       document.querySelectorAll('.option').forEach((el) => el.classList.remove('active'));
       option.classList.add('active');
       clearOutput('Use case changed. Previous output cleared. Confirm direction to continue.');
@@ -139,6 +160,7 @@ confirmBtn.onclick = () => {
   selectionLabel.textContent = `Confirmed direction: ${document.querySelector('.option.active')?.textContent || 'n/a'}`;
   clearOutput('Direction confirmed. Choose a level to run.');
 };
+modalCloseBtn.onclick = () => useCaseModal.classList.add('hidden');
 
 async function init(){
   try {
