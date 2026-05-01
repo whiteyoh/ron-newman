@@ -74,19 +74,28 @@ class Handler(SimpleHTTPRequestHandler):
             data = json.loads(self.rfile.read(length).decode("utf-8"))
             level = data.get("level")
             use_case_key = data.get("use_case", "uk_year10_teacher")
+            use_case_context = data.get("use_case_context", "")
         except Exception:
             self._send_json(400, {"request_id": request_id, "error": "invalid JSON payload"})
             return
 
-        self._execute_level(str(level), request_id, path, start, str(use_case_key))
+        self._execute_level(str(level), request_id, path, start, str(use_case_key), str(use_case_context))
 
-    def _execute_level(self, level_text: str, request_id: str, path: str, start: float, use_case_key: str = "uk_year10_teacher"):
+    def _execute_level(
+        self,
+        level_text: str,
+        request_id: str,
+        path: str,
+        start: float,
+        use_case_key: str = "uk_year10_teacher",
+        use_case_context: str = "",
+    ):
         try:
             level = int(level_text)
             if level not in LEVELS:
                 raise ValueError("out of range")
             client = AIClient()
-            payload = run_level(level, client, use_case_key=use_case_key)
+            payload = run_level(level, client, use_case_key=use_case_key, use_case_context=use_case_context)
             payload["backend"] = {
                 "provider": "OpenAI",
                 "configured": client.available(),
