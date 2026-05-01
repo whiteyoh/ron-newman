@@ -4,8 +4,8 @@ LEVELS = {
     3: {"name": "Tool Use", "desc": "Selects and uses a calculator tool for exact arithmetic."},
     4: {"name": "Retrieval + Grounding", "desc": "Reads local facts, then answers using retrieved context."},
     5: {"name": "Multi-step Reasoning", "desc": "Builds and executes a structured plan for a concrete goal."},
-    6: {"name": "Agentic Loop", "desc": "Iterates with critique + revision until quality target is met."},
-    7: {"name": "Multi-agent Collaboration", "desc": "Uses role-specialized agents to produce one final result."},
+    6: {"name": "Critique + Revision", "desc": "Uses model critique to revise an initial draft once."},
+    7: {"name": "Constrained Agent Loop", "desc": "Runs a bounded observe, act, observe, replan cycle using allowed tools and explicit stop conditions."},
     8: {"name": "Self-improving Workflow", "desc": "Scores outputs and keeps the best improved candidate."},
 }
 
