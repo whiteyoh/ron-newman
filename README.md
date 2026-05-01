@@ -153,3 +153,9 @@ The app binds to `0.0.0.0` and reads Render's `PORT`, so traffic routing works o
 - Add lightweight auth if this won’t be a public demo.
 - Pin dependency versions in `requirements.txt` for reproducible builds.
 - Add a dedicated `/healthz` endpoint if you want infra and app health separated from business endpoints.
+
+---
+
+<footer>
+  <sub>Built with curiosity by the Glitch community · If this repo helps you, please ⭐ it on GitHub.</sub>
+</footer>
