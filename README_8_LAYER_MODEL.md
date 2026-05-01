@@ -47,10 +47,10 @@ It is intended to support architecture decisions, not to imply every use case ne
 - Strength: iterative improvement.
 - Limitation: requires robust stop conditions and safeguards.
 
-### 7) Multi-agent Collaboration
-- Uses specialized roles that contribute to a final synthesis.
-- Strength: improves quality via specialization.
-- Limitation: increased coordination overhead.
+### 7) Constrained Agent Loop
+- Runs a bounded objective -> action -> tool -> observation -> next action cycle.
+- Strength: adaptive behavior with explicit safeguards and transparent traces.
+- Limitation: still needs careful action constraints and iteration limits.
 
 ### 8) Self-improving Workflow
 - Evaluates outputs and selects or updates based on defined criteria.
