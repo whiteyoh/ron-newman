@@ -23,8 +23,8 @@ Participants should be able to:
 3. **Tool Use**: model + external tool for exact operations.
 4. **Retrieval + Grounding**: answers constrained by retrieved evidence.
 5. **Multi-step Reasoning**: plan then execute.
-6. **Agentic Loop**: critique and revise iterations.
-7. **Multi-agent Collaboration**: role-based contributions and synthesis.
+6. **Critique + Revision**: one critique pass followed by one revision pass.
+7. **Constrained Agent Loop**: bounded observe/act/replan cycle with allowed tools and stop conditions.
 8. **Self-improving Workflow**: evaluate candidates and choose the stronger result.
 
 ## Suggested session structure

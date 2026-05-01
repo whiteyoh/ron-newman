@@ -32,17 +32,17 @@ This document explains how each example (`examples/level1` through `examples/lev
 - **Why this satisfies Stage 5:** The model first generates a numbered plan, then executes that plan into a timed agenda, demonstrating decomposed reasoning.
 - **Implementation signal:** Level 5 performs two sequential calls: plan creation, then plan execution.
 
-## Stage 6 — Agentic Loop (`examples/level6`)
+## Stage 6 — Critique + Revision (`examples/level6`)
 
-- **Core behavior:** Iterative draft → critique → revise cycle.
-- **Why this satisfies Stage 6:** The model evaluates its own output (via critique prompt) and performs a guided revision pass, forming a bounded feedback loop.
+- **Core behavior:** Bounded draft → critique → revise workflow.
+- **Why this satisfies Stage 6:** The model produces one initial draft, critiques it, and performs a single guided revision pass, rather than running an open-ended loop.
 - **Implementation signal:** Level 6 creates an initial draft, requests a two-bullet critique, then revises using that critique.
 
-## Stage 7 — Multi-agent Collaboration (`examples/level7`)
+## Stage 7 — Constrained Agent Loop (`examples/level7`)
 
-- **Core behavior:** Role-specialized agents collaborate to produce a final answer.
-- **Why this satisfies Stage 7:** Separate agent roles (Research, Planner, Critic, Coordinator) contribute distinct perspectives before synthesis.
-- **Implementation signal:** Level 7 runs sequential role prompts and consolidates into a coordinator output.
+- **Core behavior:** Constrained observe/act/replan loop with bounded iterations.
+- **Why this satisfies Stage 7:** The controller chooses one allowed action per step (`research`, `calculate`, `draft`, `finish`), executes tools, records observations, and replans from the evolving trace under explicit iteration limits and finish behavior.
+- **Implementation signal:** `run_constrained_agent_loop` in `src/agent_runtime.py` validates actions, executes tools defensively, keeps a step trace, exits on `finish`, and otherwise returns a best-effort answer when `max_iterations` is reached.
 
 ## Stage 8 — Self-improving Workflow (`examples/level8`)
 
@@ -60,7 +60,7 @@ This document explains how each example (`examples/level1` through `examples/lev
 | 4 | `examples/level4` | Retrieval-grounded factual response |
 | 5 | `examples/level5` | Plan then execute |
 | 6 | `examples/level6` | Critique-and-revision loop |
-| 7 | `examples/level7` | Role-based multi-agent pipeline |
+| 7 | `examples/level7` | Constrained observe/act/replan loop |
 | 8 | `examples/level8` | Score-driven self-improvement |
 
 ## Suggested use in workshops
