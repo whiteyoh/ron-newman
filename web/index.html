@@ -5,36 +5,76 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Glitch · 8 Levels of AI Competence Demo</title>
     <style>
-      body { font-family: Arial, sans-serif; margin: 1.5rem; background: #0f172a; color: #e2e8f0; }
+      :root {
+        --bg: #050816;
+        --panel: rgba(14, 23, 51, 0.72);
+        --panel-strong: rgba(11, 19, 43, 0.9);
+        --text: #e6ecff;
+        --muted: #a8b5de;
+        --accent: #68e7ff;
+        --accent-2: #8f8dff;
+        --ok: #39d98a;
+        --err: #ff6b90;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+        color: var(--text);
+        background:
+          radial-gradient(circle at 10% 10%, rgba(104, 231, 255, 0.18), transparent 30%),
+          radial-gradient(circle at 90% 0%, rgba(143, 141, 255, 0.2), transparent 32%),
+          linear-gradient(160deg, #040611, #0b1430 50%, #050816);
+        padding: 2rem;
+      }
       .hidden { display: none; }
-      .card { background: #111827; border: 1px solid #334155; border-radius: 10px; padding: 1rem; margin-bottom: 1rem; }
-      .grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(220px,1fr)); gap: 0.75rem; }
-      .choices { display: grid; grid-template-columns: repeat(auto-fit,minmax(250px,1fr)); gap: 0.75rem; margin-top: 0.8rem; }
-      button { padding: 0.65rem; background: #1d4ed8; color: white; border: 0; border-radius: 8px; cursor: pointer; }
-      button:hover { background: #2563eb; }
-      .option { text-align: left; background: #1e293b; }
-      .option.active { outline: 2px solid #60a5fa; background: #1d4ed8; }
-      #log { background: #0b1220; border: 1px solid #334155; border-radius: 8px; padding: 1rem; min-height: 280px; margin-top: 1rem; display: flex; flex-direction: column; gap: 0.5rem; overflow-y: auto; }
-      .msg { max-width: 82%; padding: 0.65rem 0.8rem; border-radius: 0.8rem; line-height: 1.35; white-space: pre-wrap; word-break: break-word; }
-      .msg.system { align-self: center; background: #1f2937; color: #cbd5e1; font-size: 0.92rem; }
-      .msg.user { align-self: flex-end; background: #1d4ed8; color: #eff6ff; }
-      .msg.ai { align-self: flex-start; background: #1e293b; color: #e2e8f0; border: 1px solid #334155; }
-      .muted { color: #94a3b8; }
-      .status { margin: 0.8rem 0; padding: 0.75rem; border-radius: 8px; border: 1px solid #334155; background: #0b1220; display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
-      .pill { font-weight: 700; padding: 0.2rem 0.5rem; border-radius: 9999px; }
-      .pill.ok { background: #14532d; color: #86efac; }
-      .pill.err { background: #7f1d1d; color: #fecaca; }
-      .spinner { width: 14px; height: 14px; border: 2px solid #93c5fd; border-top-color: transparent; border-radius: 50%; display: inline-block; animation: spin 0.8s linear infinite; vertical-align: middle; margin-right: 0.4rem; }
-      @keyframes spin { to { transform: rotate(360deg); } }
-      #meta { color: #cbd5e1; font-size: 0.9rem; }
+      .shell { max-width: 1100px; margin: 0 auto; }
+      .card {
+        background: var(--panel);
+        border: 1px solid rgba(255,255,255,0.12);
+        border-radius: 18px;
+        padding: 1.25rem;
+        margin-bottom: 1rem;
+        backdrop-filter: blur(16px);
+        box-shadow: 0 18px 40px rgba(0,0,0,0.35);
+      }
+      .grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(260px,1fr)); gap: 0.9rem; }
+      .choices { display: grid; grid-template-columns: repeat(auto-fit,minmax(280px,1fr)); gap: 0.8rem; margin-top: 0.8rem; }
+      button {
+        padding: 0.75rem 0.9rem;
+        background: linear-gradient(135deg, #4062ff, #6f64ff);
+        color: white;
+        border: 1px solid rgba(255,255,255,0.2);
+        border-radius: 12px;
+        cursor: pointer;
+        transition: transform .2s ease, box-shadow .2s ease, opacity .2s ease;
+      }
+      button:hover { transform: translateY(-1px); box-shadow: 0 10px 20px rgba(111,100,255,0.28); }
+      button:disabled { opacity: 0.55; cursor: not-allowed; }
+      .option { text-align: left; background: var(--panel-strong); }
+      .option.active { outline: 2px solid var(--accent); background: rgba(50, 67, 153, 0.9); }
+      #log { background: rgba(5, 12, 29, 0.75); border: 1px solid rgba(255,255,255,0.14); border-radius: 14px; padding: 1rem; min-height: 300px; margin-top: 1rem; display: flex; flex-direction: column; gap: 0.5rem; overflow-y: auto; }
+      .msg { max-width: 85%; padding: 0.65rem 0.8rem; border-radius: 0.85rem; line-height: 1.35; white-space: pre-wrap; word-break: break-word; }
+      .msg.system { align-self: center; background: rgba(255,255,255,0.08); color: #d7dffc; font-size: 0.92rem; }
+      .msg.user { align-self: flex-end; background: rgba(85,111,255,0.9); color: #eef2ff; }
+      .msg.ai { align-self: flex-start; background: rgba(18, 29, 65, 0.92); border: 1px solid rgba(255,255,255,0.14); }
+      .muted { color: var(--muted); }
+      .status { margin: 0.8rem 0; padding: 0.8rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.14); background: rgba(5, 12, 29, 0.7); display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+      .pill { font-weight: 700; padding: 0.25rem 0.55rem; border-radius: 9999px; background: rgba(255,255,255,0.1); }
+      .pill.ok { background: rgba(57,217,138,0.15); color: #9df7c6; }
+      .pill.err { background: rgba(255,107,144,0.16); color: #ffc5d5; }
+      .toolbar { display: flex; gap: 0.7rem; flex-wrap: wrap; margin-top: 0.85rem; }
+      .ghost { background: transparent; border: 1px solid rgba(255,255,255,0.2); }
+      #meta { color: #d0daf7; font-size: 0.9rem; }
     </style>
   </head>
   <body>
+    <div class="shell">
     <section id="entry" class="card">
-      <h1><img src="assets/glitch-logo.svg" alt="Glitch logo" style="max-width: 340px; width: 100%; height: auto;" /></h1>
-      <p>Welcome to Glitch — an interactive 8-level AI competence demo with human-in-the-loop controls.</p>
-      <p class="muted">Choose a use case, confirm direction, then run levels with clear streaming output.</p>
-      <p class="muted">This demo follows <a href="https://www.latent.space/p/levels-of-ai-competence" target="_blank" rel="noopener noreferrer">Yegge's layered AI competence approach</a> for progressively stronger control patterns.</p>
+      <h1><img src="assets/glitch-logo.svg" alt="Glitch logo" style="max-width: 360px; width: 100%; height: auto;" /></h1>
+      <p>Welcome to Glitch — an interactive 8-level AI competence studio for lesson and revision design.</p>
+      <p class="muted">Choose a use case, confirm direction, run levels, and export the generated artifact instantly.</p>
       <button id="start-btn">Enter Demo</button>
     </section>
 
@@ -51,8 +91,12 @@
         <div id="api-state"><span class="pill">Waiting</span></div>
         <div id="meta">Confirm a use case, then run a level to verify API path, model, and request id.</div>
       </div>
+      <div class="toolbar">
+        <button id="download-artifact" class="ghost" disabled>Download latest artifact (.txt)</button>
+      </div>
       <div id="log">Select and confirm a use case to begin.</div>
     </section>
+    </div>
     <script src="main.js"></script>
   </body>
 </html>

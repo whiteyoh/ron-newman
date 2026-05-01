@@ -5,10 +5,13 @@ const meta = document.getElementById('meta');
 const useCaseOptions = document.getElementById('use-case-options');
 const selectionLabel = document.getElementById('selection-label');
 const confirmBtn = document.getElementById('confirm-btn');
+const downloadArtifactBtn = document.getElementById('download-artifact');
 
 const entry = document.getElementById('entry');
 const app = document.getElementById('app');
 const startBtn = document.getElementById('start-btn');
+
+let latestArtifact = null;
 
 function enterDemo() {
   entry.classList.add('hidden');
@@ -16,23 +19,23 @@ function enterDemo() {
 }
 
 startBtn.addEventListener('click', enterDemo);
-startBtn.addEventListener('keydown', (event) => {
-  if (event.key === 'Enter' || event.key === ' ') {
-    event.preventDefault();
-    enterDemo();
-  }
-});
 
 let selectedUseCase = null;
 let confirmedUseCase = null;
 
 function sleep(ms){ return new Promise(r => setTimeout(r, ms)); }
 
+function clearArtifact() {
+  latestArtifact = null;
+  downloadArtifactBtn.disabled = true;
+}
+
 function clearOutput(message = 'Output cleared. Select a level to begin.') {
   log.innerHTML = '';
   appendMessage('system', message);
   meta.textContent = 'Run a level to verify API path, model, and request id.';
   apiState.innerHTML = '<span class="pill">Waiting</span>';
+  clearArtifact();
 }
 
 function appendMessage(role, text) {
@@ -45,12 +48,8 @@ function appendMessage(role, text) {
 
 function inferRole(line) {
   const l = line.toLowerCase();
-  if (l.includes('prompt:') || l.includes('instruction:') || l.includes('question:') || l.includes('goal:') || l.includes('task expression:')) {
-    return 'user';
-  }
-  if (l.includes('model') || l.includes('answer') || l.includes('draft') || l.includes('coordinator output') || l.includes('plan:') || l.includes('agenda')) {
-    return 'ai';
-  }
+  if (l.includes('prompt:') || l.includes('instruction:') || l.includes('question:') || l.includes('goal:') || l.includes('task expression:')) return 'user';
+  if (l.includes('model') || l.includes('answer') || l.includes('draft') || l.includes('coordinator output') || l.includes('plan:') || l.includes('agenda')) return 'ai';
   return 'system';
 }
 
@@ -62,41 +61,58 @@ async function streamLines(lines){
   }
 }
 
+function createArtifact(level, lines) {
+  const stamp = new Date().toISOString();
+  latestArtifact = `Glitch Export\nGenerated: ${stamp}\nLevel: ${level}\nUse case: ${confirmedUseCase || 'n/a'}\n\n${lines.join('\n')}`;
+  downloadArtifactBtn.disabled = false;
+}
+
+function downloadArtifact() {
+  if (!latestArtifact) return;
+  const blob = new Blob([latestArtifact], { type: 'text/plain;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `glitch-artifact-${new Date().toISOString().slice(0,10)}.txt`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
+downloadArtifactBtn.addEventListener('click', downloadArtifact);
+
 async function runLevel(level){
   if (!confirmedUseCase) {
     clearOutput('Please confirm a use case direction first.');
     return;
   }
 
-  apiState.innerHTML = '<span class="pill"><span class="spinner"></span>Running…</span>';
+  apiState.innerHTML = '<span class="pill">Running…</span>';
   log.innerHTML = '';
   appendMessage('system', 'Working...');
 
   const res = await fetch('/api/run', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ level, use_case: confirmedUseCase })
+    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ level, use_case: confirmedUseCase })
   });
   const data = await res.json();
 
   const backend = data.backend || {};
   const isConfigured = Boolean(backend.configured) && res.ok;
-  const stateClass = isConfigured ? 'ok' : 'err';
-  const stateLabel = isConfigured ? 'OpenAI API Connected' : 'OpenAI API Not Connected';
-  apiState.innerHTML = `<span class="pill ${stateClass}">${stateLabel}</span>`;
+  apiState.innerHTML = `<span class="pill ${isConfigured ? 'ok' : 'err'}">${isConfigured ? 'OpenAI API Connected' : 'OpenAI API Not Connected'}</span>`;
 
-  const requestId = data.request_id || 'n/a';
-  const model = backend.model || 'n/a';
-  const baseUrl = backend.base_url || 'n/a';
-  meta.textContent = `request_id=${requestId} · provider=${backend.provider || 'n/a'} · model=${model} · base_url=${baseUrl}`;
+  meta.textContent = `request_id=${data.request_id || 'n/a'} · provider=${backend.provider || 'n/a'} · model=${backend.model || 'n/a'} · base_url=${backend.base_url || 'n/a'}`;
 
   if (!res.ok) {
-    const error = data.error || 'unknown error';
     log.innerHTML = '';
-    appendMessage('system', `Request failed (${res.status}): ${error}`);
+    appendMessage('system', `Request failed (${res.status}): ${data.error || 'unknown error'}`);
+    clearArtifact();
     return;
   }
-  await streamLines(data.lines || ['No output lines returned.']);
+
+  const lines = data.lines || ['No output lines returned.'];
+  createArtifact(level, lines);
+  await streamLines(lines);
 }
 
 function renderUseCases(data) {
@@ -129,14 +145,8 @@ async function init(){
     const [levelsResponse, useCasesResponse] = await Promise.all([fetch('/api/levels'), fetch('/api/use-cases')]);
     const levels = await levelsResponse.json();
     const useCases = await useCasesResponse.json();
-
-    if (!levelsResponse.ok || !levels.levels || !useCasesResponse.ok || !useCases.use_cases) {
-      clearOutput('Could not load configuration.');
-      return;
-    }
-
+    if (!levelsResponse.ok || !levels.levels || !useCasesResponse.ok || !useCases.use_cases) return clearOutput('Could not load configuration.');
     renderUseCases(useCases.use_cases);
-
     Object.entries(levels.levels).forEach(([k,v]) => {
       const btn = document.createElement('button');
       btn.textContent = `Level ${k}: ${v.name}`;
