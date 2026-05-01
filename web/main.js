@@ -15,6 +15,10 @@ const entry = document.getElementById('entry');
 const app = document.getElementById('app');
 const startBtn = document.getElementById('start-btn');
 
+function updateLevelButtonsVisibility() {
+  buttons.classList.toggle('hidden', !selectedUseCase);
+}
+
 let latestArtifact = null;
 
 function enterDemo() {
@@ -158,6 +162,7 @@ function renderUseCases(data) {
       document.querySelectorAll('.option').forEach((el) => el.classList.remove('active'));
       option.classList.add('active');
       clearOutput('Use case changed. Previous output cleared. Confirm direction to continue.');
+      updateLevelButtonsVisibility();
     };
     useCaseOptions.appendChild(option);
   });
@@ -183,6 +188,7 @@ async function init(){
       btn.onclick = () => runLevel(k);
       buttons.appendChild(btn);
     });
+    updateLevelButtonsVisibility();
   } catch (err) {
     clearOutput(`Could not load configuration: ${err.message}`);
   }
