@@ -3,30 +3,51 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>8 Levels of AI Competence Demo</title>
+    <title>Glitch · 8 Levels of AI Competence Demo</title>
     <style>
       body { font-family: Arial, sans-serif; margin: 1.5rem; background: #0f172a; color: #e2e8f0; }
+      .hidden { display: none; }
+      .card { background: #111827; border: 1px solid #334155; border-radius: 10px; padding: 1rem; margin-bottom: 1rem; }
       .grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(220px,1fr)); gap: 0.75rem; }
+      .choices { display: grid; grid-template-columns: repeat(auto-fit,minmax(250px,1fr)); gap: 0.75rem; margin-top: 0.8rem; }
       button { padding: 0.65rem; background: #1d4ed8; color: white; border: 0; border-radius: 8px; cursor: pointer; }
       button:hover { background: #2563eb; }
+      .option { text-align: left; background: #1e293b; }
+      .option.active { outline: 2px solid #60a5fa; background: #1d4ed8; }
       #log { white-space: pre-wrap; background: #111827; border: 1px solid #334155; border-radius: 8px; padding: 1rem; min-height: 280px; margin-top: 1rem; }
       .muted { color: #94a3b8; }
       .status { margin: 0.8rem 0; padding: 0.75rem; border-radius: 8px; border: 1px solid #334155; background: #0b1220; display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
       .pill { font-weight: 700; padding: 0.2rem 0.5rem; border-radius: 9999px; }
       .pill.ok { background: #14532d; color: #86efac; }
       .pill.err { background: #7f1d1d; color: #fecaca; }
+      .spinner { width: 14px; height: 14px; border: 2px solid #93c5fd; border-top-color: transparent; border-radius: 50%; display: inline-block; animation: spin 0.8s linear infinite; vertical-align: middle; margin-right: 0.4rem; }
+      @keyframes spin { to { transform: rotate(360deg); } }
       #meta { color: #cbd5e1; font-size: 0.9rem; }
     </style>
   </head>
   <body>
-    <h1><img src="assets/glitch-logo.svg" alt="Glitch logo" style="max-width: 340px; width: 100%; height: auto;" /></h1>
-    <p class="muted">Click a level to run a visible demonstration. Output streams below for human-friendly interpretation.</p>
-    <div class="grid" id="buttons"></div>
-    <div class="status">
-      <div id="api-state"><span class="pill">Waiting</span></div>
-      <div id="meta">Run a level to verify the API path, model, and request id.</div>
-    </div>
-    <div id="log">Select a level to begin.</div>
+    <section id="entry" class="card">
+      <h1><img src="assets/glitch-logo.svg" alt="Glitch logo" style="max-width: 340px; width: 100%; height: auto;" /></h1>
+      <p>Welcome to Glitch — an interactive 8-level AI competence demo with human-in-the-loop controls.</p>
+      <p class="muted">Choose a use case, confirm direction, then run levels with clear streaming output.</p>
+      <button id="start-btn">Enter Demo</button>
+    </section>
+
+    <section id="app" class="hidden">
+      <p class="muted">Select a use case option. Changing this option clears previous outputs.</p>
+      <div id="use-case-options" class="choices"></div>
+      <div class="card">
+        <strong>Human-in-the-loop confirmation:</strong>
+        <p id="selection-label" class="muted">No use case selected yet.</p>
+        <button id="confirm-btn" disabled>Confirm this direction</button>
+      </div>
+      <div class="grid" id="buttons"></div>
+      <div class="status">
+        <div id="api-state"><span class="pill">Waiting</span></div>
+        <div id="meta">Confirm a use case, then run a level to verify API path, model, and request id.</div>
+      </div>
+      <div id="log">Select and confirm a use case to begin.</div>
+    </section>
     <script src="main.js"></script>
   </body>
 </html>
