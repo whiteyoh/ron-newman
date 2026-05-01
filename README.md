@@ -100,3 +100,56 @@ The CI workflow (`.github/workflows/ci.yml`) runs the same sequence automaticall
 4. Run tests
 5. Launch `app.py` and verify `GET /api/levels` responds
 6. If `OPENAI_API_KEY` is set in repository secrets, call `GET /api/run/1` and print the model completion line in Actions logs
+
+---
+
+## Deploy on Render (onrender.com)
+
+This repo includes a `render.yaml` Blueprint, so Render can auto-configure the web service.
+
+### 1) Push this repository to GitHub
+Render deploys directly from your Git repository.
+
+### 2) Create the web service in Render
+1. In Render, choose **New +** → **Blueprint**.
+2. Connect your GitHub account/repo.
+3. Select this repository; Render will detect `render.yaml`.
+
+### 3) Configure required secret
+Set this environment variable in Render:
+- `OPENAI_API_KEY` = your OpenAI API key
+
+Optional overrides (already defaulted in `render.yaml`):
+- `OPENAI_MODEL` (default `gpt-4.1-mini`)
+- `OPENAI_BASE_URL` (default `https://api.openai.com/v1`)
+
+### 4) Deploy
+Render will run:
+- Build: `pip install -r requirements.txt`
+- Start: `python app.py`
+
+The app binds to `0.0.0.0` and reads Render's `PORT`, so traffic routing works out of the box.
+
+### 5) Verify after deploy
+- Open `https://<your-service>.onrender.com/api/levels`
+- You should receive JSON containing the 8 levels.
+
+---
+
+## Quick Code Review for Production Readiness
+
+### What is already good
+- Uses `PORT` env var for cloud routing compatibility.
+- Structured JSON error responses with request IDs.
+- Timeout and upstream error handling in OpenAI client.
+- API-level tests already exist.
+
+### Changes made for Render readiness
+- Updated default host binding to `0.0.0.0` for cloud deployment safety.
+- Added `render.yaml` with health check (`/api/levels`) and env scaffolding.
+
+### Recommended next hardening steps
+- Add basic request rate limiting to protect `/api/run`.
+- Add lightweight auth if this won’t be a public demo.
+- Pin dependency versions in `requirements.txt` for reproducible builds.
+- Add a dedicated `/healthz` endpoint if you want infra and app health separated from business endpoints.
