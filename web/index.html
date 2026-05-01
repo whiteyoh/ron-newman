@@ -74,7 +74,46 @@
       .thinking { display: inline-flex; align-items: center; gap: 0.5rem; }
       .robot-spinner { width: 24px; height: 24px; animation: spin 1.3s linear infinite; }
       @keyframes spin { from { transform: rotate(0deg);} to { transform: rotate(360deg);} }
-      .footer { text-align: center; padding: 0.85rem 1rem 0.5rem; font-size: 0.9rem; color: var(--muted); }
+      .footer {
+        position: relative;
+        margin-top: 1.25rem;
+        text-align: center;
+        padding: 1rem 1.2rem;
+        font-size: 0.9rem;
+        color: #d9e3ff;
+        border: 1px solid rgba(255,255,255,0.18);
+        border-radius: 16px;
+        background:
+          linear-gradient(120deg, rgba(104, 231, 255, 0.12), rgba(143, 141, 255, 0.12)),
+          rgba(7, 14, 33, 0.85);
+        box-shadow:
+          inset 0 1px 0 rgba(255,255,255,0.2),
+          0 14px 30px rgba(5, 8, 22, 0.45);
+        backdrop-filter: blur(14px);
+      }
+      .footer::before {
+        content: "";
+        position: absolute;
+        inset: -1px;
+        border-radius: inherit;
+        padding: 1px;
+        background: linear-gradient(100deg, rgba(104, 231, 255, 0.45), rgba(143, 141, 255, 0.45));
+        -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        pointer-events: none;
+      }
+      .footer strong {
+        letter-spacing: 0.02em;
+      }
+      .footer a {
+        color: var(--accent);
+        text-decoration: none;
+        border-bottom: 1px dashed rgba(104, 231, 255, 0.55);
+      }
+      .footer a:hover {
+        color: #baf5ff;
+      }
       @media (max-width: 768px) {
         body { padding: 0.75rem; }
         .card { padding: 1rem; border-radius: 14px; }
@@ -89,7 +128,7 @@
       <h1><img src="assets/glitch-logo.svg" alt="Glitch logo" style="max-width: 360px; width: 100%; height: auto;" /></h1>
       <p>Welcome to Glitch — an interactive 8-level AI competence studio for lesson and revision design.</p>
       <p class="muted">Choose a use case, confirm direction, run levels, and export the generated artifact instantly.</p>
-      <p class="muted">Need the conceptual background first? Read <a href="/README_YEGGE_8_LAYERS_EXPLAINED.md" target="_blank" rel="noopener noreferrer">Yegge’s 8 layers explained</a>.</p>
+      <p class="muted">Need the conceptual background first? Read <a href="https://justin.abrah.ms/blog/2026-01-08-yegge-s-developer-agent-evolution-model.html" target="_blank" rel="noopener noreferrer">Yegge’s developer-agent evolution model</a>.</p>
       <button id="start-btn">Enter Demo</button>
     </section>
 
@@ -111,7 +150,7 @@
       </div>
       <div id="log">Select and confirm a use case to begin.</div>
     </section>
-    <footer class="footer">Built with Glitch · Mobile-friendly demo mode enabled.</footer>
+    <footer class="footer"><strong>Built with Glitch</strong> · Mobile-friendly demo mode enabled · <a href="https://justin.abrah.ms/blog/2026-01-08-yegge-s-developer-agent-evolution-model.html" target="_blank" rel="noopener noreferrer">Design inspiration</a></footer>
     </div>
     <div id="use-case-modal" class="modal-backdrop hidden">
       <div class="modal">
