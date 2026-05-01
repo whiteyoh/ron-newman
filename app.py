@@ -73,14 +73,14 @@ class Handler(SimpleHTTPRequestHandler):
             length = int(self.headers.get("Content-Length", "0"))
             data = json.loads(self.rfile.read(length).decode("utf-8"))
             level = data.get("level")
-            use_case_key = data.get("use_case", "saas_product")
+            use_case_key = data.get("use_case", "uk_year10_teacher")
         except Exception:
             self._send_json(400, {"request_id": request_id, "error": "invalid JSON payload"})
             return
 
         self._execute_level(str(level), request_id, path, start, str(use_case_key))
 
-    def _execute_level(self, level_text: str, request_id: str, path: str, start: float, use_case_key: str = "saas_product"):
+    def _execute_level(self, level_text: str, request_id: str, path: str, start: float, use_case_key: str = "uk_year10_teacher"):
         try:
             level = int(level_text)
             if level not in LEVELS:

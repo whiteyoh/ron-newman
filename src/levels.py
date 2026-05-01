@@ -25,7 +25,7 @@ def run_level(level: int, client, use_case_key: str = DEFAULT_USE_CASE_KEY) -> d
         }
 
     if level == 1:
-        prompt = use_case_prompt("The support agent replies: 'I understand your issue, and I can'", use_case)
+        prompt = use_case_prompt("The teacher begins the lesson: 'Today we're mastering key ideas by'", use_case)
         completion = client.chat("Continue the text naturally in one short phrase.", prompt)
         lines = [f"Prompt: {prompt}", f"Model completion: {completion}"]
     elif level == 2:
@@ -38,29 +38,29 @@ def run_level(level: int, client, use_case_key: str = DEFAULT_USE_CASE_KEY) -> d
         answer = client.chat("You can call a calculator. Return final numeric answer only.", use_case_prompt(f"Use calculator result {tool_result} for expression {expression}.", use_case))
         lines = [f"Task expression: {expression}", f"calculator_tool => {tool_result}", f"Model final answer: {answer}"]
     elif level == 4:
-        question = "What is the default port for Postgres?"
+        question = "What is a SMART learning objective?"
         evidence = retrieve_local_facts(question)
         answer = client.chat("Answer only from supplied evidence. If missing, say unknown.", use_case_prompt(f"Question: {question}\nEvidence: {evidence}", use_case))
         lines = [f"Question: {question}", f"Retrieved evidence: {evidence}", f"Grounded answer: {answer}"]
     elif level == 5:
-        goal = use_case_prompt("Design a 2-hour training workshop for support agents.", use_case)
+        goal = use_case_prompt("Design a 2-hour Year 10 revision workshop.", use_case)
         plan = client.chat("Create a concise numbered plan.", goal)
         agenda = client.chat("Execute the plan into a timed agenda with bullet points.", plan)
         lines = [f"Goal: {goal}", "Plan:", plan, "Executed agenda:", agenda]
     elif level == 6:
-        draft = client.chat("Write a short release note with one clear benefit.", use_case_prompt("We shipped faster support search.", use_case))
+        draft = client.chat("Write a short lesson-summary note with one clear learner benefit.", use_case_prompt("Students can now self-test using spaced retrieval prompts.", use_case))
         critique = client.chat("Critique this draft in two bullets.", draft)
         improved = client.chat("Revise the draft using this critique.", f"Draft:\n{draft}\n\nCritique:\n{critique}")
         lines = ["Initial draft:", draft, "Critique:", critique, "Improved draft:", improved]
     elif level == 7:
-        prompt = use_case_prompt("Propose a secure, low-cost internal support assistant for a 30-person startup.", use_case)
+        prompt = use_case_prompt("Propose a low-cost AI assistant that helps teachers build lesson and revision resources.", use_case)
         researcher = client.chat("You are ResearchAgent. List constraints and risks.", prompt)
         planner = client.chat("You are PlannerAgent. Propose architecture using research notes.", researcher)
         critic = client.chat("You are CriticAgent. Find weaknesses and improvements.", planner)
         final = client.chat("You are Coordinator. Produce final recommendation.", f"Plan:\n{planner}\n\nCritique:\n{critic}")
         lines = ["ResearchAgent:", researcher, "PlannerAgent:", planner, "CriticAgent:", critic, "Coordinator output:", final]
     else:
-        seed = use_case_prompt("Draft guidance for writing effective support ticket updates.", use_case)
+        seed = use_case_prompt("Draft guidance for writing effective lesson and revision plans.", use_case)
         v1 = client.chat("Write a first draft.", seed)
         score1 = client.chat("Score this from 0-100 for clarity and actionability, return only integer.", v1)
         v2 = client.chat("Improve this draft to increase clarity and actionability.", v1)
