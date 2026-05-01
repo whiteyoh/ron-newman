@@ -36,6 +36,12 @@ def test_retrieve_local_facts_known_key():
     assert retrieve_local_facts("Which port does Redis use?") == "Redis default port is 6379."
 
 
+
+
+def test_retrieve_local_facts_smart_learning_objective():
+    assert retrieve_local_facts("What is a SMART learning objective?") == (
+        "A SMART learning objective is Specific, Measurable, Achievable, Relevant, and Time-bound."
+    )
 def test_retrieve_local_facts_unknown_key():
     assert retrieve_local_facts("What is Kafka default port?") == "No matching fact found in local knowledge base."
 

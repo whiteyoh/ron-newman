@@ -61,6 +61,8 @@ def retrieve_local_facts(question: str) -> str:
         "postgres": "PostgreSQL default port is 5432.",
         "redis": "Redis default port is 6379.",
         "nginx": "Nginx commonly serves HTTP on port 80.",
+        "smart learning objective": "A SMART learning objective is Specific, Measurable, Achievable, Relevant, and Time-bound.",
+        "smart objective": "A SMART learning objective is Specific, Measurable, Achievable, Relevant, and Time-bound.",
     }
     lower_question = question.lower()
     for key, value in kb.items():
