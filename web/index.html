@@ -14,7 +14,11 @@
       button:hover { background: #2563eb; }
       .option { text-align: left; background: #1e293b; }
       .option.active { outline: 2px solid #60a5fa; background: #1d4ed8; }
-      #log { white-space: pre-wrap; background: #111827; border: 1px solid #334155; border-radius: 8px; padding: 1rem; min-height: 280px; margin-top: 1rem; }
+      #log { background: #0b1220; border: 1px solid #334155; border-radius: 8px; padding: 1rem; min-height: 280px; margin-top: 1rem; display: flex; flex-direction: column; gap: 0.5rem; overflow-y: auto; }
+      .msg { max-width: 82%; padding: 0.65rem 0.8rem; border-radius: 0.8rem; line-height: 1.35; white-space: pre-wrap; word-break: break-word; }
+      .msg.system { align-self: center; background: #1f2937; color: #cbd5e1; font-size: 0.92rem; }
+      .msg.user { align-self: flex-end; background: #1d4ed8; color: #eff6ff; }
+      .msg.ai { align-self: flex-start; background: #1e293b; color: #e2e8f0; border: 1px solid #334155; }
       .muted { color: #94a3b8; }
       .status { margin: 0.8rem 0; padding: 0.75rem; border-radius: 8px; border: 1px solid #334155; background: #0b1220; display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
       .pill { font-weight: 700; padding: 0.2rem 0.5rem; border-radius: 9999px; }
