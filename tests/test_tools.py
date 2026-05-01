@@ -52,6 +52,12 @@ def test_use_case_prompt_includes_human_revision_requirements():
     assert "do not ask follow-up questions" in result
 
 
+
+
+def test_use_case_prompt_includes_human_next_steps_section():
+    result = use_case_prompt("Draft a response")
+    assert "What you should do next" in result
+    assert "classroom session breakdown" in result
 def test_use_case_prompt_prefixes_text():
     result = use_case_prompt("Draft a response")
     assert "Use case for all levels" in result
