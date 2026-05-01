@@ -29,15 +29,35 @@ let confirmedUseCase = null;
 function sleep(ms){ return new Promise(r => setTimeout(r, ms)); }
 
 function clearOutput(message = 'Output cleared. Select a level to begin.') {
-  log.textContent = message;
+  log.innerHTML = '';
+  appendMessage('system', message);
   meta.textContent = 'Run a level to verify API path, model, and request id.';
   apiState.innerHTML = '<span class="pill">Waiting</span>';
 }
 
+function appendMessage(role, text) {
+  const item = document.createElement('div');
+  item.className = `msg ${role}`;
+  item.textContent = text;
+  log.appendChild(item);
+  log.scrollTop = log.scrollHeight;
+}
+
+function inferRole(line) {
+  const l = line.toLowerCase();
+  if (l.includes('prompt:') || l.includes('instruction:') || l.includes('question:') || l.includes('goal:') || l.includes('task expression:')) {
+    return 'user';
+  }
+  if (l.includes('model') || l.includes('answer') || l.includes('draft') || l.includes('coordinator output') || l.includes('plan:') || l.includes('agenda')) {
+    return 'ai';
+  }
+  return 'system';
+}
+
 async function streamLines(lines){
-  log.textContent = '';
+  log.innerHTML = '';
   for (const line of lines){
-    log.textContent += line + '\n';
+    appendMessage(inferRole(line), line);
     await sleep(350);
   }
 }
@@ -49,7 +69,8 @@ async function runLevel(level){
   }
 
   apiState.innerHTML = '<span class="pill"><span class="spinner"></span>Running…</span>';
-  log.textContent = 'Working...';
+  log.innerHTML = '';
+  appendMessage('system', 'Working...');
 
   const res = await fetch('/api/run', {
     method: 'POST',
@@ -71,7 +92,8 @@ async function runLevel(level){
 
   if (!res.ok) {
     const error = data.error || 'unknown error';
-    log.textContent = `Request failed (${res.status}): ${error}`;
+    log.innerHTML = '';
+    appendMessage('system', `Request failed (${res.status}): ${error}`);
     return;
   }
   await streamLines(data.lines || ['No output lines returned.']);
@@ -109,7 +131,7 @@ async function init(){
     const useCases = await useCasesResponse.json();
 
     if (!levelsResponse.ok || !levels.levels || !useCasesResponse.ok || !useCases.use_cases) {
-      log.textContent = 'Could not load configuration.';
+      clearOutput('Could not load configuration.');
       return;
     }
 
@@ -122,7 +144,7 @@ async function init(){
       buttons.appendChild(btn);
     });
   } catch (err) {
-    log.textContent = `Could not load configuration: ${err.message}`;
+    clearOutput(`Could not load configuration: ${err.message}`);
   }
 }
 
