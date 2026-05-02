@@ -51,8 +51,8 @@ jobs:
           sleep 2
           curl -fsS -X POST http://127.0.0.1:18001/api/run -H 'content-type: application/json' -d '{"level":1}' > /tmp/openai.json
           python - <<'PY'
-import json
-p = json.load(open('/tmp/openai.json'))
-assert p.get('lines')
-print('Live smoke ok')
-PY
+          import json
+          p = json.load(open('/tmp/openai.json'))
+          assert p.get('lines')
+          print('Live smoke ok')
+          PY
