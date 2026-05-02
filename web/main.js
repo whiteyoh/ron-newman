@@ -220,7 +220,7 @@ async function init(){
     Object.entries(levels.levels).forEach(([k,v]) => {
       const btn = document.createElement('button');
       btn.textContent = `Level ${k}: ${v.name}`;
-      btn.onclick = () => runLevel(k);
+      btn.onclick = () => runLevel(Number(k));
       buttons.appendChild(btn);
     });
     updateLevelButtonsVisibility();
