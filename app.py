@@ -17,7 +17,7 @@ ROOT = Path(__file__).parent
 WEB = ROOT / "web"
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
-logger = logging.getLogger("glytch-demo")
+logger = logging.getLogger("ron-newman-demo")
 
 
 class Handler(SimpleHTTPRequestHandler):

@@ -1,4 +1,4 @@
-![Glytch logo](../assets/glytch-logo.svg)
+![Ron Newman logo](../assets/ron-newman-logo.svg)
 
 # Scenario Use Cases (Given / When / Then)
 
