@@ -1,8 +1,8 @@
-![Ron Newman logo](assets/ron-newman-logo.svg)
+![Glytch logo](assets/glytch-logo.svg)
 
 ## Workshop Guide
 
-This guide explains the purpose and flow of the Ron Newman workshop.
+This guide explains the purpose and flow of the Glytch workshop.
 
 The workshop uses one set of scenario use cases across eight levels so participants can compare output quality, reliability, and operational complexity at each stage.
 

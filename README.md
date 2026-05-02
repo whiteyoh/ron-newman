@@ -1,6 +1,6 @@
-![Ron Newman logo](assets/ron-newman-logo.svg)
+![Glytch logo](assets/glytch-logo.svg)
 
-## Ron Newman Workshop Repository
+## Glytch Workshop Repository
 
 This repository contains an 8-level workshop that demonstrates how application behavior changes as system capability increases from simple prompting to evaluated workflows.
 

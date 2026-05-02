@@ -1,4 +1,4 @@
-![Ron Newman logo](../assets/ron-newman-logo.svg)
+![Glytch logo](../assets/glytch-logo.svg)
 
 ## Executive Brief
 This repository presents a workshop-first AI maturity program for leaders, product teams, and engineers, explicitly aligned to **Yegge’s 8 layers of AI competence**.
@@ -144,5 +144,5 @@ The program satisfies all eight layers with clear architectural separation betwe
 
 For executive decision-making, this should be treated as a **production-relevant maturity framework**: a practical path from basic language assistance to governed, self-improving AI operations.
 
-*This document is part of the Ron Newman project.*
+*This document is part of the Glytch project.*
 
