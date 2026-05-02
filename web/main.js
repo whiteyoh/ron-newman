@@ -10,6 +10,7 @@ const useCaseModal = document.getElementById('use-case-modal');
 const modalTitle = document.getElementById('modal-title');
 const modalBody = document.getElementById('modal-body');
 const modalCloseBtn = document.getElementById('modal-close');
+const contextInput = document.getElementById('context-input');
 
 const entry = document.getElementById('entry');
 const app = document.getElementById('app');
@@ -155,7 +156,7 @@ function renderUseCases(data) {
     });
     option.onclick = () => {
       selectedUseCase = key;
-      selectedUseCaseContext = prompt('Add any context (topic, lesson length, student constraints). This will be used directly.') || '';
+      selectedUseCaseContext = contextInput.value.trim();
       confirmedUseCase = null;
       confirmBtn.disabled = false;
       selectionLabel.textContent = `Selected (not confirmed): ${key.replaceAll('_', ' ')}${selectedUseCaseContext ? ` | context: ${selectedUseCaseContext}` : ''}`;
@@ -169,6 +170,7 @@ function renderUseCases(data) {
 }
 
 confirmBtn.onclick = () => {
+  selectedUseCaseContext = contextInput.value.trim();
   confirmedUseCase = selectedUseCase;
   selectionLabel.textContent = `Confirmed direction: ${document.querySelector('.option.active')?.textContent || 'n/a'}`;
   clearOutput('Direction confirmed. Choose a level to run.');
@@ -195,3 +197,8 @@ async function init(){
 }
 
 init();
+
+
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape') useCaseModal.classList.add('hidden');
+});
