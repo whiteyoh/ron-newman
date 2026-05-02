@@ -7,6 +7,17 @@ from src.agent_runtime import run_constrained_agent_loop
 from src.tools import calculator_tool, retrieve_local_facts
 
 
+LEVEL_ADVANCEMENT_REASONS = {
+    2: "It advances beyond Level 1 by obeying explicit instructions and constraints instead of only predicting likely next words.",
+    3: "It advances beyond Level 2 by taking external actions (tool calls) to get exact results, not just following text-only instructions.",
+    4: "It advances beyond Level 3 by grounding answers in retrieved evidence, so responses can be tied to provided facts.",
+    5: "It advances beyond Level 4 by planning and executing multiple connected steps toward a concrete goal.",
+    6: "It advances beyond Level 5 by evaluating and revising its own draft using critique feedback.",
+    7: "It advances beyond Level 6 by running a bounded agent loop with explicit observe-act-replan iterations and stop conditions.",
+    8: "It advances beyond Level 7 by scoring multiple candidate outputs and selecting the best improved result.",
+}
+
+
 def use_case_prompt(text: str, use_case: str | None = None) -> str:
     if use_case is None:
         use_case = USE_CASE_OPTIONS[DEFAULT_USE_CASE_KEY]
@@ -26,7 +37,10 @@ def run_level(
             f"Confirmed context from user: {use_case_context.strip()}\n"
             "Use this confirmed context directly and do not ask clarifying questions."
         )
-    intro = [f"Running Level {level}: {LEVELS[level]['name']}", LEVELS[level]["desc"], use_case]
+    intro = [f"Running Level {level}: {LEVELS[level]['name']}", LEVELS[level]["desc"]]
+    if level > 1:
+        intro.append(f"Why this is more advanced than Level {level - 1}: {LEVEL_ADVANCEMENT_REASONS[level]}")
+    intro.append(use_case)
 
     if not client.available():
         return {
