@@ -22,7 +22,10 @@ class _SafeMathEvaluator(ast.NodeVisitor):
         if self.depth > MAX_AST_DEPTH:
             raise ValueError("expression too deep")
         try:
-            return super().visit(node)
+            result = super().visit(node)
+            if isinstance(result, (int, float)):
+                return result
+            raise ValueError("expression did not evaluate to a numeric value")
         finally:
             self.depth -= 1
 
@@ -81,8 +84,14 @@ def retrieve_local_facts(question: str) -> str:
         "postgres": "PostgreSQL default port is 5432.",
         "redis": "Redis default port is 6379.",
         "nginx": "Nginx commonly serves HTTP on port 80.",
-        "smart learning objective": "A SMART learning objective is Specific, Measurable, Achievable, Relevant, and Time-bound.",
-        "smart objective": "A SMART learning objective is Specific, Measurable, Achievable, Relevant, and Time-bound.",
+        "smart learning objective": (
+            "A SMART learning objective is Specific, "
+            "Measurable, Achievable, Relevant, and Time-bound."
+        ),
+        "smart objective": (
+            "A SMART learning objective is Specific, Measurable, "
+            "Achievable, Relevant, and Time-bound."
+        ),
     }
     lower_question = question.lower()
     for key, value in kb.items():
