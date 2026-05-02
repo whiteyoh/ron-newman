@@ -17,6 +17,33 @@ LEVEL_ADVANCEMENT_REASONS = {
     8: "It advances beyond Level 7 by scoring multiple candidate outputs and selecting the best improved result.",
 }
 
+LEVEL_CONTEXT_TIP_TEMPLATES = {
+    1: "Starter tip: for {topic}, write one clear next sentence you can immediately use.",
+    2: "Constraint tip: for {topic}, force your prompt to include a word limit and exact output format.",
+    3: "Tool tip: for {topic}, use a concrete check (dates, marks, timings, formulas) before finalizing.",
+    4: "Evidence tip: for {topic}, anchor your answer to at least two specific facts or examples.",
+    5: "Planning tip: for {topic}, split work into timed blocks with a clear result for each block.",
+    6: "Revision tip: for {topic}, run one critique pass focused on clarity and learner usefulness.",
+    7: "Agent tip: for {topic}, iterate in short cycles (observe -> act -> review) with a stop condition.",
+    8: "Optimization tip: for {topic}, compare multiple drafts and keep the one with the strongest actionability.",
+}
+
+
+def _topic_from_context(use_case_context: str | None, use_case: str) -> str:
+    if use_case_context and use_case_context.strip():
+        return use_case_context.strip()
+    if "revision" in use_case.lower():
+        return "revision"
+    if "lesson" in use_case.lower():
+        return "lesson planning"
+    return "your current topic"
+
+
+def _contextual_tip(level: int, use_case_context: str | None, use_case: str) -> str:
+    topic = _topic_from_context(use_case_context, use_case)
+    template = LEVEL_CONTEXT_TIP_TEMPLATES[level]
+    return template.format(topic=topic)
+
 
 def use_case_prompt(text: str, use_case: str | None = None) -> str:
     if use_case is None:
@@ -37,7 +64,12 @@ def run_level(
             f"Confirmed context from user: {use_case_context.strip()}\n"
             "Use this confirmed context directly and do not ask clarifying questions."
         )
-    intro = [f"Running Level {level}: {LEVELS[level]['name']}", LEVELS[level]["desc"]]
+    intro = [
+        f"Running Level {level}: {LEVELS[level]['name']}",
+        LEVELS[level]["desc"],
+        f"Nourishment: {LEVELS[level]['nourishment']}",
+        f"Topic tip: {_contextual_tip(level, use_case_context, use_case)}",
+    ]
     if level > 1:
         intro.append(f"Why this is more advanced than Level {level - 1}: {LEVEL_ADVANCEMENT_REASONS[level]}")
     intro.append(use_case)
