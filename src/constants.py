@@ -1,12 +1,44 @@
 LEVELS = {
-    1: {"name": "Autocomplete", "desc": "Predicts likely next text from a short prompt."},
-    2: {"name": "Instruction Following", "desc": "Follows explicit constraints in a prompt."},
-    3: {"name": "Tool Use", "desc": "Selects and uses a calculator tool for exact arithmetic."},
-    4: {"name": "Retrieval + Grounding", "desc": "Reads local facts, then answers using retrieved context."},
-    5: {"name": "Multi-step Reasoning", "desc": "Builds and executes a structured plan for a concrete goal."},
-    6: {"name": "Critique + Revision", "desc": "Uses model critique to revise an initial draft once."},
-    7: {"name": "Constrained Agent Loop", "desc": "Runs a bounded observe, act, observe, replan cycle using allowed tools and explicit stop conditions."},
-    8: {"name": "Self-improving Workflow", "desc": "Scores outputs and keeps the best improved candidate."},
+    1: {
+        "name": "Autocomplete",
+        "desc": "Predicts likely next text from a short prompt.",
+        "nourishment": "Gives a fast first draft you can react to instead of starting from a blank page.",
+    },
+    2: {
+        "name": "Instruction Following",
+        "desc": "Follows explicit constraints in a prompt.",
+        "nourishment": "Improves reliability by honoring exact format, length, and scope requirements.",
+    },
+    3: {
+        "name": "Tool Use",
+        "desc": "Selects and uses a calculator tool for exact arithmetic.",
+        "nourishment": "Raises accuracy for concrete tasks by combining language with dependable tool outputs.",
+    },
+    4: {
+        "name": "Retrieval + Grounding",
+        "desc": "Reads local facts, then answers using retrieved context.",
+        "nourishment": "Builds trust by tying responses to evidence instead of free-form guessing.",
+    },
+    5: {
+        "name": "Multi-step Reasoning",
+        "desc": "Builds and executes a structured plan for a concrete goal.",
+        "nourishment": "Turns broad goals into actionable sequences that are easier to execute.",
+    },
+    6: {
+        "name": "Critique + Revision",
+        "desc": "Uses model critique to revise an initial draft once.",
+        "nourishment": "Improves quality through a quick feedback loop before you use the result.",
+    },
+    7: {
+        "name": "Constrained Agent Loop",
+        "desc": "Runs a bounded observe, act, observe, replan cycle using allowed tools and explicit stop conditions.",
+        "nourishment": "Adds controlled autonomy so complex tasks progress safely with visible reasoning steps.",
+    },
+    8: {
+        "name": "Self-improving Workflow",
+        "desc": "Scores outputs and keeps the best improved candidate.",
+        "nourishment": "Delivers stronger final answers by iterating and selecting the best-performing version.",
+    },
 }
 
 USE_CASE_OPTIONS = {
