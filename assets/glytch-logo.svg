@@ -1,4 +1,4 @@
-<svg width="960" height="280" viewBox="0 0 960 280" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Ron Newman - intelligently artificial logo">
+<svg width="960" height="280" viewBox="0 0 960 280" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Glytch - intelligently artificial logo">
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0%" stop-color="#0b1020"/>
@@ -21,9 +21,9 @@
   <rect x="0" y="0" width="960" height="280" rx="24" fill="url(#bg)"/>
 
   <g filter="url(#glow)">
-    <text x="54" y="132" font-size="76" font-family="'Segoe UI', 'Inter', sans-serif" font-weight="800" fill="url(#text)">RON NEWMAN</text>
-    <text x="56" y="138" font-size="76" font-family="'Segoe UI', 'Inter', sans-serif" font-weight="800" fill="#ff4d8d" opacity="0.28">RON NEWMAN</text>
-    <text x="50" y="126" font-size="76" font-family="'Segoe UI', 'Inter', sans-serif" font-weight="800" fill="#22d3ee" opacity="0.28">RON NEWMAN</text>
+    <text x="54" y="132" font-size="76" font-family="'Segoe UI', 'Inter', sans-serif" font-weight="800" fill="url(#text)">GLYTCH</text>
+    <text x="56" y="138" font-size="76" font-family="'Segoe UI', 'Inter', sans-serif" font-weight="800" fill="#ff4d8d" opacity="0.28">GLYTCH</text>
+    <text x="50" y="126" font-size="76" font-family="'Segoe UI', 'Inter', sans-serif" font-weight="800" fill="#22d3ee" opacity="0.28">GLYTCH</text>
   </g>
 
   <text x="56" y="194" font-size="30" font-family="'Consolas', 'Menlo', monospace" letter-spacing="1.2" fill="#d7dbf5">intelligently artificial</text>

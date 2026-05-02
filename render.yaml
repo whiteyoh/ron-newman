@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: ron-newman-app
+    name: glytch-app
     runtime: python
     plan: free
     buildCommand: pip install -r requirements.txt
