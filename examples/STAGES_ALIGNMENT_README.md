@@ -1,6 +1,6 @@
-![Glitch logo](../assets/glitch-logo.svg)
+![Glytch logo](../assets/glytch-logo.svg)
 
-This document explains how each example (`examples/level1` through `examples/level8`) maps to the Glitch workshop's eight stages of AI capability.
+This document explains how each example (`examples/level1` through `examples/level8`) maps to the Glytch workshop's eight stages of AI capability.
 
 ## Stage 1 — Autocomplete (`examples/level1`)
 

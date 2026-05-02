@@ -1,4 +1,4 @@
-![Glitch logo](assets/glitch-logo.svg)
+![Glytch logo](assets/glytch-logo.svg)
 
 ## 8-Layer Capability Model
 

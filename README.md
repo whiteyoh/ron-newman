@@ -1,6 +1,6 @@
-![Glitch logo](assets/glitch-logo.svg)
+![Glytch logo](assets/glytch-logo.svg)
 
-## Glitch Workshop Repository
+## Glytch Workshop Repository
 
 This repository contains an 8-level workshop that demonstrates how application behavior changes as system capability increases from simple prompting to evaluated workflows.
 
