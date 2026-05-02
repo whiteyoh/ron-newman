@@ -1,6 +1,10 @@
+from __future__ import annotations
+
 import json
 from dataclasses import dataclass
 from typing import Any, Callable
+
+from src.types import AIChatClient
 
 
 ALLOWED_ACTIONS = {"research", "calculate", "draft", "finish"}
@@ -49,7 +53,7 @@ def _parse_decision(raw: str) -> AgentDecision | None:
     return AgentDecision(action=action, input=tool_input, reason=reason, final=final)
 
 
-def choose_next_action(client, objective: str, trace: list[AgentStep], last_observation: str) -> AgentDecision:
+def choose_next_action(client: AIChatClient, objective: str, trace: list[AgentStep], last_observation: str) -> AgentDecision:
     trace_lines = [
         f"#{step.iteration} action={step.action} reason={step.reason} input={step.tool_input} observation={step.observation}"
         for step in trace
@@ -83,7 +87,7 @@ def choose_next_action(client, objective: str, trace: list[AgentStep], last_obse
 
 
 def run_constrained_agent_loop(
-    client,
+    client: AIChatClient,
     objective: str,
     retrieve_fn: Callable[[str], str],
     calculate_fn: Callable[[str], str],

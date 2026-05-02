@@ -9,29 +9,11 @@
     <meta property="og:title" content="Glytch · 8 Levels of AI Competence Demo" />
     <meta property="og:description" content="Run guided AI competence levels, confirm direction, and export artifacts." />
     <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://glytch.uk" />
+    <link rel="canonical" href="https://glytch.uk" />
     <meta name="theme-color" content="#050816" />
-    <style>
-      :root { --bg:#050816;--panel:rgba(14,23,51,.72);--panel-strong:rgba(11,19,43,.9);--text:#e6ecff;--muted:#a8b5de;--accent:#68e7ff;--accent-2:#8f8dff;--ok:#39d98a;--err:#ff6b90; }
-      * { box-sizing:border-box; }
-      body { margin:0; min-height:100vh; font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; color:var(--text); background:radial-gradient(circle at 10% 10%, rgba(104,231,255,.18), transparent 30%),radial-gradient(circle at 90% 0%, rgba(143,141,255,.2), transparent 32%),linear-gradient(160deg,#040611,#0b1430 50%,#050816); padding:1rem; }
-      .hidden{display:none!important}.shell{max-width:1100px;margin:0 auto}.card{background:var(--panel);border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:1.25rem;margin-bottom:1rem;backdrop-filter:blur(16px);box-shadow:0 18px 40px rgba(0,0,0,.35)}
-      .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:.65rem}.choices{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:.8rem;margin-top:.8rem}
-      button{padding:.75rem .9rem;background:linear-gradient(135deg,#4062ff,#6f64ff);color:#fff;border:1px solid rgba(255,255,255,.2);border-radius:12px;cursor:pointer;transition:transform .2s ease,box-shadow .2s ease,opacity .2s ease}
-      button:hover{transform:translateY(-1px);box-shadow:0 10px 20px rgba(111,100,255,.28)}button:disabled{opacity:.55;cursor:not-allowed}
-      .option{text-align:left;background:var(--panel-strong)}.option.active{outline:2px solid var(--accent);background:rgba(50,67,153,.9)}.option strong{display:block;margin-bottom:.3rem;text-transform:capitalize}
-      #log{background:rgba(5,12,29,.75);border:1px solid rgba(255,255,255,.14);border-radius:14px;padding:1rem;min-height:300px;max-height:44vh;margin-top:1rem;display:flex;flex-direction:column;gap:.5rem;overflow-y:auto}
-      .msg{max-width:85%;padding:.65rem .8rem;border-radius:.85rem;line-height:1.35;white-space:pre-wrap;word-break:break-word}.msg.system{align-self:center;background:rgba(255,255,255,.08);color:#d7dffc;font-size:.92rem}.msg.user{align-self:flex-end;background:rgba(85,111,255,.9);color:#eef2ff}.msg.ai{align-self:flex-start;background:rgba(18,29,65,.92);border:1px solid rgba(255,255,255,.14)}
-      .muted{color:var(--muted)}.status{margin:.8rem 0;padding:.8rem;border-radius:12px;border:1px solid rgba(255,255,255,.14);background:rgba(5,12,29,.7);display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}.pill{font-weight:700;padding:.25rem .55rem;border-radius:9999px;background:rgba(255,255,255,.1)}.pill.ok{background:rgba(57,217,138,.15);color:#9df7c6}.pill.err{background:rgba(255,107,144,.16);color:#ffc5d5}
-      .toolbar{display:flex;gap:.7rem;flex-wrap:wrap;margin-top:.85rem}.ghost{background:transparent;border:1px solid rgba(255,255,255,.2)}#meta{color:#d0daf7;font-size:.9rem}
-      .skip-link{position:absolute;left:-999px;top:0;background:#fff;color:#111;padding:.5rem .7rem;border-radius:6px;z-index:100}.skip-link:focus{left:1rem;top:1rem}
-      .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;z-index:50;padding:1rem}.modal{width:min(680px,100%);max-height:80vh;overflow-y:auto;background:rgba(11,19,43,.98);border:1px solid rgba(255,255,255,.2);border-radius:16px;padding:1rem;box-shadow:0 24px 60px rgba(0,0,0,.45)}.modal header{display:flex;justify-content:space-between;align-items:center;gap:1rem}
-      .thinking{display:inline-flex;align-items:center;gap:.5rem}.robot-spinner{width:24px;height:24px;animation:spin 1.3s linear infinite}@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
-      .footer{position:relative;margin-top:1.25rem;text-align:center;padding:1rem 1.2rem;font-size:.9rem;color:#d9e3ff;border:1px solid rgba(255,255,255,.18);border-radius:16px;background:linear-gradient(120deg, rgba(104,231,255,.12), rgba(143,141,255,.12)), rgba(7,14,33,.85);box-shadow:inset 0 1px 0 rgba(255,255,255,.2),0 14px 30px rgba(5,8,22,.45);backdrop-filter:blur(14px)}
-      .footer::before{content:"";position:absolute;inset:-1px;border-radius:inherit;padding:1px;background:linear-gradient(100deg, rgba(104,231,255,.45), rgba(143,141,255,.45));-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none}
-      .footer a{color:var(--accent);text-decoration:none;border-bottom:1px dashed rgba(104,231,255,.55)}.footer a:hover{color:#baf5ff}
-      @media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
-      @media (max-width:768px){body{padding:.75rem}.card{padding:1rem;border-radius:14px}#log{min-height:40vh;max-height:52vh}.msg{max-width:95%}}
-    </style>
+    <link rel="stylesheet" href="styles.css" />
+    
   </head>
   <body>
     <a class="skip-link" href="#app">Skip to demo</a>
@@ -64,7 +46,7 @@
         </div>
         <div id="log" role="log" aria-live="polite">Select and confirm a use case to begin.</div>
       </section>
-      <footer class="footer"><strong>Built with Glytch</strong> · Mobile-friendly demo mode enabled · <a href="https://github.com/ron-newman/ron-newman" target="_blank" rel="noopener noreferrer">GitHub repo</a> · <a href="https://justin.abrah.ms/blog/2026-01-08-yegge-s-developer-agent-evolution-model.html" target="_blank" rel="noopener noreferrer">Design inspiration</a></footer>
+      <footer class="footer"><strong>Built with Glytch</strong> · Mobile-friendly demo mode enabled · <a href="https://github.com/whiteyoh/ron-newman" target="_blank" rel="noopener noreferrer">GitHub repo</a> · <a href="https://justin.abrah.ms/blog/2026-01-08-yegge-s-developer-agent-evolution-model.html" target="_blank" rel="noopener noreferrer">Design inspiration</a></footer>
     </main>
     <div id="use-case-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="modal-title">
       <div class="modal">
