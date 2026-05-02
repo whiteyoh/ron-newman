@@ -120,12 +120,15 @@ async function runLevel(level){
 
   try {
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 10000);
+    const timeout = setTimeout(() => controller.abort(), 60000);
     const res = await fetch('/api/run', {
       method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ level, use_case: confirmedUseCase, use_case_context: selectedUseCaseContext }), signal: controller.signal
     });
     clearTimeout(timeout);
-    const data = await res.json();
+    const contentType = res.headers.get("content-type") || "";
+    const data = contentType.includes("application/json")
+      ? await res.json()
+      : { error: await res.text() };
 
   const backend = data.backend || {};
   const isConfigured = Boolean(backend.configured) && res.ok;
@@ -145,7 +148,11 @@ async function runLevel(level){
   await streamLines(lines);
   } catch (err) {
     log.innerHTML = "";
-    appendMessage('system', `Request failed: ${err.message}`);
+    const timedOut = err.name === "AbortError";
+    apiState.innerHTML = `<span class="pill err">${timedOut ? "Request timed out" : "OpenAI API Not Connected"}</span>`;
+    appendMessage('system', timedOut
+      ? "Request timed out after 60 seconds. Please try again or use a lighter prompt/context."
+      : `Request failed: ${err.message}`);
     clearArtifact();
   } finally {
     runInProgress = false;
@@ -190,10 +197,16 @@ function renderUseCases(data) {
 }
 
 confirmBtn.onclick = () => {
+  if (!selectedUseCase) {
+    clearOutput("Select a use case before confirming direction.");
+    return;
+  }
   selectedUseCaseContext = contextInput.value.trim();
   confirmedUseCase = selectedUseCase;
-  selectionLabel.textContent = `Confirmed direction: ${document.querySelector('.option.active')?.textContent || 'n/a'}`;
-  clearOutput('Direction confirmed. Choose a level to run.');
+  const friendlyName = selectedUseCase.replaceAll("_", " ");
+  selectionLabel.textContent = `Confirmed direction: ${friendlyName}${selectedUseCaseContext ? ` | context: ${selectedUseCaseContext}` : ""}`;
+  clearOutput("Direction confirmed. Choose a level to run.");
+  updateLevelButtonsVisibility();
 };
 modalCloseBtn.onclick = () => useCaseModal.classList.add('hidden');
 
