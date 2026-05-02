@@ -55,7 +55,7 @@ function appendMessage(role, text) {
   log.scrollTop = log.scrollHeight;
 }
 
-function renderThinkingMessage(message = 'Glitch is thinking...') {
+function renderThinkingMessage(message = 'Glytch is thinking...') {
   const item = document.createElement('div');
   item.className = 'msg ai';
   item.innerHTML = `<span class="thinking"><img src="assets/robotic-person.svg" alt="Thinking" class="robot-spinner" />${message}</span>`;
@@ -80,7 +80,7 @@ async function streamLines(lines){
 
 function createArtifact(level, lines) {
   const stamp = new Date().toISOString();
-  latestArtifact = `Glitch Export\nGenerated: ${stamp}\nLevel: ${level}\nUse case: ${confirmedUseCase || 'n/a'}\n\n${lines.join('\n')}`;
+  latestArtifact = `Glytch Export\nGenerated: ${stamp}\nLevel: ${level}\nUse case: ${confirmedUseCase || 'n/a'}\n\n${lines.join('\n')}`;
   downloadArtifactBtn.disabled = false;
 }
 
@@ -90,7 +90,7 @@ function downloadArtifact() {
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = `glitch-artifact-${new Date().toISOString().slice(0,10)}.txt`;
+  a.download = `glytch-artifact-${new Date().toISOString().slice(0,10)}.txt`;
   document.body.appendChild(a);
   a.click();
   a.remove();
@@ -107,7 +107,7 @@ async function runLevel(level){
 
   apiState.innerHTML = '<span class="pill">Running…</span>';
   log.innerHTML = '';
-  renderThinkingMessage('Glitch is thinking...');
+  renderThinkingMessage('Glytch is thinking...');
 
   const res = await fetch('/api/run', {
     method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ level, use_case: confirmedUseCase, use_case_context: selectedUseCaseContext })
