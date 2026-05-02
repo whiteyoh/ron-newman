@@ -12,7 +12,13 @@ def _serve(server: ThreadingHTTPServer) -> None:
     server.serve_forever()
 
 
-def _request(port: int, method: str, path: str, body: bytes | None = None, headers: dict[str, str] | None = None):
+def _request(
+    port: int,
+    method: str,
+    path: str,
+    body: bytes | None = None,
+    headers: dict[str, str] | None = None,
+):
     conn = HTTPConnection("127.0.0.1", port, timeout=5)
     conn.request(method, path, body=body, headers=headers or {})
     resp = conn.getresponse()
@@ -36,17 +42,39 @@ def test_http_endpoints() -> None:
         status, data = _request(port, "GET", "/api/use-cases")
         assert status == 200 and "use_cases" in json.loads(data)
 
-        status, data = _request(port, "POST", "/api/run", json.dumps({"level": 1}).encode(), {"Content-Type": "application/json"})
+        status, data = _request(
+            port,
+            "POST",
+            "/api/run",
+            json.dumps({"level": 1}).encode(),
+            {"Content-Type": "application/json"},
+        )
         payload = json.loads(data)
         assert status == 200 and any("not configured" in line.lower() for line in payload["lines"])
 
-        status, _ = _request(port, "POST", "/api/run", b"{bad", {"Content-Type": "application/json"})
+        status, _ = _request(
+            port, "POST", "/api/run", b"{bad", {"Content-Type": "application/json"}
+        )
         assert status == 400
-        status, _ = _request(port, "POST", "/api/run", json.dumps({"level": 99}).encode(), {"Content-Type": "application/json"})
+        status, _ = _request(
+            port,
+            "POST",
+            "/api/run",
+            json.dumps({"level": 99}).encode(),
+            {"Content-Type": "application/json"},
+        )
         assert status == 400
-        status, _ = _request(port, "POST", "/api/run", json.dumps({"level": 1}).encode(), {"Content-Type": "text/plain"})
+        status, _ = _request(
+            port,
+            "POST",
+            "/api/run",
+            json.dumps({"level": 1}).encode(),
+            {"Content-Type": "text/plain"},
+        )
         assert status == 400
-        status, _ = _request(port, "POST", "/api/run", b"x" * (17 * 1024), {"Content-Type": "application/json"})
+        status, _ = _request(
+            port, "POST", "/api/run", b"x" * (17 * 1024), {"Content-Type": "application/json"}
+        )
         assert status == 413
     finally:
         server.shutdown()

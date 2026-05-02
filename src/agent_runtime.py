@@ -1,11 +1,11 @@
 from __future__ import annotations
 
 import json
+from collections.abc import Callable
 from dataclasses import dataclass
-from typing import Any, Callable
+from typing import Any
 
 from src.types import AIChatClient
-
 
 ALLOWED_ACTIONS = {"research", "calculate", "draft", "finish"}
 
@@ -53,15 +53,22 @@ def _parse_decision(raw: str) -> AgentDecision | None:
     return AgentDecision(action=action, input=tool_input, reason=reason, final=final)
 
 
-def choose_next_action(client: AIChatClient, objective: str, trace: list[AgentStep], last_observation: str) -> AgentDecision:
+def choose_next_action(
+    client: AIChatClient, objective: str, trace: list[AgentStep], last_observation: str
+) -> AgentDecision:
     trace_lines = [
-        f"#{step.iteration} action={step.action} reason={step.reason} input={step.tool_input} observation={step.observation}"
+        (
+            f"#{step.iteration} action={step.action} reason={step.reason} "
+            f"input={step.tool_input} observation={step.observation}"
+        )
         for step in trace
     ]
     prompt = (
         "You are a constrained agent controller. Choose exactly one next action. "
         "Return strict JSON only with schema: "
-        '{"action":"research|calculate|draft|finish","input":"string","reason":"short human-readable reason","final":"string only when action is finish"}. '
+        '{"action":"research|calculate|draft|finish","input":"string",'
+        '"reason":"short human-readable reason",'
+        '"final":"string only when action is finish"}. '
         "Do not include markdown or extra keys."
     )
     context = (
@@ -74,10 +81,15 @@ def choose_next_action(client: AIChatClient, objective: str, trace: list[AgentSt
     decision = _parse_decision(raw)
     if decision is None:
         correction_prompt = (
-            "Your last response was invalid JSON. Return only valid JSON using this schema exactly: "
-            '{"action":"research|calculate|draft|finish","input":"string","reason":"short human-readable reason","final":"string only when action is finish"}.'
+            "Your last response was invalid JSON. "
+            "Return only valid JSON using this schema exactly: "
+            '{"action":"research|calculate|draft|finish","input":"string",'
+            '"reason":"short human-readable reason",'
+            '"final":"string only when action is finish"}.'
         )
-        raw_retry = client.chat(correction_prompt, f"Objective: {objective}\nTrace:\n" + "\n".join(trace_lines))
+        raw_retry = client.chat(
+            correction_prompt, f"Objective: {objective}\nTrace:\n" + "\n".join(trace_lines)
+        )
         decision = _parse_decision(raw_retry)
 
     if decision is None:
@@ -100,7 +112,10 @@ def run_constrained_agent_loop(
         decision = choose_next_action(client, objective, trace, last_observation)
 
         if decision.action not in ALLOWED_ACTIONS:
-            observation = f"Unknown action '{decision.action}'. Choose one of: research, calculate, draft, finish."
+            observation = (
+                f"Unknown action '{decision.action}'. Choose one of: "
+                "research, calculate, draft, finish."
+            )
             trace.append(
                 AgentStep(
                     iteration=iteration,
@@ -114,7 +129,9 @@ def run_constrained_agent_loop(
             continue
 
         if decision.action == "finish":
-            final_answer = decision.final or decision.input or "Best effort final answer not provided."
+            final_answer = (
+                decision.final or decision.input or "Best effort final answer not provided."
+            )
             trace.append(
                 AgentStep(
                     iteration=iteration,
@@ -151,7 +168,10 @@ def run_constrained_agent_loop(
         "Max iterations reached. Produce a best-effort final answer from the observations.",
         "\n".join(
             [
-                f"#{step.iteration} action={step.action} input={step.tool_input} observation={step.observation}"
+                (
+                    f"#{step.iteration} action={step.action} input={step.tool_input} "
+                    f"observation={step.observation}"
+                )
                 for step in trace
             ]
         ),

@@ -50,7 +50,9 @@ class Handler(SimpleHTTPRequestHandler):
     def _request_id(self) -> str:
         return uuid.uuid4().hex[:12]
 
-    def _validation_error(self, request_id: str, error: str, code: str, field: str | None = None) -> None:
+    def _validation_error(
+        self, request_id: str, error: str, code: str, field: str | None = None
+    ) -> None:
         payload: dict[str, Any] = {"request_id": request_id, "error": error, "code": code}
         if field:
             payload["field"] = field
@@ -60,9 +62,18 @@ class Handler(SimpleHTTPRequestHandler):
         ip = self.client_address[0] if self.client_address else "unknown"
         now = time.time()
         with _rate_limit_lock:
-            window = [t for t in _rate_limit_store.get(ip, []) if now - t < RATE_LIMIT_WINDOW_SECONDS]
+            window = [
+                t for t in _rate_limit_store.get(ip, []) if now - t < RATE_LIMIT_WINDOW_SECONDS
+            ]
             if len(window) >= RATE_LIMIT_MAX_REQUESTS:
-                self._send_json(429, {"request_id": request_id, "error": "rate limit exceeded", "code": "rate_limited"})
+                self._send_json(
+                    429,
+                    {
+                        "request_id": request_id,
+                        "error": "rate limit exceeded",
+                        "code": "rate_limited",
+                    },
+                )
                 return False
             window.append(now)
             _rate_limit_store[ip] = window
@@ -91,18 +102,32 @@ class Handler(SimpleHTTPRequestHandler):
     def _parse_run_request(self, request_id: str) -> RunRequest | None:
         content_type = self.headers.get("Content-Type", "")
         if "application/json" not in content_type:
-            self._validation_error(request_id, "content type must be application/json", "invalid_content_type", "Content-Type")
+            self._validation_error(
+                request_id,
+                "content type must be application/json",
+                "invalid_content_type",
+                "Content-Type",
+            )
             return None
         try:
             length = int(self.headers.get("Content-Length", "0"))
         except ValueError:
-            self._validation_error(request_id, "invalid content length", "invalid_content_length", "Content-Length")
+            self._validation_error(
+                request_id, "invalid content length", "invalid_content_length", "Content-Length"
+            )
             return None
         if length <= 0:
             self._validation_error(request_id, "request body is required", "missing_body")
             return None
         if length > MAX_BODY_BYTES:
-            self._send_json(413, {"request_id": request_id, "error": "request body too large", "code": "body_too_large"})
+            self._send_json(
+                413,
+                {
+                    "request_id": request_id,
+                    "error": "request body too large",
+                    "code": "body_too_large",
+                },
+            )
             return None
         raw = self.rfile.read(length)
         try:
@@ -119,43 +144,84 @@ class Handler(SimpleHTTPRequestHandler):
             return None
         use_case = data.get("use_case", "uk_year10_teacher")
         use_case_context = data.get("use_case_context", "")
-        return RunRequest(level=level, use_case=str(use_case), use_case_context=str(use_case_context))
+        return RunRequest(
+            level=level, use_case=str(use_case), use_case_context=str(use_case_context)
+        )
 
     def do_POST(self) -> None:
         request_id = self._request_id()
         path = urlparse(self.path).path
         start = time.perf_counter()
         if path != "/api/run":
-            self._send_json(404, {"request_id": request_id, "error": "not found", "code": "not_found"})
+            self._send_json(
+                404, {"request_id": request_id, "error": "not found", "code": "not_found"}
+            )
             return
         if not self._check_rate_limit(request_id):
             return
         parsed = self._parse_run_request(request_id)
         if parsed is None:
             return
-        self._execute_level(str(parsed.level), request_id, path, start, parsed.use_case, parsed.use_case_context)
+        self._execute_level(
+            str(parsed.level), request_id, path, start, parsed.use_case, parsed.use_case_context
+        )
 
-    def _execute_level(self, level_text: str, request_id: str, path: str, start: float, use_case_key: str = "uk_year10_teacher", use_case_context: str = "") -> None:
+    def _execute_level(
+        self,
+        level_text: str,
+        request_id: str,
+        path: str,
+        start: float,
+        use_case_key: str = "uk_year10_teacher",
+        use_case_context: str = "",
+    ) -> None:
         status = 200
         try:
             level = int(level_text)
             if level not in LEVELS:
                 raise ValueError("out of range")
             client = AIClient()
-            payload = run_level(level, client, use_case_key=use_case_key, use_case_context=use_case_context)
-            payload["backend"] = {"provider": "OpenAI", "configured": client.available(), "model": client.model, "base_url": client.base_url}
+            payload = run_level(
+                level, client, use_case_key=use_case_key, use_case_context=use_case_context
+            )
+            payload["backend"] = {
+                "provider": "OpenAI",
+                "configured": client.available(),
+                "model": client.model,
+                "base_url": client.base_url,
+            }
             payload["request_id"] = request_id
             self._send_json(status, payload)
         except ValueError:
             status = 400
-            self._send_json(status, {"request_id": request_id, "error": "invalid level", "code": "invalid_level", "field": "level"})
+            self._send_json(
+                status,
+                {
+                    "request_id": request_id,
+                    "error": "invalid level",
+                    "code": "invalid_level",
+                    "field": "level",
+                },
+            )
         except AIClientError as err:
             status = err.status
-            self._send_json(status, {"request_id": request_id, "error": err.message, "code": err.code})
+            self._send_json(
+                status, {"request_id": request_id, "error": err.message, "code": err.code}
+            )
         except Exception:
             status = 500
-            self._send_json(status, {"request_id": request_id, "error": "internal error", "code": "internal_error"})
-        logger.info("request_id=%s path=%s level=%s status=%s duration_ms=%.2f", request_id, path, level_text, status, (time.perf_counter() - start) * 1000)
+            self._send_json(
+                status,
+                {"request_id": request_id, "error": "internal error", "code": "internal_error"},
+            )
+        logger.info(
+            "request_id=%s path=%s level=%s status=%s duration_ms=%.2f",
+            request_id,
+            path,
+            level_text,
+            status,
+            (time.perf_counter() - start) * 1000,
+        )
 
 
 if __name__ == "__main__":

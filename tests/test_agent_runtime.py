@@ -13,7 +13,9 @@ class SequenceClient:
 
 
 def test_valid_json_action_selection():
-    client = SequenceClient(['{"action":"research","input":"smart objective","reason":"need facts","final":""}'])
+    client = SequenceClient(
+        ['{"action":"research","input":"smart objective","reason":"need facts","final":""}']
+    )
     decision = choose_next_action(client, "obj", [], "")
     assert decision.action == "research"
     assert decision.input == "smart objective"
@@ -58,7 +60,11 @@ def test_finish_stops_loop():
 
 def test_max_iteration_fallback():
     loop_response = '{"action":"research","input":"postgres","reason":"collect","final":""}'
-    client = SequenceClient([loop_response, loop_response, loop_response, loop_response, loop_response, "best effort"])
-    result = run_constrained_agent_loop(client, "obj", retrieve_local_facts, calculator_tool, max_iterations=5)
+    client = SequenceClient(
+        [loop_response, loop_response, loop_response, loop_response, loop_response, "best effort"]
+    )
+    result = run_constrained_agent_loop(
+        client, "obj", retrieve_local_facts, calculator_tool, max_iterations=5
+    )
     assert result["stopped_on_finish"] is False
     assert result["final_answer"] == "best effort"

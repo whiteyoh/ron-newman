@@ -48,15 +48,25 @@ class AIClient:
                 detail = err.read().decode("utf-8", errors="ignore").strip()[:180]
             except Exception:
                 pass
-            raise AIClientError(f"upstream HTTP error: {err.code}{f' ({detail})' if detail else ''}", code="upstream_http", status=502) from err
+            raise AIClientError(
+                f"upstream HTTP error: {err.code}{f' ({detail})' if detail else ''}",
+                code="upstream_http",
+                status=502,
+            ) from err
         except URLError as err:
-            raise AIClientError(f"connection error: {err.reason}", code="upstream_connection", status=502) from err
+            raise AIClientError(
+                f"connection error: {err.reason}", code="upstream_connection", status=502
+            ) from err
         except TimeoutError as err:
             raise AIClientError("upstream timeout", code="upstream_timeout", status=504) from err
         except json.JSONDecodeError as err:
-            raise AIClientError("invalid JSON from upstream", code="upstream_json", status=502) from err
+            raise AIClientError(
+                "invalid JSON from upstream", code="upstream_json", status=502
+            ) from err
 
         try:
             return str(body["choices"][0]["message"]["content"]).strip()
         except (KeyError, IndexError, TypeError, AttributeError) as err:
-            raise AIClientError("unexpected upstream response shape", code="upstream_schema", status=502) from err
+            raise AIClientError(
+                "unexpected upstream response shape", code="upstream_schema", status=502
+            ) from err
