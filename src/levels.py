@@ -1,5 +1,7 @@
 from typing import Any
 
+from src.types import AIChatClient
+
 from src.constants import DEFAULT_USE_CASE_KEY, LEVELS, USE_CASE_OPTIONS
 from src.agent_runtime import run_constrained_agent_loop
 from src.tools import calculator_tool, retrieve_local_facts
@@ -13,7 +15,7 @@ def use_case_prompt(text: str, use_case: str | None = None) -> str:
 
 def run_level(
     level: int,
-    client,
+    client: AIChatClient,
     use_case_key: str = DEFAULT_USE_CASE_KEY,
     use_case_context: str | None = None,
 ) -> dict[str, Any]:

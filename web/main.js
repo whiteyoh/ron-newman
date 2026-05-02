@@ -17,10 +17,11 @@ const app = document.getElementById('app');
 const startBtn = document.getElementById('start-btn');
 
 function updateLevelButtonsVisibility() {
-  buttons.classList.toggle('hidden', !selectedUseCase);
+  buttons.classList.toggle('hidden', !confirmedUseCase);
 }
 
 let latestArtifact = null;
+let runInProgress = false;
 
 function enterDemo() {
   entry.classList.add('hidden');
@@ -100,20 +101,31 @@ function downloadArtifact() {
 
 downloadArtifactBtn.addEventListener('click', downloadArtifact);
 
+function setLevelButtonsDisabled(disabled) {
+  document.querySelectorAll('#buttons button').forEach((btn) => { btn.disabled = disabled; });
+}
+
 async function runLevel(level){
   if (!confirmedUseCase) {
     clearOutput('Please confirm a use case direction first.');
     return;
   }
 
+  if (runInProgress) return;
+  runInProgress = true;
+  setLevelButtonsDisabled(true);
   apiState.innerHTML = '<span class="pill">Running…</span>';
   log.innerHTML = '';
   renderThinkingMessage('Glytch is thinking...');
 
-  const res = await fetch('/api/run', {
-    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ level, use_case: confirmedUseCase, use_case_context: selectedUseCaseContext })
-  });
-  const data = await res.json();
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 10000);
+    const res = await fetch('/api/run', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ level, use_case: confirmedUseCase, use_case_context: selectedUseCaseContext }), signal: controller.signal
+    });
+    clearTimeout(timeout);
+    const data = await res.json();
 
   const backend = data.backend || {};
   const isConfigured = Boolean(backend.configured) && res.ok;
@@ -131,6 +143,14 @@ async function runLevel(level){
   const lines = data.lines || ['No output lines returned.'];
   createArtifact(level, lines);
   await streamLines(lines);
+  } catch (err) {
+    log.innerHTML = "";
+    appendMessage('system', `Request failed: ${err.message}`);
+    clearArtifact();
+  } finally {
+    runInProgress = false;
+    setLevelButtonsDisabled(false);
+  }
 }
 
 function renderUseCases(data) {
