@@ -41,9 +41,27 @@ def test_agenticness_scores_exist_for_all_levels():
         assert "score" in AGENTICNESS[level]
 
 
+def test_run_level_has_agenticness_for_every_level():
+    for level in range(1, 9):
+        payload = run_level(level, DummyClient())
+        assert "agenticness" in payload
+        for field in (
+            "score",
+            "explanation",
+            "chooses_actions",
+            "uses_tools",
+            "loops",
+            "runs_independently",
+            "self_verifies",
+            "multi_agent",
+        ):
+            assert field in payload["agenticness"]
+
+
 def test_level7_trace_has_action_observation_stop_condition():
     payload = run_level(7, DummyClient())
     text = "\n".join(payload["lines"])
+    assert "Agent loop timeline:" in text
     assert "Chosen action:" in text
     assert "Observation:" in text
     assert "Stop condition:" in text
@@ -52,6 +70,7 @@ def test_level7_trace_has_action_observation_stop_condition():
 def test_level8_orchestrator_roles_present():
     payload = run_level(8, DummyClient())
     text = "\n".join(payload["lines"])
+    assert "Simulated orchestration note:" in text
     assert "planner" in text
     assert "critic" in text
     assert "teacher-resource-writer" in text

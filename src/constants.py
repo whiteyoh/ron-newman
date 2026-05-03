@@ -48,8 +48,11 @@ LEVELS = {
         ),
     },
     8: {
-        "name": "Self-improving Workflow",
-        "desc": "Scores outputs and keeps the best improved candidate.",
+        "name": "Mini Orchestrator / Self-improving Workflow",
+        "desc": (
+            "Workshop-safe simulation that coordinates planner, critic, "
+            "teacher-resource-writer, and verifier roles."
+        ),
         "nourishment": (
             "Delivers stronger final answers by iterating and selecting the "
             "best-performing version."
@@ -111,8 +114,12 @@ AGENTICNESS = {
     },
     3: {
         "score": 3,
-        "explanation": "Tool use is a small step into action-taking, but still user-directed.",
-        "chooses_actions": True,
+        "explanation": (
+            "Tool use improves precision, but tool invocation is system-selected in this demo "
+            "rather than autonomously decided by the model."
+        ),
+        "chooses_actions": False,
+        "system_selected_tool": True,
         "uses_tools": True,
         "loops": False,
         "runs_independently": False,
@@ -121,8 +128,12 @@ AGENTICNESS = {
     },
     4: {
         "score": 3,
-        "explanation": "Retrieval grounds answers in evidence, improving reliability more than autonomy.",
-        "chooses_actions": True,
+        "explanation": (
+            "Retrieval grounds answers in evidence, while retrieval invocation remains "
+            "system-selected in this demo."
+        ),
+        "chooses_actions": False,
+        "system_selected_tool": True,
         "uses_tools": True,
         "loops": False,
         "runs_independently": False,

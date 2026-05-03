@@ -42,6 +42,34 @@ def test_http_endpoints() -> None:
         status, data = _request(port, "GET", "/api/use-cases")
         assert status == 200 and "use_cases" in json.loads(data)
 
+        status, data = _request(port, "GET", "/api/agentic-maturity")
+        maturity_payload = json.loads(data)
+        assert status == 200
+        assert "stages" in maturity_payload
+        assert len(maturity_payload["stages"]) == 8
+        required = {
+            "id",
+            "name",
+            "plain_english_summary",
+            "how_it_feels",
+            "what_the_human_does",
+            "what_the_agent_does",
+            "trust_level",
+            "autonomy_level",
+            "risk",
+            "example_workflow",
+            "evidence_of_this_level",
+            "next_step_to_level_up",
+        }
+        for stage in maturity_payload["stages"]:
+            assert required.issubset(stage)
+
+        status, data = _request(port, "GET", "/api/assessment")
+        assessment_payload = json.loads(data)
+        assert status == 200
+        assert "questions" in assessment_payload
+        assert assessment_payload["questions"]
+
         status, data = _request(
             port,
             "POST",
