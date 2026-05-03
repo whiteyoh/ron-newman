@@ -69,3 +69,6 @@ This document explains how each example (`examples/level1` through `examples/lev
 
 - Ask participants to compare adjacent stages (e.g., 4 → 5, 6 → 7) and identify what new control mechanism is introduced.
 - Have participants evaluate trade-offs for each stage: quality, latency, cost, and operational complexity.
+
+## Why Levels 1–6 were uplifted to 7/10
+Levels 1–6 are no longer raw capability-only demos. Each now runs inside a workshop-safe agentic wrapper with an objective, policy, allowed actions, verification, stop condition, approval gate, audit trail, and final verdict. The original capability theme is preserved per level (supervised completion, permissioned instruction following, tool-action loop, grounded research, CLI-style single-agent planning run, and bounded evaluator loop). A 7/10 score here reflects bounded and inspectable agent workflow mechanics, not production-grade autonomy. The app still avoids real side effects (no shell execution, file writes, GitHub writes, or background jobs).

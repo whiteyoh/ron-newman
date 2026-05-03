@@ -1,9 +1,10 @@
-from typing import Any
+from typing import Any, cast
 
 from src.agent_models import AgentPolicy, AgentTask
 
 # ruff: noqa: E501
 from src.agent_runtime import run_constrained_agent_loop
+from src.agentic_wrappers import run_agentic_capability_demo
 from src.constants import AGENTICNESS, DEFAULT_USE_CASE_KEY, LEVELS, USE_CASE_OPTIONS
 from src.orchestrator import run_mini_orchestrator
 from src.tools import calculator_tool, retrieve_local_facts
@@ -105,10 +106,11 @@ def run_level(
             f"Confirmed context from user: {use_case_context.strip()}\n"
             "Use this confirmed context directly and do not ask clarifying questions."
         )
+    level_info = cast(dict[str, str], LEVELS[level])
     intro = [
-        f"Running Level {level}: {LEVELS[level]['name']}",
-        LEVELS[level]["desc"],
-        f"Nourishment: {LEVELS[level]['nourishment']}",
+        f"Running Level {level}: {level_info['name']}",
+        level_info["desc"],
+        f"Nourishment: {level_info['nourishment']}",
         f"Topic tip: {_contextual_tip(level, use_case_context, use_case)}",
     ]
     if level > 1:
@@ -120,7 +122,7 @@ def run_level(
     if not client.available():
         return {
             "level": level,
-            "title": LEVELS[level]["name"],
+            "title": level_info["name"],
             "lines": intro
             + [
                 "AI backend not configured.",
@@ -129,145 +131,297 @@ def run_level(
         }
 
     if level == 1:
-        prompt = use_case_prompt(
-            "The teacher begins the lesson: 'Today we're mastering key ideas by'", use_case
-        )
-        completion = client.chat("Continue the text naturally in one short phrase.", prompt)
-        lines = [f"Prompt: {prompt}", f"Model completion: {completion}"]
-    elif level == 2:
-        user_prompt = use_case_prompt(
-            "Summarize this in exactly 7 words: We reduced reply time while keeping quality high.",
-            use_case,
-        )
-        completion = client.chat("Follow user constraints precisely.", user_prompt)
-        lines = [f"Instruction: {user_prompt}", f"Model output: {completion}"]
-    elif level == 3:
-        expression = "17*43"
-        chooser = client.chat(
-            'Return strict JSON only: {"action":"answer_directly|use_calculator","tool_input":"string","final_answer":"string"}.',
-            use_case_prompt(
-                f"Question: What is {expression}? Allowed actions: answer_directly, use_calculator.",
-                use_case,
-            ),
-        )
-        action = "answer_directly"
-        tool_input = expression
-        tool_result = "n/a"
-        final_answer = ""
-        try:
-            import json
+        objective = use_case_prompt("Produce a useful one-line continuation.", use_case)
+        prompt = "The teacher begins the lesson: 'Today we're mastering key ideas by'"
+        allowed = ["draft_completion", "verify_completion", "revise_completion", "finish"]
 
-            parsed = json.loads(chooser)
-            action = str(parsed.get("action", "answer_directly"))
-            tool_input = str(parsed.get("tool_input", expression))
-            final_answer = str(parsed.get("final_answer", ""))
-        except Exception:
-            action = "answer_directly"
-            final_answer = "Fallback: unable to parse model JSON."
-        if action == "use_calculator":
-            tool_result = calculator_tool(tool_input)
-            final_answer = client.chat(
-                "Use tool result to provide final answer.", f"tool_result={tool_result}"
-            )
-        elif not final_answer:
-            final_answer = client.chat("Answer directly in one line.", f"What is {expression}?")
+        def exec_l1(action: str, _state: dict[str, Any]) -> tuple[str, str]:
+            if action == "draft_completion":
+                draft = client.chat("Continue the text naturally in one short phrase.", prompt)
+                return draft, f"drafted continuation: {draft}"
+            if action == "verify_completion":
+                verdict = client.chat(
+                    "Verify if this continuation is useful, specific, and safe. Return strong/weak plus reason.",
+                    f"prompt={prompt}",
+                )
+                return "", f"verification: {verdict}"
+            if action == "revise_completion":
+                revised = client.chat(
+                    "Revise the completion to be more useful and specific.", prompt
+                )
+                return revised, f"revised completion: {revised}"
+            return "", "finish selected"
+
+        run = run_agentic_capability_demo(
+            client,
+            1,
+            objective,
+            "Supervised completion agent",
+            allowed,
+            "draft_completion",
+            exec_l1,
+            "Final verifier: is the continuation classroom-useful and safe?",
+        )
+        lines = [
+            f"Objective: {run['objective']}",
+            f"Policy: {run['policy']}",
+            f"Allowed actions: {', '.join(allowed)}",
+            f"Action trace: {run['actions']}",
+            f"Verification: {run['verification_result']}",
+            "Approval gate: simulated human approval required before final use.",
+            f"Final verdict: {run['final_verdict']}",
+            "Audit trail:",
+            *run["audit_log"],
+            f"Final answer: {run['final_answer']}",
+        ]
+    elif level == 2:
+        objective = use_case_prompt("Follow instruction contract with permission gate.", use_case)
+        instruction = (
+            "Summarize this in exactly 7 words: We reduced reply time while keeping quality high."
+        )
+        permission = "Request permission to apply instruction output in IDE"
+        allowed = ["draft_completion", "verify_completion", "revise_completion", "finish"]
+
+        def exec_l2(action: str, _state: dict[str, Any]) -> tuple[str, str]:
+            if action == "draft_completion":
+                out = client.chat(
+                    "Follow user constraints precisely and respond as JSON with output field.",
+                    instruction,
+                )
+                return out, f"structured output drafted: {out}"
+            if action == "verify_completion":
+                check = client.chat(
+                    "Check exact 7-word constraint and return pass/fail with reason.", instruction
+                )
+                return "", f"constraint verifier: {check}"
+            if action == "revise_completion":
+                revised = client.chat("Revise to satisfy exact 7-word constraint.", instruction)
+                return revised, f"revision produced: {revised}"
+            return "", "finish selected"
+
+        run = run_agentic_capability_demo(
+            client,
+            2,
+            objective,
+            "Permissioned instruction-following agent",
+            allowed,
+            "draft_completion",
+            exec_l2,
+            "Final verifier: does output satisfy instruction contract exactly?",
+        )
+        lines = [
+            f"Instruction: {instruction}",
+            f"Permission requested: {permission}",
+            "Permission granted simulation: yes (workshop-safe)",
+            f"Constraint verifier result: {run['verification_result']}",
+            f"Revision decision: {'revise once then finish' if 'weak' in run['verification_result'].lower() or 'fail' in run['verification_result'].lower() else 'finish'}",
+            f"Policy: {run['policy']}",
+            f"Action trace: {run['actions']}",
+            f"Approval gate: {'required' if run['approval_required'] else 'not required'}",
+            f"Final approved output: {run['final_answer']}",
+            f"Final verdict: {run['final_verdict']}",
+            "Audit trail:",
+            *run["audit_log"],
+        ]
+    elif level == 3:
+        objective = use_case_prompt(
+            "Solve arithmetic with model-selected tool action loop.", use_case
+        )
+        expression = "17*43"
+        allowed = [
+            "answer_directly",
+            "use_calculator",
+            "verify_with_calculator",
+            "revise_answer",
+            "finish",
+        ]
+
+        def exec_l3(action: str, _state: dict[str, Any]) -> tuple[str, str]:
+            if action == "answer_directly":
+                ans = client.chat("Answer directly in one line.", f"What is {expression}?")
+                return ans, "selected action=answer_directly"
+            if action == "use_calculator":
+                result = calculator_tool(expression)
+                ans = client.chat("Use calculator output to answer.", result)
+                return ans, f"tool input={expression}; tool result={result}"
+            if action == "verify_with_calculator":
+                v = calculator_tool(expression)
+                return "", f"independent verification={v}"
+            if action == "revise_answer":
+                rev = client.chat("Revise answer to match verified calculator result.", expression)
+                return rev, "answer revised"
+            return "", "finish selected"
+
+        run = run_agentic_capability_demo(
+            client,
+            3,
+            objective,
+            "Tool-action loop",
+            allowed,
+            "use_calculator",
+            exec_l3,
+            "Final verifier: is final answer numerically correct and safe?",
+        )
         lines = [
             f"Task expression: {expression}",
-            f"Model selected action: {action}",
-            f"Tool input: {tool_input}",
-            f"Tool result: {tool_result}",
-            f"Final answer: {final_answer}",
+            f"Selected action trace: {run['actions']}",
+            f"Tool result / observations: {run['observations']}",
+            f"Independent verification: {calculator_tool(expression)}",
+            f"Approval decision: {'approved' if run['approved_for_final'] else 'denied'}",
+            f"Final answer: {run['final_answer']}",
+            f"Final verdict: {run['final_verdict']}",
+            "Policy:",
+            str(run["policy"]),
+            "Audit trail:",
+            *run["audit_log"],
         ]
     elif level == 4:
+        objective = use_case_prompt("Answer using retrieved evidence only.", use_case)
         question = "What is a SMART learning objective?"
         evidence = retrieve_local_facts(question)
-        sufficiency = client.chat(
-            "Is this evidence sufficient for the question? Return sufficient/insufficient and one reason.",
-            f"Question: {question}\nEvidence: {evidence}",
-        )
-        answer = client.chat(
-            "Answer only from evidence. If insufficient, clearly note limits.",
-            use_case_prompt(
-                f"Question: {question}\nEvidence(source=local_kb): {evidence}\nSufficiency: {sufficiency}",
-                use_case,
-            ),
-        )
-        support = client.chat(
-            "Is this answer fully supported by the supplied evidence? Return supported/unsupported and one reason.",
-            f"Evidence: {evidence}\nAnswer: {answer}",
+        allowed = ["retrieve_evidence", "verify_completion", "revise_completion", "finish"]
+
+        def exec_l4(action: str, _state: dict[str, Any]) -> tuple[str, str]:
+            if action == "retrieve_evidence":
+                answer = client.chat(
+                    "Answer only from supplied evidence.", f"Q:{question}\nEvidence:{evidence}"
+                )
+                return answer, f"evidence source=local_kb; evidence={evidence}"
+            if action == "verify_completion":
+                support = client.chat(
+                    "Check whether answer is fully supported by evidence.", f"Evidence:{evidence}"
+                )
+                return "", f"support verification={support}"
+            if action == "revise_completion":
+                revised = client.chat(
+                    "Revise and mark limits if unsupported.", f"Evidence:{evidence}"
+                )
+                return revised, "revised for evidence support"
+            return "", "finish selected"
+
+        run = run_agentic_capability_demo(
+            client,
+            4,
+            objective,
+            "Grounded research agent",
+            allowed,
+            "retrieve_evidence",
+            exec_l4,
+            "Final verifier: supported/unsupported based on evidence only.",
         )
         lines = [
-            f"Question: {question}",
-            f"Retrieved evidence: {evidence}",
-            "Evidence source: local_kb",
-            f"Sufficiency check: {sufficiency}",
-            f"Grounded answer: {answer}",
-            f"Support verifier: {support}",
+            f"Research objective: {objective}",
+            "Retrieval plan: query local_kb then answer from evidence only.",
+            f"Evidence source: {evidence}",
+            f"Evidence sufficiency: {client.chat('Is evidence sufficient? Return sufficient/insufficient.', evidence)}",
+            f"Answer: {run['final_answer']}",
+            f"Support verification: {run['verification_result']}",
+            f"Human approval gate: {'required' if run['approval_required'] else 'none'}",
+            f"Final verdict: {run['final_verdict']}",
+            "Policy:",
+            str(run["policy"]),
+            "Audit trail:",
+            *run["audit_log"],
         ]
     elif level == 5:
-        goal = use_case_prompt("Design a 2-hour Year 10 revision workshop.", use_case)
-        plan = client.chat("Create a concise numbered plan.", goal)
-        execution = client.chat("Execute this plan into a timed agenda with bullets.", plan)
-        verification = client.chat(
-            "Verify against objective. Return strong/weak/unsupported/incomplete and one reason.",
-            f"Objective: {goal}\nOutput: {execution}",
-        )
-        revise = (
-            "revise"
-            if any(tag in verification.lower() for tag in ["weak", "unsupported", "incomplete"])
-            else "keep"
-        )
-        final = (
-            execution
-            if revise == "keep"
-            else client.chat(
-                "Revise to fix verification weakness.",
-                f"Objective:{goal}\nPlan:{plan}\nExecution:{execution}\nVerification:{verification}",
-            )
+        objective = use_case_prompt("Design a 2-hour Year 10 revision workshop.", use_case)
+        allowed = ["plan", "verify_completion", "revise_completion", "finish"]
+
+        def exec_l5(action: str, _state: dict[str, Any]) -> tuple[str, str]:
+            if action == "plan":
+                plan = client.chat(
+                    "Create concise numbered plan, then execute as timed agenda.", objective
+                )
+                return plan, f"plan_execute_output={plan}"
+            if action == "verify_completion":
+                ver = client.chat(
+                    "Verify against objective. Return strong/weak/incomplete and one reason.",
+                    objective,
+                )
+                return "", f"final verifier={ver}"
+            if action == "revise_completion":
+                revised = client.chat("Revise to fix verifier weaknesses.", objective)
+                return revised, "revision generated"
+            return "", "finish selected"
+
+        run = run_agentic_capability_demo(
+            client,
+            5,
+            objective,
+            "CLI-style single-agent run",
+            allowed,
+            "plan",
+            exec_l5,
+            "Final verifier: objective fit, practical sequencing, and safety.",
+            max_iterations=3,
         )
         lines = [
-            f"Goal: {goal}",
-            "Plan:",
-            plan,
-            "Execution:",
-            execution,
-            f"Verification result: {verification}",
-            f"Revision decision: {revise}",
+            f"Run id: {run['run_id']}",
+            f"Objective: {objective}",
+            f"Action budget: {run['policy']['max_iterations']}",
+            f"Step trace: {run['actions']}",
+            f"Stop condition: {run['stop_condition']}",
+            f"Final verifier: {run['verification_result']}",
+            f"Approved for use: {'yes' if run['approved_for_final'] else 'no'}",
+            f"Final verdict: {run['final_verdict']}",
+            "Policy:",
+            str(run["policy"]),
+            "Structured run summary:",
+            f"stop_condition={run['stop_condition']}",
+            "Audit trail:",
+            *run["audit_log"],
             "Final answer:",
-            final,
+            run["final_answer"],
         ]
     elif level == 6:
         objective = use_case_prompt(
             "Write a short lesson-summary note with one clear learner benefit.", use_case
         )
-        current = client.chat("Draft initial answer.", objective)
-        lines = ["Bounded critique loop:"]
-        threshold = 80
-        selected = current
-        for attempt in range(1, 4):
-            critique = client.chat("Critique this draft and provide one improvement.", current)
-            score_raw = client.chat("Score this draft 0-100 as integer only.", current)
-            try:
-                score = int("".join(ch for ch in score_raw if ch.isdigit()) or "0")
-            except Exception:
-                score = 0
-            decision = "revise" if attempt < 3 and score < threshold else "select"
-            lines.extend(
-                [
-                    f"Attempt number: {attempt}",
-                    f"Score: {score}",
-                    f"Critique: {critique}",
-                    f"Decision: {decision}",
-                ]
-            )
-            selected = current
-            if decision == "revise":
-                current = client.chat(
-                    "Revise using critique.", f"Draft:{current}\nCritique:{critique}"
+        allowed = ["draft_completion", "critique", "revise_completion", "finish"]
+        attempts: list[tuple[int, int, str]] = []
+
+        def exec_l6(action: str, state: dict[str, Any]) -> tuple[str, str]:
+            if action == "draft_completion":
+                draft = client.chat("Draft initial answer.", objective)
+                return draft, "attempt 1 drafted"
+            if action == "critique":
+                critique = client.chat(
+                    "Critique this draft and provide one improvement.", state.get("current", "")
                 )
-            else:
-                break
-        lines.extend(["Selected final answer:", selected])
+                score_raw = client.chat(
+                    "Score this draft 0-100 as integer only.", state.get("current", "")
+                )
+                score = int("".join(ch for ch in score_raw if ch.isdigit()) or "0")
+                attempts.append((state["iteration"], score, critique))
+                return "", f"attempt={state['iteration']} score={score} critique={critique}"
+            if action == "revise_completion":
+                revised = client.chat("Revise using critique.", state.get("current", ""))
+                return revised, "revision created"
+            return "", "finish selected"
+
+        run = run_agentic_capability_demo(
+            client,
+            6,
+            objective,
+            "Bounded evaluator agent",
+            allowed,
+            "draft_completion",
+            exec_l6,
+            "Final verifier: does final note meet objective with clear learner benefit?",
+            max_iterations=3,
+        )
+        lines = [
+            "Bounded evaluator loop:",
+            *[f"Attempt number: {a[0]} | Score: {a[1]} | Critique: {a[2]}" for a in attempts],
+            f"Best candidate: {run['final_answer']}",
+            f"Final verifier: {run['verification_result']}",
+            f"Approval gate: {'required' if run['approval_required'] else 'none'}",
+            f"Final verdict: {run['final_verdict']}",
+            "Policy:",
+            str(run["policy"]),
+            "Audit trail:",
+            *run["audit_log"],
+        ]
     elif level == 7:
         objective = use_case_prompt(
             "Design a practical support workflow for teachers creating lessons and revision plans.",
@@ -378,7 +532,7 @@ def run_level(
 
     return {
         "level": level,
-        "title": LEVELS[level]["name"],
+        "title": level_info["name"],
         "lines": intro + lines,
         "agenticness": AGENTICNESS[level],
     }
