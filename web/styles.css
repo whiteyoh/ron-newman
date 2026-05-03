@@ -30,7 +30,7 @@ button:focus-visible,.option:focus-visible,select:focus-visible,textarea:focus-v
 .level-card{min-height:145px;display:flex;flex-direction:column;gap:.25rem}
 .status{position:sticky;top:.5rem;z-index:5;margin-bottom:.8rem;padding:.65rem;border:1px solid var(--border);border-radius:12px;background:var(--surface-strong);display:flex;justify-content:space-between;flex-wrap:wrap}
 #log{background:rgba(5,12,29,.75);border:1px solid var(--border);border-radius:12px;padding:.8rem;min-height:220px;max-height:42vh;overflow:auto;display:flex;flex-direction:column;gap:.5rem}
-.msg{max-width:90%;padding:.6rem .75rem;border-radius:12px;white-space:pre-wrap}.msg.user{align-self:flex-end;background:#4e63d8}.msg.ai{align-self:flex-start;background:#1b2a58}.msg.system{align-self:center;background:rgba(255,255,255,.1)}
+.msg{max-width:92%;padding:.6rem .75rem;border-radius:12px;white-space:pre-wrap;border:1px solid rgba(255,255,255,.14)}.msg.user{align-self:flex-end;background:#4e63d8}.msg.ai,.msg.agent{align-self:flex-start;background:#1b2a58}.msg.system{align-self:center;background:rgba(255,255,255,.1)}.msg.trace{align-self:stretch;background:rgba(104,231,255,.08);border-left:3px solid rgba(104,231,255,.6)}.msg.tool{align-self:stretch;background:rgba(249,182,77,.12);border-left:3px solid rgba(249,182,77,.8)}.msg.verifier{align-self:stretch;background:rgba(68,215,154,.12);border-left:3px solid rgba(68,215,154,.8)}
 .theatre-flow{display:grid;gap:.6rem}.theatre-step{border-left:4px solid var(--accent)}.theatre-step.active-replay{border-left-color:var(--warning);transform:scale(1.01)}
 .actor{font-weight:700;font-size:.82rem;text-transform:uppercase;letter-spacing:.04em}
 .taskboard-grid{display:grid;grid-template-columns:repeat(5,minmax(170px,1fr));gap:.6rem;overflow:auto}.taskboard-column h4{margin:.2rem 0 .5rem}
@@ -41,3 +41,6 @@ button:focus-visible,.option:focus-visible,select:focus-visible,textarea:focus-v
 .footer a{color:var(--accent)}
 @media (max-width:800px){.taskboard-grid{grid-template-columns:1fr}.status{position:static}}
 @media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+.helper-text{margin:.35rem 0 .5rem;}
+.trace-badge{margin-left:.35rem;font-size:.75rem;}
