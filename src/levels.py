@@ -344,24 +344,35 @@ def run_level(
         orch = run_mini_orchestrator(client, task, parallel=True)
         lines = [
             "Simulated orchestration note: This remains workshop-safe and is not a production orchestrator.",
-            "Orchestration trace:",
+            f"Orchestrator run id: {orch['run_id']}",
             f"orchestration mode: {orch['mode']}",
+            "Policy:",
+            f"max worker retries: {orch['policy']['max_worker_retries']}",
+            f"verifier required: {orch['policy']['require_verifier_supported']}",
+            f"human approval required: {orch['policy']['require_human_approval_before_merge']}",
+            "Taskboard:",
         ]
-        for item in orch["trace"]:
+        for item in orch["taskboard"]:
             lines.extend(
                 [
-                    f"worker name: {item['worker']}",
-                    f"worker task: {item['task']}",
-                    f"worker output summary: {item['output_summary']}",
+                    f"worker: {item['worker_name']}",
+                    f"task: {item['task']}",
+                    f"status: {item['status']}",
+                    f"attempt: {item['attempt']}",
                 ]
             )
         lines.extend(
             [
+                "Audit trail:",
+                *orch["audit_log"],
                 f"verifier result: {orch['verifier_result']}",
+                "Approval gate:",
+                f"approval required: {'yes' if orch['approval_required'] else 'no'}",
+                f"approved for merge: {'yes' if orch['approved_for_merge'] else 'no'}",
                 f"merge policy: {orch['merge_policy']}",
-                "final answer:",
+                ("final answer:" if orch["approved_for_merge"] else "needs human review:"),
                 orch["final_answer"],
-                f"honest limitation note: {orch['limitation']}",
+                "honest limitation note: This is still a workshop-safe orchestrator simulation. It does not execute repository changes, manage real background jobs, or persist state outside the request.",
             ]
         )
 

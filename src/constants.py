@@ -195,7 +195,7 @@ AGENTICNESS = {
         "self_verifies": True,
         "multi_agent": True,
         "closest_yegge_stage": 6,
-        "yegge_alignment_score": 8,
-        "yegge_alignment_explanation": "Parallel worker orchestration with verifier+merger, still workshop-safe and limited.",
+        "yegge_alignment_score": 9,
+        "yegge_alignment_explanation": "Now includes taskboard state, worker lifecycle, retry policy, verifier gate, approval gate, and merge policy. Still workshop-safe and not a production orchestrator.",
     },
 }

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from enum import Enum
 
 
 @dataclass
@@ -56,3 +57,50 @@ class AgentRunResult:
     tool_errors: int
     verified: bool
     final_verdict: str
+
+
+class TaskStatus(str, Enum):
+    PENDING = "pending"
+    RUNNING = "running"
+    COMPLETED = "completed"
+    FAILED = "failed"
+    VERIFIED = "verified"
+    MERGED = "merged"
+    NEEDS_HUMAN_REVIEW = "needs_human_review"
+
+
+class WorkerStatus(str, Enum):
+    WAITING = "waiting"
+    RUNNING = "running"
+    COMPLETED = "completed"
+    FAILED = "failed"
+    RETRIED = "retried"
+
+
+@dataclass
+class OrchestratorTaskRecord:
+    task_id: str
+    worker_name: str
+    worker_role: str
+    task: str
+    status: TaskStatus = TaskStatus.PENDING
+    attempt: int = 0
+    output: str = ""
+    error: str = ""
+    started_at: str = ""
+    completed_at: str = ""
+    worker_status: WorkerStatus = WorkerStatus.WAITING
+
+
+@dataclass
+class OrchestratorRunState:
+    run_id: str
+    objective: str
+    mode: str
+    tasks: list[OrchestratorTaskRecord]
+    verifier_result: str = ""
+    merge_policy: str = "objective coverage > clarity > actionability"
+    approval_required: bool = True
+    approved_for_merge: bool = False
+    final_answer: str = ""
+    audit_log: list[str] = field(default_factory=list)
