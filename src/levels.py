@@ -191,8 +191,8 @@ def _build_structured_payload(
                     "label": "Action selected",
                     "actor": "agent",
                     "status": "running",
-                    "summary": f"Iteration {step.get('iteration', '?')}: {step.get('chosen_action', 'action')}",
-                    "detail": f"Observation: {step.get('observation', 'n/a')} · Reason: {step.get('reason', 'n/a')}",
+                    "summary": f"Iteration {step.get('iteration', '?')}: {step.get('action', step.get('chosen_action', 'action'))}",
+                    "detail": f"Tool input: {step.get('tool_input', 'n/a')} · Observation: {step.get('observation', 'n/a')} · Reason: {step.get('reason', 'n/a')} · Stop: {step.get('stop_condition', 'continue')} · Verifier: {step.get('verifier_result', 'pending')}",
                 }
             )
         theatre_steps += [
@@ -291,6 +291,9 @@ def _build_structured_payload(
         "diff_preview": yegge_simulation.get("previewed_changes"),
         "command_preview": yegge_simulation.get("command_preview"),
         "parallel_agents": yegge_simulation.get("agent_instances"),
+        "swarm_summary": run_data.get(
+            "swarm_summary", {"total_agents": len(yegge_simulation.get("agent_instances", []))}
+        ),
         "review_gate": yegge_simulation.get("review_gate"),
         "workflow_preview": workflow_preview,
         "why_not_production": yegge_simulation.get("why_not_production"),
@@ -703,9 +706,31 @@ def run_level(
                 run["final_answer"],
             ]
         )
+        agent_instances = simulation.get("agent_instances", [])
         run_data = {
             "trace": [s.__dict__ for s in run["trace"]],
-            "swarm_summary": simulation.get("swarm_summary", {"total_agents": 11}),
+            "swarm_summary": {
+                "total_agents": len(agent_instances),
+                "running": sum(
+                    1 for a in agent_instances if str(a.get("status", "")).lower() == "running"
+                ),
+                "ready": sum(
+                    1
+                    for a in agent_instances
+                    if str(a.get("status", "")).lower() in {"ready", "pending"}
+                ),
+                "completed": sum(
+                    1 for a in agent_instances if "complete" in str(a.get("status", "")).lower()
+                ),
+                "coordination_pressure": "High — many agent contexts need manual review",
+                "pressure_points": [
+                    "duplicate work",
+                    "conflicting outputs",
+                    "manual prioritisation",
+                    "review bottleneck",
+                ],
+                "why_orchestration_matters": "As agent count rises, manual prioritisation and review bottlenecks make orchestration necessary.",
+            },
         }
     else:
         task = AgentTask(
