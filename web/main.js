@@ -11,6 +11,11 @@ const modalTitle = document.getElementById('modal-title');
 const modalBody = document.getElementById('modal-body');
 const modalCloseBtn = document.getElementById('modal-close');
 const contextInput = document.getElementById('context-input');
+const theatreSteps = document.getElementById('theatre-steps');
+const replayBtn = document.getElementById('replay-btn');
+const taskboardEl = document.getElementById('taskboard');
+let lastReplaySteps = [];
+
 
 const entry = document.getElementById('entry');
 const app = document.getElementById('app');
@@ -144,6 +149,7 @@ async function runLevel(level){
   }
 
   const lines = data.lines || ['No output lines returned.'];
+  renderTheatre(data);
   if (data.agenticness) {
     lines.unshift(`Why this score is justified: ${data.agenticness.explanation}`);
     lines.unshift(`Yegge alignment score: ${data.agenticness.yegge_alignment_score}/10`);
@@ -225,8 +231,8 @@ async function init(){
     if (!levelsResponse.ok || !levels.levels || !useCasesResponse.ok || !useCases.use_cases) return clearOutput('Could not load configuration.');
     renderUseCases(useCases.use_cases);
     renderMaturityCards(maturity.stages || []);
-    document.querySelectorAll('input[name="selfcheck"]').forEach((el)=>el.addEventListener('change', renderAssessmentResult));
-    renderAssessmentResult();
+    renderQuiz();
+
     Object.entries(levels.levels).forEach(([k,v]) => {
       const btn = document.createElement('button');
       btn.textContent = `Level ${k}: ${v.name}`;
@@ -267,3 +273,17 @@ function renderMaturityCards(stages) {
     container.appendChild(card);
   });
 }
+
+function renderTheatre(data){
+  theatreSteps.innerHTML='';
+  (data.theatre_steps||[]).forEach((s)=>{const c=document.createElement('div'); c.className='option'; c.innerHTML=`<strong>${s.label}</strong><div class="muted">${s.summary}</div><div class="muted">${s.detail}</div>`; theatreSteps.appendChild(c);});
+  lastReplaySteps = data.replay_steps || [];
+  replayBtn.disabled = lastReplaySteps.length===0;
+  taskboardEl.innerHTML='';
+  if(data.taskboard){ const h=document.createElement('h3'); h.textContent='Level 8 Orchestrator Dashboard'; taskboardEl.appendChild(h); (data.taskboard.workers||[]).forEach(w=>{const c=document.createElement('div'); c.className='option'; c.innerHTML=`<strong>${w.worker}</strong><div class="muted">task: ${w.task}</div><div class="muted">status: ${w.status} · attempts: ${w.attempt}</div><div class="muted">verified: ${w.verified ? 'yes':'no'}</div>`; taskboardEl.appendChild(c);}); }
+}
+replayBtn?.addEventListener('click', async ()=>{ if(!lastReplaySteps.length) return; log.innerHTML=''; for(const step of lastReplaySteps){ appendMessage('system', `Replay: ${step}`); await sleep(300);} });
+function renderQuiz(){ const q=document.getElementById('quiz-questions'); if(!q) return; const questions=[
+'Do you only ask AI questions?', 'Do you let AI edit files?', 'Do you approve every action?', 'Do you let AI run tools?', 'Do you run agents in the terminal?', 'Do you run multiple agents at once?', 'Do you review outputs through a taskboard?', 'Do you have your own orchestration system?'
+]; q.innerHTML=''; questions.forEach((text,i)=>{ const row=document.createElement('div'); row.innerHTML=`<label>${text} <select data-q="${i}"><option value="0">No</option><option value="1">Yes</option></select></label>`; q.appendChild(row);}); q.addEventListener('change', renderAssessmentResult); renderAssessmentResult(); }
+function renderAssessmentResult(){ const vals=[...document.querySelectorAll('#quiz-questions select')].map(s=>Number(s.value||0)); const score=vals.reduce((a,b)=>a+b,0); const stage=Math.min(8, Math.max(1, score)); const out=document.getElementById('assessment-result'); const conf=score>=6?'high':score>=3?'medium':'early-signal'; const next=stage<3?'supervised edits with approval gates':stage<6?'bounded tool use + verification':'taskboard orchestration with merge gates'; const tryLevel=Math.min(8, stage+1); out.textContent=`You are probably around Stage ${stage}. Confidence: ${conf}. Your next safe step is ${next}. Try Glytch Level ${tryLevel} next.`; }

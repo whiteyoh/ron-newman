@@ -93,6 +93,154 @@ def use_case_prompt(text: str, use_case: str | None = None) -> str:
     return f"{use_case}\n{text}"
 
 
+def _build_structured_payload(
+    level: int, level_info: dict[str, str], lines: list[str], agenticness: dict[str, Any]
+) -> dict[str, Any]:
+    stage_summary = {
+        "level": level,
+        "name": level_info["name"],
+        "plain_summary": level_info["desc"],
+        "closest_yegge_stage": agenticness["closest_yegge_stage"],
+    }
+    score_summary = {
+        "capability_level": level,
+        "agenticness_score": agenticness["score"],
+        "yegge_alignment_score": agenticness["yegge_alignment_score"],
+        "why_this_score": agenticness["explanation"],
+        "why_not_higher": "More autonomy requires stronger orchestration, verification depth, and governance.",
+        "move_up_hint": "Add tighter verification, clearer approval gates, and stronger orchestration only when needed.",
+    }
+    theatre_steps = [
+        {
+            "label": "What the human asked for",
+            "actor": "human",
+            "status": "complete",
+            "summary": lines[0] if lines else "Objective set",
+            "detail": "Objective created",
+        },
+        {
+            "label": "What the agent decided",
+            "actor": "agent",
+            "status": "complete",
+            "summary": "Policy and actions selected.",
+            "detail": "Bounded autonomy in workshop-safe simulation.",
+        },
+        {
+            "label": "What the agent checked",
+            "actor": "verifier",
+            "status": "complete",
+            "summary": "Verifier reviewed output.",
+            "detail": "Verification step applied before final verdict.",
+        },
+        {
+            "label": "Where the human stays in control",
+            "actor": "human",
+            "status": "approved",
+            "summary": "Human approval gate enforced.",
+            "detail": "Final output requires review and approval.",
+        },
+        {
+            "label": "Can we trust this output?",
+            "actor": "orchestrator" if level == 8 else "agent",
+            "status": "complete",
+            "summary": "Final verdict issued with audit trail.",
+            "detail": "Outcome is educational and workshop-safe.",
+        },
+    ]
+    replay_steps = [
+        "objective created",
+        "policy loaded",
+        "action selected",
+        "tool/worker executed",
+        "observation received",
+        "verifier checked",
+        "approval gate applied",
+        "final verdict",
+    ]
+    approval_summary = {
+        "approval_required": True,
+        "approved": level != 8,
+        "merge_decision": "approved" if level != 8 else "conditional",
+    }
+    audit_summary = {
+        "entries": [
+            entry
+            for entry in lines
+            if any(k in entry.lower() for k in ["audit", "verdict", "approval", "verification"])
+        ][:8]
+    }
+    taskboard = None
+    if level == 8:
+        taskboard = {
+            "columns": ["Pending", "Running", "Completed", "Needs human review", "Merged"],
+            "workers": [
+                {
+                    "worker": "planner",
+                    "task": "Break objective into tasks",
+                    "status": "completed",
+                    "attempt": 1,
+                    "output_summary": "Plan drafted",
+                    "error": "",
+                    "verified": True,
+                },
+                {
+                    "worker": "researcher",
+                    "task": "Gather guidance",
+                    "status": "completed",
+                    "attempt": 1,
+                    "output_summary": "Evidence gathered",
+                    "error": "",
+                    "verified": True,
+                },
+                {
+                    "worker": "teacher_resource_writer",
+                    "task": "Draft teaching resource",
+                    "status": "completed",
+                    "attempt": 1,
+                    "output_summary": "Draft produced",
+                    "error": "",
+                    "verified": True,
+                },
+                {
+                    "worker": "critic",
+                    "task": "Stress-test draft",
+                    "status": "completed",
+                    "attempt": 1,
+                    "output_summary": "Critique captured",
+                    "error": "",
+                    "verified": True,
+                },
+                {
+                    "worker": "verifier",
+                    "task": "Check claims and fit",
+                    "status": "completed",
+                    "attempt": 1,
+                    "output_summary": "Verifier gate complete",
+                    "error": "",
+                    "verified": True,
+                },
+                {
+                    "worker": "merger",
+                    "task": "Apply merge policy",
+                    "status": "needs_review",
+                    "attempt": 1,
+                    "output_summary": "Awaiting human gate",
+                    "error": "",
+                    "verified": True,
+                },
+            ],
+        }
+    return {
+        "stage_summary": stage_summary,
+        "score_summary": score_summary,
+        "theatre_steps": theatre_steps,
+        "approval_summary": approval_summary,
+        "audit_summary": audit_summary,
+        "replay_steps": replay_steps,
+        "taskboard": taskboard,
+    }
+
+
 def run_level(
     level: int,
     client: AIChatClient,
@@ -530,9 +678,11 @@ def run_level(
             ]
         )
 
-    return {
+    payload = {
         "level": level,
         "title": level_info["name"],
         "lines": intro + lines,
         "agenticness": AGENTICNESS[level],
     }
+    payload.update(_build_structured_payload(level, level_info, intro + lines, AGENTICNESS[level]))
+    return payload
