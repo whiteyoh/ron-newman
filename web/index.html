@@ -4,9 +4,15 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Glytch | See AI grow from prompts into controlled agents</title>
-    <meta name="description" content="Workshop-safe demo that shows decisions, checks, human approval gates, and orchestration in plain English across 8 AI maturity levels." />
+    <meta
+      name="description"
+      content="Workshop-safe demo that shows decisions, checks, human approval gates, and orchestration in plain English across 8 AI maturity levels."
+    />
     <meta property="og:title" content="Glytch | Controlled Agent Demo" />
-    <meta property="og:description" content="See what the human asked, what the agent decided, what was checked, and what should happen next." />
+    <meta
+      property="og:description"
+      content="See what the human asked, what the agent decided, what was checked, and what should happen next."
+    />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://glytch.uk" />
     <meta name="theme-color" content="#0b1228" />
@@ -14,69 +20,91 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <a href="#main-content" class="skip-link">Skip to main content</a>
-    <main id="main-content" class="shell" tabindex="-1">
-      <section id="entry" class="card hero" aria-labelledby="hero-title">
-        <h1 id="hero-title"><img src="assets/glytch-logo.svg" alt="Glytch" class="logo" /></h1>
-        <h2>See AI grow from simple prompts into controlled agents.</h2>
-        <p class="lead">Watch decisions, checks, approvals and orchestration unfold in plain English.</p>
-        <div class="badges" aria-label="Safety and design badges">
-          <span class="badge">Workshop-safe</span><span class="badge">Human approval gates</span><span class="badge">No real side effects</span><span class="badge">Yegge-inspired</span>
-        </div>
+    <a href="#main" class="skip-link">Skip to main content</a>
+
+    <header class="site-header" aria-label="Glytch site header">
+      <div class="brand-row">
+        <img src="assets/glytch-logo.svg" alt="Glytch" class="logo" />
+        <p class="tagline">Make the invisible visible — safely.</p>
+      </div>
+      <div class="badges" aria-label="Safety and design badges">
+        <span class="badge">Workshop-safe</span>
+        <span class="badge">Human approval gates</span>
+        <span class="badge">No real side effects</span>
+      </div>
+    </header>
+
+    <main id="main" class="app-shell" tabindex="-1">
+      <section id="entry" class="panel hero" aria-labelledby="hero-title">
+        <h1 id="hero-title">Understand AI maturity in 10 seconds.</h1>
+        <p class="lead">Choose a scenario, confirm direction, launch a level, and watch a simulated agentic run with visible checks and approval gates.</p>
         <button id="start-btn">Start the demo</button>
       </section>
 
       <section id="app" class="hidden" aria-label="Glytch demo application">
-        <section class="card" aria-labelledby="setup-title">
-          <div class="section-header"><h2 id="setup-title">Choose your workshop scenario</h2></div>
+        <section class="panel" aria-labelledby="setup-title">
+          <h2 id="setup-title">1) Setup your scenario</h2>
           <div id="use-case-options" class="choices"></div>
           <div class="confirm-panel">
             <p id="selection-label" class="muted">No use case selected yet.</p>
-            <label for="context-input">Optional context for the demo</label>
-            <p class="muted helper-text">Add a topic or constraint if you want. You can leave this blank.</p>
-            <textarea id="context-input" rows="3" placeholder="Example: age group, policy constraints, or workshop focus"></textarea>
-                        <button id="confirm-btn" disabled>Confirm this direction</button>
+            <label for="context-input">Optional context</label>
+            <p class="muted helper-text">Add audience, constraints, or workshop focus. You can leave this blank.</p>
+            <textarea id="context-input" rows="4" placeholder="Example: healthcare policy briefing for non-technical team"></textarea>
+            <button id="confirm-btn" disabled>Confirm this direction</button>
           </div>
         </section>
 
-        <section class="card" aria-labelledby="levels-title">
-          <div class="section-header"><h2 id="levels-title">Choose a level</h2><p class="muted">Use the lowest useful level.</p></div>
+        <section class="panel" aria-labelledby="levels-title">
+          <div class="section-header">
+            <h2 id="levels-title">2) Choose a level</h2>
+            <p class="muted">Use the lowest useful level first.</p>
+          </div>
           <div class="grid" id="buttons"></div>
         </section>
 
-        <section class="card" aria-labelledby="dashboard-title">
-          <div class="section-header"><h2 id="dashboard-title">Run dashboard</h2><span class="badge">Simulation replay — no answer needed</span></div>
-          <div class="status" aria-live="polite"><div id="api-state"><span class="pill">Waiting</span></div><div id="meta"></div></div>
+        <section class="panel" aria-labelledby="dashboard-title">
+          <div class="section-header">
+            <h2 id="dashboard-title">3) Run dashboard</h2>
+            <span class="badge">Simulation replay · Read-only trace</span>
+          </div>
+          <div class="status" aria-live="polite">
+            <div id="api-state"><span class="pill">Waiting</span></div>
+            <div id="meta"></div>
+          </div>
           <div id="score-panel" class="dashboard-grid"></div>
-          <h3>Agentic Theatre <span class="muted small">Workshop-safe simulation · No real external actions</span> <span class="badge trace-badge">Read-only trace</span></h3>
+          <h3>Agentic theatre</h3>
           <div id="theatre-steps" class="theatre-flow" aria-live="polite"></div>
-          <div class="toolbar"><button id="replay-btn" class="ghost" disabled>Replay this run</button><span id="replay-state" class="muted"></span></div>
+          <div class="toolbar">
+            <button id="replay-btn" class="ghost" disabled>Replay this run</button>
+            <span id="replay-state" class="muted"></span>
+          </div>
           <div id="taskboard"></div>
-          <h3>Raw output transcript <span class="badge trace-badge">Read-only trace</span></h3>
+          <h3>Raw output transcript</h3>
           <div id="log" aria-live="polite"></div>
           <button id="download-artifact" class="ghost" disabled>Download latest artifact (.txt)</button>
         </section>
 
-        <section class="card" aria-labelledby="maturity-title">
-          <div class="section-header"><h2 id="maturity-title">Maturity and self-check</h2></div>
-          <h3>Agentic Maturity Ladder</h3>
+        <section class="panel" aria-labelledby="maturity-title">
+          <h2 id="maturity-title">4) Understand your maturity stage</h2>
+          <h3>Agentic maturity ladder</h3>
           <div id="maturity-cards" class="choices"></div>
           <h3>What level am I?</h3>
-          <div id="quiz-questions"></div>
+          <div id="quiz-questions" class="quiz-grid"></div>
           <p id="assessment-result" class="quiz-card" aria-live="polite"></p>
         </section>
 
-        <section class="card" aria-labelledby="before-after-title">
-          <h2 id="before-after-title">Before vs Agentic</h2>
+        <section class="panel" aria-labelledby="before-after-title">
+          <h2 id="before-after-title">5) Before vs agentic</h2>
           <div id="before-after" class="choices"></div>
         </section>
       </section>
     </main>
 
-    <footer class="footer">
-      Built for plain-English AI workshops.
-      <a href="https://github.com/whiteyoh/ron-newman" target="_blank" rel="noopener noreferrer">GitHub repo</a> ·
-      <a href="docs/YEGGE_ALIGNMENT.md" target="_blank" rel="noopener noreferrer">Yegge model inspiration</a> ·
+    <footer class="site-footer">
+      <a href="https://github.com/whiteyoh/ron-newman" target="_blank" rel="noopener noreferrer">GitHub repo</a>
+      <span>·</span>
+      <a href="docs/YEGGE_ALIGNMENT.md" target="_blank" rel="noopener noreferrer">Yegge/design inspiration</a>
+      <span>·</span>
       <a href="https://glytch.uk" target="_blank" rel="noopener noreferrer">glytch.uk</a>
     </footer>
 
