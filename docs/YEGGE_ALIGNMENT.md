@@ -30,3 +30,10 @@ Avoid: "These 8 capability levels are exactly Yegge's 8 stages."
 - Added Yegge fields per level in `AGENTICNESS`: `closest_yegge_stage`, `yegge_alignment_score`, and `yegge_alignment_explanation`.
 - Limitation: this remains workshop-safe and is not a production orchestrator (no external side effects, no deployment automation, limited policy depth).
 
+
+
+## Why Yegge adoption increased by one point
+- Before: Level 8 demonstrated parallel role orchestration with verifier and merger outputs.
+- After: Level 8 now runs a taskboard-based orchestrator simulation with explicit task state, worker lifecycle transitions, retry handling, audit trail, verifier gate, approval gate, and merge policy.
+- Score change: Yegge alignment for Level 8 increased from 8 to 9 (exactly +1) because these orchestration mechanics now exist in implementation.
+- Still missing for production-level orchestration: persistent storage, real worker processes, repository side effects, deployment integration, and multi-run memory.
