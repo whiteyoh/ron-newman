@@ -144,7 +144,12 @@ async function runLevel(level){
   }
 
   const lines = data.lines || ['No output lines returned.'];
-  if (data.agenticness) { lines.unshift(`Agenticness ${data.agenticness.score}/10: ${data.agenticness.explanation}`); }
+  if (data.agenticness) {
+    lines.unshift(`Why this score is justified: ${data.agenticness.explanation}`);
+    lines.unshift(`Yegge alignment score: ${data.agenticness.yegge_alignment_score}/10`);
+    lines.unshift(`Closest Yegge stage: ${data.agenticness.closest_yegge_stage}`);
+    lines.unshift(`Agenticness score: ${data.agenticness.score}/10`);
+  }
   createArtifact(level, lines);
   await streamLines(lines);
   } catch (err) {

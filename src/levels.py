@@ -1,8 +1,11 @@
 from typing import Any
 
+from src.agent_models import AgentPolicy, AgentTask
+
 # ruff: noqa: E501
 from src.agent_runtime import run_constrained_agent_loop
 from src.constants import AGENTICNESS, DEFAULT_USE_CASE_KEY, LEVELS, USE_CASE_OPTIONS
+from src.orchestrator import run_mini_orchestrator
 from src.tools import calculator_tool, retrieve_local_facts
 from src.types import AIChatClient
 
@@ -140,106 +143,227 @@ def run_level(
         lines = [f"Instruction: {user_prompt}", f"Model output: {completion}"]
     elif level == 3:
         expression = "17*43"
-        tool_result = calculator_tool(expression)
-        answer = client.chat(
-            "You can call a calculator. Return final numeric answer only.",
+        chooser = client.chat(
+            'Return strict JSON only: {"action":"answer_directly|use_calculator","tool_input":"string","final_answer":"string"}.',
             use_case_prompt(
-                f"Use calculator result {tool_result} for expression {expression}.", use_case
+                f"Question: What is {expression}? Allowed actions: answer_directly, use_calculator.",
+                use_case,
             ),
         )
+        action = "answer_directly"
+        tool_input = expression
+        tool_result = "n/a"
+        final_answer = ""
+        try:
+            import json
+
+            parsed = json.loads(chooser)
+            action = str(parsed.get("action", "answer_directly"))
+            tool_input = str(parsed.get("tool_input", expression))
+            final_answer = str(parsed.get("final_answer", ""))
+        except Exception:
+            action = "answer_directly"
+            final_answer = "Fallback: unable to parse model JSON."
+        if action == "use_calculator":
+            tool_result = calculator_tool(tool_input)
+            final_answer = client.chat(
+                "Use tool result to provide final answer.", f"tool_result={tool_result}"
+            )
+        elif not final_answer:
+            final_answer = client.chat("Answer directly in one line.", f"What is {expression}?")
         lines = [
             f"Task expression: {expression}",
-            f"calculator_tool => {tool_result}",
-            f"Model final answer: {answer}",
+            f"Model selected action: {action}",
+            f"Tool input: {tool_input}",
+            f"Tool result: {tool_result}",
+            f"Final answer: {final_answer}",
         ]
     elif level == 4:
         question = "What is a SMART learning objective?"
         evidence = retrieve_local_facts(question)
+        sufficiency = client.chat(
+            "Is this evidence sufficient for the question? Return sufficient/insufficient and one reason.",
+            f"Question: {question}\nEvidence: {evidence}",
+        )
         answer = client.chat(
-            "Answer only from supplied evidence. If missing, say unknown.",
-            use_case_prompt(f"Question: {question}\nEvidence: {evidence}", use_case),
+            "Answer only from evidence. If insufficient, clearly note limits.",
+            use_case_prompt(
+                f"Question: {question}\nEvidence(source=local_kb): {evidence}\nSufficiency: {sufficiency}",
+                use_case,
+            ),
+        )
+        support = client.chat(
+            "Is this answer fully supported by the supplied evidence? Return supported/unsupported and one reason.",
+            f"Evidence: {evidence}\nAnswer: {answer}",
         )
         lines = [
             f"Question: {question}",
             f"Retrieved evidence: {evidence}",
+            "Evidence source: local_kb",
+            f"Sufficiency check: {sufficiency}",
             f"Grounded answer: {answer}",
+            f"Support verifier: {support}",
         ]
     elif level == 5:
         goal = use_case_prompt("Design a 2-hour Year 10 revision workshop.", use_case)
         plan = client.chat("Create a concise numbered plan.", goal)
-        agenda = client.chat("Execute the plan into a timed agenda with bullet points.", plan)
-        lines = [f"Goal: {goal}", "Plan:", plan, "Executed agenda:", agenda]
+        execution = client.chat("Execute this plan into a timed agenda with bullets.", plan)
+        verification = client.chat(
+            "Verify against objective. Return strong/weak/unsupported/incomplete and one reason.",
+            f"Objective: {goal}\nOutput: {execution}",
+        )
+        revise = (
+            "revise"
+            if any(tag in verification.lower() for tag in ["weak", "unsupported", "incomplete"])
+            else "keep"
+        )
+        final = (
+            execution
+            if revise == "keep"
+            else client.chat(
+                "Revise to fix verification weakness.",
+                f"Objective:{goal}\nPlan:{plan}\nExecution:{execution}\nVerification:{verification}",
+            )
+        )
+        lines = [
+            f"Goal: {goal}",
+            "Plan:",
+            plan,
+            "Execution:",
+            execution,
+            f"Verification result: {verification}",
+            f"Revision decision: {revise}",
+            "Final answer:",
+            final,
+        ]
     elif level == 6:
-        draft = client.chat(
-            "Write a short lesson-summary note with one clear learner benefit.",
-            use_case_prompt("Students can now self-test using spaced retrieval prompts.", use_case),
+        objective = use_case_prompt(
+            "Write a short lesson-summary note with one clear learner benefit.", use_case
         )
-        critique = client.chat("Critique this draft in two bullets.", draft)
-        improved = client.chat(
-            "Revise the draft using this critique.", f"Draft:\n{draft}\n\nCritique:\n{critique}"
-        )
-        lines = ["Initial draft:", draft, "Critique:", critique, "Improved draft:", improved]
+        current = client.chat("Draft initial answer.", objective)
+        lines = ["Bounded critique loop:"]
+        threshold = 80
+        selected = current
+        for attempt in range(1, 4):
+            critique = client.chat("Critique this draft and provide one improvement.", current)
+            score_raw = client.chat("Score this draft 0-100 as integer only.", current)
+            try:
+                score = int("".join(ch for ch in score_raw if ch.isdigit()) or "0")
+            except Exception:
+                score = 0
+            decision = "revise" if attempt < 3 and score < threshold else "select"
+            lines.extend(
+                [
+                    f"Attempt number: {attempt}",
+                    f"Score: {score}",
+                    f"Critique: {critique}",
+                    f"Decision: {decision}",
+                ]
+            )
+            selected = current
+            if decision == "revise":
+                current = client.chat(
+                    "Revise using critique.", f"Draft:{current}\nCritique:{critique}"
+                )
+            else:
+                break
+        lines.extend(["Selected final answer:", selected])
     elif level == 7:
         objective = use_case_prompt(
             "Design a practical support workflow for teachers creating lessons and revision plans.",
             use_case,
+        )
+        policy = AgentPolicy(
+            allowed_actions=["research", "calculate", "draft", "finish"],
+            max_iterations=5,
+            max_tool_errors=1,
+            require_final_verification=True,
         )
         run = run_constrained_agent_loop(
             client=client,
             objective=objective,
             retrieve_fn=retrieve_local_facts,
             calculate_fn=calculator_tool,
-            max_iterations=5,
+            max_iterations=policy.max_iterations,
         )
-        lines = ["Objective:", objective, "Agent loop timeline:"]
+        tool_errors = sum(1 for s in run["trace"] if "tool error" in s.observation)
+        verified = True
+        verifier = (
+            client.chat(
+                "Verify final answer for objective fit. Return safe/unsafe and one reason.",
+                f"Objective:{objective}\nAnswer:{run['final_answer']}",
+            )
+            if policy.require_final_verification
+            else "verification skipped"
+        )
+        if "unsafe" in verifier.lower():
+            verified = False
+        lines = [
+            "Objective:",
+            objective,
+            "Agent policy:",
+            f"allowed_actions={policy.allowed_actions}",
+            f"max_iterations={policy.max_iterations}",
+            f"max_tool_errors={policy.max_tool_errors}",
+            f"require_final_verification={policy.require_final_verification}",
+            "Agent loop timeline:",
+        ]
         for step in run["trace"]:
             lines.extend(
                 [
                     f"Iteration {step.iteration}",
                     f"Chosen action: {step.action}",
+                    f"Action budget remaining: {max(policy.max_iterations - step.iteration, 0)}",
                     f"Tool input: {step.tool_input}",
                     f"Observation: {step.observation}",
                     f"Decision reason: {step.reason}",
+                    f"Tool error count: {tool_errors}",
                 ]
             )
-        stop = (
-            "stop condition met: finish action"
-            if run["stopped_on_finish"]
-            else "stop condition met: max iterations"
+        lines.extend(
+            [
+                f"Stop condition: {'finish action' if run['stopped_on_finish'] else 'max iterations budget'}",
+                f"Final verifier step: {verifier}",
+                f"safe to use?: {'yes' if verified else 'no'}",
+                "Structured run summary:",
+                f"stopped_on_finish: {run['stopped_on_finish']}",
+                f"stopped_on_budget: {not run['stopped_on_finish']}",
+                f"tool_errors: {tool_errors}",
+                f"verified: {verified}",
+                f"final_verdict: {'safe' if verified else 'needs review'}",
+                "Final answer:",
+                run["final_answer"],
+            ]
         )
-        lines.extend([f"Stop condition: {stop}", "Final answer:", run["final_answer"]])
     else:
-        seed = use_case_prompt(
-            "Draft guidance for writing effective lesson and revision plans.", use_case
+        task = AgentTask(
+            objective=use_case_prompt(
+                "Draft guidance for writing effective lesson and revision plans.", use_case
+            )
         )
-        planner = client.chat("You are planner. Return a short execution plan.", seed)
-        critic = client.chat("You are critic. Identify two risks and two improvements.", planner)
-        writer = client.chat(
-            "You are teacher-resource-writer. Produce classroom-ready guidance using plan and critique.",
-            f"Plan:\n{planner}\n\nCritique:\n{critic}",
-        )
-        verifier = client.chat(
-            "You are verifier. Score 0-100 for clarity/actionability and give one-line verdict.",
-            writer,
-        )
-        final = client.chat(
-            "Merge planner, critic, writer, and verifier into one concise final answer.",
-            f"Planner:\n{planner}\n\nCritic:\n{critic}\n\nWriter:\n{writer}\n\nVerifier:\n{verifier}",
-        )
+        orch = run_mini_orchestrator(client, task, parallel=True)
         lines = [
-            "Simulated orchestration note: This is not a full production orchestrator. It is a workshop-safe miniature showing the pattern.",
+            "Simulated orchestration note: This remains workshop-safe and is not a production orchestrator.",
             "Orchestration trace:",
-            "Worker: planner",
-            planner,
-            "Worker: critic",
-            critic,
-            "Worker: teacher-resource-writer",
-            writer,
-            "Worker: verifier",
-            verifier,
-            "Final merged answer:",
-            final,
+            f"orchestration mode: {orch['mode']}",
         ]
+        for item in orch["trace"]:
+            lines.extend(
+                [
+                    f"worker name: {item['worker']}",
+                    f"worker task: {item['task']}",
+                    f"worker output summary: {item['output_summary']}",
+                ]
+            )
+        lines.extend(
+            [
+                f"verifier result: {orch['verifier_result']}",
+                f"merge policy: {orch['merge_policy']}",
+                "final answer:",
+                orch["final_answer"],
+                f"honest limitation note: {orch['limitation']}",
+            ]
+        )
 
     return {
         "level": level,
