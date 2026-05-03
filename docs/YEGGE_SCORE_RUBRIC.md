@@ -17,3 +17,8 @@ Level 1 is not advanced autonomy. It earns 8 because it faithfully demonstrates 
 
 ## Not production automation
 All levels remain workshop-safe: no real shell execution, no real file writes, no GitHub writes, no background jobs, and no external side effects.
+
+
+## Simulation note
+
+Scores evaluate workshop-safe simulations with explicit verification and human approval gates; they do not indicate production autonomy.

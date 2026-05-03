@@ -78,3 +78,8 @@ Glytch now includes Agentic Theatre, a maturity ladder, score explanations, and 
 
 ## Yegge alignment update
 This demo now presents **capability vs Yegge stage** with high-fidelity workshop simulations, explicit human approval gates, and clear non-production limits.
+
+
+## Workshop simulation fidelity updates
+
+All 8 levels now include a Yegge workflow simulation object. These are high-fidelity workshop simulations, not production autonomous agents. Level 8 taskboard uses real orchestrator run state and theatre/replay views now derive from actual run data.
