@@ -75,3 +75,14 @@ Use the lowest layer that consistently meets your use-case requirements.
 For this repository, layer behavior is demonstrated in:
 - `examples/SCENARIO_USE_CASES.md`
 - `examples/level1` through `examples/level8`
+
+## 2026-05 agenticness implementation update
+- Level 3: upgraded to model-selected tool action with JSON action choice and visible tool trace.
+- Level 4: upgraded with evidence source labels, sufficiency check, and answer support verifier.
+- Level 5: upgraded to plan-execute-verify with conditional single revision.
+- Level 6: upgraded to bounded critique loop (score gate, threshold, max revisions).
+- Level 7: upgraded with explicit AgentPolicy, action budget visibility, tool-error counting, final verifier gate, and structured run summary.
+- Level 8: upgraded to mini-orchestrator abstraction in `src/orchestrator.py` with planner/researcher/writer/critic workers plus verifier and merger, running in safe parallel mode with fallback.
+- Added Yegge fields per level in `AGENTICNESS`: `closest_yegge_stage`, `yegge_alignment_score`, and `yegge_alignment_explanation`.
+- Limitation: this remains workshop-safe and is not a production orchestrator (no external side effects, no deployment automation, limited policy depth).
+
