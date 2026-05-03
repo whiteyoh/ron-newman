@@ -32,26 +32,27 @@
           <div id="use-case-options" class="choices"></div>
           <div class="confirm-panel">
             <p id="selection-label" class="muted">No use case selected yet.</p>
-            <label for="context-input">Optional context for this run</label>
+            <label for="context-input">Optional context for the demo</label>
+            <p class="muted helper-text">Add a topic or constraint if you want. You can leave this blank.</p>
             <textarea id="context-input" rows="3" placeholder="Example: age group, policy constraints, or workshop focus"></textarea>
-            <button id="confirm-btn" disabled>Confirm direction</button>
+                        <button id="confirm-btn" disabled>Confirm this direction</button>
           </div>
         </section>
 
         <section class="card" aria-labelledby="levels-title">
-          <div class="section-header"><h2 id="levels-title">Run a Glytch level</h2><p class="muted">Use the lowest useful level.</p></div>
+          <div class="section-header"><h2 id="levels-title">Choose a level</h2><p class="muted">Use the lowest useful level.</p></div>
           <div class="grid" id="buttons"></div>
         </section>
 
         <section class="card" aria-labelledby="dashboard-title">
-          <div class="section-header"><h2 id="dashboard-title">Run dashboard</h2><span class="badge">Human approval gate</span></div>
+          <div class="section-header"><h2 id="dashboard-title">Run dashboard</h2><span class="badge">Simulation replay — no answer needed</span></div>
           <div class="status" aria-live="polite"><div id="api-state"><span class="pill">Waiting</span></div><div id="meta"></div></div>
           <div id="score-panel" class="dashboard-grid"></div>
-          <h3>Agentic Theatre <span class="muted small">Workshop-safe simulation · No real external actions</span></h3>
+          <h3>Agentic Theatre <span class="muted small">Workshop-safe simulation · No real external actions</span> <span class="badge trace-badge">Read-only trace</span></h3>
           <div id="theatre-steps" class="theatre-flow" aria-live="polite"></div>
           <div class="toolbar"><button id="replay-btn" class="ghost" disabled>Replay this run</button><span id="replay-state" class="muted"></span></div>
           <div id="taskboard"></div>
-          <h3>Raw output transcript</h3>
+          <h3>Raw output transcript <span class="badge trace-badge">Read-only trace</span></h3>
           <div id="log" aria-live="polite"></div>
           <button id="download-artifact" class="ghost" disabled>Download latest artifact (.txt)</button>
         </section>

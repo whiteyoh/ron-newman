@@ -14,3 +14,10 @@
 - [ ] Download artifact button creates a text file after a run.
 - [ ] Reduced motion preference disables/limits animation behavior.
 - [ ] Missing API key fallback shows clear non-crashing status.
+- [ ] Before selecting a level, helper text explains this is a simulated, read-only trace.
+- [ ] During a run, the dashboard shows simulation-only messaging (no answer needed).
+- [ ] Transcript and Agentic Theatre visibly include "Read-only trace" labels.
+- [ ] Transcript labels use demo/trace wording (not Prompt/Question/Instruction as user asks).
+- [ ] Only scenario/context/level controls appear interactive.
+- [ ] Run each level and confirm no transcript line looks like the UI is waiting for user input.
+
