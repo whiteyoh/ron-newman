@@ -9,6 +9,7 @@ from src.constants import AGENTICNESS, DEFAULT_USE_CASE_KEY, LEVELS, USE_CASE_OP
 from src.orchestrator import run_mini_orchestrator
 from src.tools import calculator_tool, retrieve_local_facts
 from src.types import AIChatClient
+from src.yegge_workflows import build_yegge_simulation
 
 LEVEL_ADVANCEMENT_REASONS = {
     2: (
@@ -94,7 +95,12 @@ def use_case_prompt(text: str, use_case: str | None = None) -> str:
 
 
 def _build_structured_payload(
-    level: int, level_info: dict[str, str], lines: list[str], agenticness: dict[str, Any]
+    level: int,
+    level_info: dict[str, str],
+    lines: list[str],
+    agenticness: dict[str, Any],
+    yegge_simulation: dict[str, Any],
+    run_data: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     stage_summary = {
         "level": level,
@@ -104,10 +110,13 @@ def _build_structured_payload(
     }
     score_summary = {
         "capability_level": level,
-        "agenticness_score": agenticness["score"],
+        "capability_score": agenticness.get("capability_score", level),
+        "agenticness_score": agenticness.get("agenticness_score", agenticness["score"]),
         "yegge_alignment_score": agenticness["yegge_alignment_score"],
-        "why_this_score": agenticness["explanation"],
-        "why_not_higher": "More autonomy requires stronger orchestration, verification depth, and governance.",
+        "why_this_score": agenticness["yegge_alignment_explanation"],
+        "why_not_higher": agenticness.get(
+            "yegge_alignment_limit", "Workshop-safe simulation limits autonomy."
+        ),
         "move_up_hint": "Add tighter verification, clearer approval gates, and stronger orchestration only when needed.",
     }
     theatre_steps = [
@@ -169,67 +178,13 @@ def _build_structured_payload(
             if any(k in entry.lower() for k in ["audit", "verdict", "approval", "verification"])
         ][:8]
     }
-    taskboard = None
-    if level == 8:
-        taskboard = {
-            "columns": ["Pending", "Running", "Completed", "Needs human review", "Merged"],
-            "workers": [
-                {
-                    "worker": "planner",
-                    "task": "Break objective into tasks",
-                    "status": "completed",
-                    "attempt": 1,
-                    "output_summary": "Plan drafted",
-                    "error": "",
-                    "verified": True,
-                },
-                {
-                    "worker": "researcher",
-                    "task": "Gather guidance",
-                    "status": "completed",
-                    "attempt": 1,
-                    "output_summary": "Evidence gathered",
-                    "error": "",
-                    "verified": True,
-                },
-                {
-                    "worker": "teacher_resource_writer",
-                    "task": "Draft teaching resource",
-                    "status": "completed",
-                    "attempt": 1,
-                    "output_summary": "Draft produced",
-                    "error": "",
-                    "verified": True,
-                },
-                {
-                    "worker": "critic",
-                    "task": "Stress-test draft",
-                    "status": "completed",
-                    "attempt": 1,
-                    "output_summary": "Critique captured",
-                    "error": "",
-                    "verified": True,
-                },
-                {
-                    "worker": "verifier",
-                    "task": "Check claims and fit",
-                    "status": "completed",
-                    "attempt": 1,
-                    "output_summary": "Verifier gate complete",
-                    "error": "",
-                    "verified": True,
-                },
-                {
-                    "worker": "merger",
-                    "task": "Apply merge policy",
-                    "status": "needs_review",
-                    "attempt": 1,
-                    "output_summary": "Awaiting human gate",
-                    "error": "",
-                    "verified": True,
-                },
-            ],
-        }
+    taskboard = run_data.get("taskboard") if run_data else None
+    workflow_preview = {
+        "workflow_name": yegge_simulation["workflow_name"],
+        "simulated_environment": yegge_simulation["simulated_environment"],
+        "human_role": yegge_simulation["human_role"],
+        "agent_role": yegge_simulation["agent_role"],
+    }
     return {
         "stage_summary": stage_summary,
         "score_summary": score_summary,
@@ -238,6 +193,21 @@ def _build_structured_payload(
         "audit_summary": audit_summary,
         "replay_steps": replay_steps,
         "taskboard": taskboard,
+        "capability_summary": {
+            "capability_being_taught": yegge_simulation["capability_being_taught"],
+            "simulation_type": agenticness.get("simulation_type", "workshop-safe simulation"),
+        },
+        "yegge_simulation": yegge_simulation,
+        "yegge_score_summary": score_summary,
+        "workflow_preview": workflow_preview,
+        "permission_flow": yegge_simulation.get("permissions"),
+        "diff_preview": yegge_simulation.get("previewed_changes"),
+        "command_preview": yegge_simulation.get("command_preview"),
+        "parallel_agents": yegge_simulation.get("agent_instances"),
+        "swarm_summary": run_data.get("swarm_summary") if run_data else None,
+        "review_gate": yegge_simulation.get("review_gate"),
+        "risk_controls": yegge_simulation.get("risk_controls"),
+        "why_not_production": yegge_simulation.get("why_not_production"),
     }
 
 
@@ -266,6 +236,8 @@ def run_level(
             f"Why this is more advanced than Level {level - 1}: {LEVEL_ADVANCEMENT_REASONS[level]}"
         )
     intro.append(use_case)
+    simulation = build_yegge_simulation(level, level_info["name"], use_case).to_dict()
+    run_data: dict[str, Any] = {}
 
     if not client.available():
         return {
@@ -322,6 +294,7 @@ def run_level(
             *run["audit_log"],
             f"Final answer: {run['final_answer']}",
         ]
+        run_data = run
     elif level == 2:
         objective = use_case_prompt("Follow instruction contract with permission gate.", use_case)
         instruction = (
@@ -371,6 +344,7 @@ def run_level(
             "Audit trail:",
             *run["audit_log"],
         ]
+        run_data = run
     elif level == 3:
         objective = use_case_prompt(
             "Solve arithmetic with model-selected tool action loop.", use_case
@@ -423,6 +397,7 @@ def run_level(
             "Audit trail:",
             *run["audit_log"],
         ]
+        run_data = run
     elif level == 4:
         objective = use_case_prompt("Answer using retrieved evidence only.", use_case)
         question = "What is a SMART learning objective?"
@@ -471,6 +446,7 @@ def run_level(
             "Audit trail:",
             *run["audit_log"],
         ]
+        run_data = run
     elif level == 5:
         objective = use_case_prompt("Design a 2-hour Year 10 revision workshop.", use_case)
         allowed = ["plan", "verify_completion", "revise_completion", "finish"]
@@ -521,6 +497,7 @@ def run_level(
             "Final answer:",
             run["final_answer"],
         ]
+        run_data = run
     elif level == 6:
         objective = use_case_prompt(
             "Write a short lesson-summary note with one clear learner benefit.", use_case
@@ -570,6 +547,7 @@ def run_level(
             "Audit trail:",
             *run["audit_log"],
         ]
+        run_data = run
     elif level == 7:
         objective = use_case_prompt(
             "Design a practical support workflow for teachers creating lessons and revision plans.",
@@ -637,6 +615,10 @@ def run_level(
                 run["final_answer"],
             ]
         )
+        run_data = {
+            "trace": [s.__dict__ for s in run["trace"]],
+            "swarm_summary": simulation.get("swarm_summary", {"total_agents": 11}),
+        }
     else:
         task = AgentTask(
             objective=use_case_prompt(
@@ -677,6 +659,7 @@ def run_level(
                 "honest limitation note: This is still a workshop-safe orchestrator simulation. It does not execute repository changes, manage real background jobs, or persist state outside the request.",
             ]
         )
+        run_data = orch
 
     payload = {
         "level": level,
@@ -684,5 +667,9 @@ def run_level(
         "lines": intro + lines,
         "agenticness": AGENTICNESS[level],
     }
-    payload.update(_build_structured_payload(level, level_info, intro + lines, AGENTICNESS[level]))
+    payload.update(
+        _build_structured_payload(
+            level, level_info, intro + lines, AGENTICNESS[level], simulation, run_data
+        )
+    )
     return payload

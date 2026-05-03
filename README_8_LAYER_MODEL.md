@@ -92,3 +92,6 @@ Levels 1–6 are no longer raw capability-only demos. Each now runs inside a wor
 
 ## WOW but honest update
 Glytch now includes Agentic Theatre, a maturity ladder, score explanations, and a Level 8 taskboard dashboard. It remains a workshop-safe simulated orchestration environment with human approval gates and no external side effects.
+
+## Yegge alignment update
+This demo now presents **capability vs Yegge stage** with high-fidelity workshop simulations, explicit human approval gates, and clear non-production limits.

@@ -21,3 +21,6 @@
 - [ ] Only scenario/context/level controls appear interactive.
 - [ ] Run each level and confirm no transcript line looks like the UI is waiting for user input.
 
+
+## Yegge alignment update
+This demo now presents **capability vs Yegge stage** with high-fidelity workshop simulations, explicit human approval gates, and clear non-production limits.
