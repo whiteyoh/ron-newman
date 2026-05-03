@@ -102,6 +102,7 @@ def _build_structured_payload(
     yegge_simulation: dict[str, Any],
     run_data: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
+    run_data = run_data or {}
     stage_summary = {
         "level": level,
         "name": level_info["name"],
@@ -117,68 +118,159 @@ def _build_structured_payload(
         "why_not_higher": agenticness.get(
             "yegge_alignment_limit", "Workshop-safe simulation limits autonomy."
         ),
-        "move_up_hint": "Add tighter verification, clearer approval gates, and stronger orchestration only when needed.",
     }
-    theatre_steps = [
-        {
-            "label": "What the human asked for",
-            "actor": "human",
-            "status": "complete",
-            "summary": lines[0] if lines else "Objective set",
-            "detail": "Objective created",
-        },
-        {
-            "label": "What the agent decided",
-            "actor": "agent",
-            "status": "complete",
-            "summary": "Policy and actions selected.",
-            "detail": "Bounded autonomy in workshop-safe simulation.",
-        },
-        {
-            "label": "What the agent checked",
-            "actor": "verifier",
-            "status": "complete",
-            "summary": "Verifier reviewed output.",
-            "detail": "Verification step applied before final verdict.",
-        },
-        {
-            "label": "Where the human stays in control",
-            "actor": "human",
-            "status": "approved",
-            "summary": "Human approval gate enforced.",
-            "detail": "Final output requires review and approval.",
-        },
-        {
-            "label": "Can we trust this output?",
-            "actor": "orchestrator" if level == 8 else "agent",
-            "status": "complete",
-            "summary": "Final verdict issued with audit trail.",
-            "detail": "Outcome is educational and workshop-safe.",
-        },
-    ]
-    replay_steps = [
-        "objective created",
-        "policy loaded",
-        "action selected",
-        "tool/worker executed",
-        "observation received",
-        "verifier checked",
-        "approval gate applied",
-        "final verdict",
-    ]
+    theatre_steps = []
+    if level <= 6 and run_data:
+        theatre_steps = [
+            {
+                "label": "Demo request",
+                "actor": "human",
+                "status": "complete",
+                "summary": run_data.get("objective", "Objective set"),
+                "detail": "Human objective provided.",
+            },
+            {
+                "label": "Policy loaded",
+                "actor": "agent",
+                "status": "complete",
+                "summary": run_data.get("policy", "Policy loaded"),
+                "detail": "Bounded policy applied.",
+            },
+            {
+                "label": "Action selected",
+                "actor": "agent",
+                "status": "complete",
+                "summary": (run_data.get("actions") or ["Action selected"])[0],
+                "detail": "Agent selected a bounded action.",
+            },
+            {
+                "label": "Observation received",
+                "actor": "tool",
+                "status": "complete",
+                "summary": (run_data.get("observations") or ["Observation received"])[0],
+                "detail": "Tool/simulation returned observation.",
+            },
+            {
+                "label": "Verification performed",
+                "actor": "verifier",
+                "status": "complete",
+                "summary": run_data.get("verification_result", "Verifier check complete"),
+                "detail": "Verification executed before verdict.",
+            },
+            {
+                "label": "Human approval gate",
+                "actor": "human",
+                "status": "approved"
+                if run_data.get("approved_for_final", True)
+                else "needs_review",
+                "summary": f"Approval required: {run_data.get('approval_required', True)}",
+                "detail": f"Approved: {run_data.get('approved_for_final', False)}",
+            },
+            {
+                "label": "Final verdict",
+                "actor": "agent",
+                "status": "complete",
+                "summary": run_data.get("final_verdict", "Final verdict issued"),
+                "detail": "Workshop-safe simulation outcome.",
+            },
+        ]
+    elif level == 7 and run_data:
+        loop = run_data.get("trace", [])
+        theatre_steps = [
+            {
+                "label": "Demo request",
+                "actor": "human",
+                "status": "complete",
+                "summary": run_data.get("objective", "Objective set"),
+                "detail": "Bounded agent loop started.",
+            }
+        ]
+        for step in loop[:5]:
+            theatre_steps.append(
+                {
+                    "label": "Action selected",
+                    "actor": "agent",
+                    "status": "running",
+                    "summary": f"Iteration {step.get('iteration', '?')}: {step.get('chosen_action', 'action')}",
+                    "detail": f"Observation: {step.get('observation', 'n/a')} · Reason: {step.get('reason', 'n/a')}",
+                }
+            )
+        theatre_steps += [
+            {
+                "label": "Verification performed",
+                "actor": "verifier",
+                "status": "complete",
+                "summary": run_data.get("final_verifier", "Verifier complete"),
+                "detail": "Final verifier reviewed bounded loop.",
+            },
+            {
+                "label": "Final verdict",
+                "actor": "agent",
+                "status": "complete",
+                "summary": run_data.get("final_verdict", "Final verdict issued"),
+                "detail": run_data.get("stop_condition", "Stop condition reached"),
+            },
+        ]
+    elif level == 8 and run_data:
+        orch = run_data
+        theatre_steps = [
+            {
+                "label": "Demo request",
+                "actor": "human",
+                "status": "complete",
+                "summary": orch.get("run_id", "orchestrator run created"),
+                "detail": orch.get("mode", "parallel"),
+            },
+            {
+                "label": "Policy loaded",
+                "actor": "orchestrator",
+                "status": "complete",
+                "summary": "Worker tasks created",
+                "detail": str(len(orch.get("taskboard", []))) + " tasks in taskboard.",
+            },
+            {
+                "label": "Action selected",
+                "actor": "orchestrator",
+                "status": "running",
+                "summary": "Workers started and executed",
+                "detail": "See taskboard for status transitions.",
+            },
+            {
+                "label": "Verification performed",
+                "actor": "verifier",
+                "status": "complete",
+                "summary": orch.get("verifier_result", "Verifier result pending"),
+                "detail": "Verifier checked objective coverage.",
+            },
+            {
+                "label": "Human approval gate",
+                "actor": "human",
+                "status": "approved" if orch.get("approved_for_merge") else "needs_review",
+                "summary": f"Approval required: {orch.get('approval_required', True)}",
+                "detail": f"Approved: {orch.get('approved_for_merge', False)}",
+            },
+            {
+                "label": "Final verdict",
+                "actor": "orchestrator",
+                "status": "merged" if orch.get("approved_for_merge") else "needs_review",
+                "summary": orch.get("status", "needs_human_review"),
+                "detail": orch.get("final_answer", "Needs human review"),
+            },
+        ]
+    replay_steps = [f"{s['label']}: {s['summary']}" for s in theatre_steps]
     approval_summary = {
-        "approval_required": True,
-        "approved": level != 8,
-        "merge_decision": "approved" if level != 8 else "conditional",
+        "approval_required": run_data.get("approval_required", True),
+        "approved": run_data.get("approved_for_merge", run_data.get("approved_for_final", False)),
+        "merge_decision": "approved"
+        if run_data.get("approved_for_merge")
+        else run_data.get("status", "needs_human_review"),
+        "verifier_result": run_data.get(
+            "verifier_result", run_data.get("verification_result", "Available after run")
+        ),
+        "merge_policy": run_data.get("merge_policy", "Workshop-safe merge policy"),
     }
-    audit_summary = {
-        "entries": [
-            entry
-            for entry in lines
-            if any(k in entry.lower() for k in ["audit", "verdict", "approval", "verification"])
-        ][:8]
-    }
-    taskboard = run_data.get("taskboard") if run_data else None
+    audit_summary = {"entries": run_data.get("audit_log") or []}
+    taskboard = run_data.get("taskboard")
     workflow_preview = {
         "workflow_name": yegge_simulation["workflow_name"],
         "simulated_environment": yegge_simulation["simulated_environment"],
@@ -193,21 +285,17 @@ def _build_structured_payload(
         "audit_summary": audit_summary,
         "replay_steps": replay_steps,
         "taskboard": taskboard,
-        "capability_summary": {
-            "capability_being_taught": yegge_simulation["capability_being_taught"],
-            "simulation_type": agenticness.get("simulation_type", "workshop-safe simulation"),
-        },
         "yegge_simulation": yegge_simulation,
         "yegge_score_summary": score_summary,
-        "workflow_preview": workflow_preview,
         "permission_flow": yegge_simulation.get("permissions"),
         "diff_preview": yegge_simulation.get("previewed_changes"),
         "command_preview": yegge_simulation.get("command_preview"),
         "parallel_agents": yegge_simulation.get("agent_instances"),
-        "swarm_summary": run_data.get("swarm_summary") if run_data else None,
         "review_gate": yegge_simulation.get("review_gate"),
-        "risk_controls": yegge_simulation.get("risk_controls"),
+        "workflow_preview": workflow_preview,
         "why_not_production": yegge_simulation.get("why_not_production"),
+        "lines": lines,
+        "agenticness": agenticness,
     }
 
 
