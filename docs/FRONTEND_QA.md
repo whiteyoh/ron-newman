@@ -1,11 +1,14 @@
 # Frontend QA checklist
 
-- [ ] Mobile quiz uses Yes/No segmented buttons (no native selects).
-- [ ] Quiz cards do not overlap on small screens.
+- [ ] Network/API failure shows friendly message: "Something went wrong while running the simulation. No action was taken. Please try again."
+- [ ] Running a level never leaves UI stuck in running state.
+- [ ] No raw `undefined`, `null`, or `n/a` appears in normal UI.
+- [ ] Level 7 theatre shows actual action value from trace.
 - [ ] Level 8 taskboard renders real worker records from orchestrator run state.
-- [ ] Replay steps reflect actual theatre steps from run data.
-- [ ] Score panel avoids raw `n/a` and uses workshop-safe fallback copy.
-- [ ] Mobile/Desktop preview is hidden by default or clearly labeled for QA/debug.
-- [ ] Transcript remains read-only.
-- [ ] No horizontal scroll on mobile.
-- [ ] iOS Safari bottom bar does not hide core controls.
+- [ ] Level 8 approval/merge panel appears and shows verifier + policy fields.
+- [ ] Replay works after a successful run.
+- [ ] Replay remains disabled after a failed run.
+- [ ] Mobile quiz segmented Yes/No buttons remain tappable and use `aria-pressed`.
+- [ ] Preview layout toggle is hidden unless `?debug=1`.
+- [ ] Transcript remains read-only and does not ask the user for input.
+- [ ] No horizontal scroll on iPhone-sized viewport.
