@@ -47,7 +47,7 @@ body {
   gap: 0.5rem;
 }
 
-.logo { width: clamp(260px, 32vw, 420px); max-width: 100%; min-width: 220px; height: auto; }
+.logo { width: 100%; max-width: 100%; min-width: 0; height: auto; }
 .tagline { margin: 0; color: var(--muted); }
 
 .panel,
@@ -225,6 +225,19 @@ textarea {
 
 @media (prefers-reduced-motion: reduce) {
   * { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}
+
+
+body.force-mobile .site-header,
+body.force-mobile .app-shell,
+body.force-mobile .site-footer {
+  width: min(420px, 100%) !important;
+}
+
+body.force-desktop .site-header,
+body.force-desktop .app-shell,
+body.force-desktop .site-footer {
+  width: min(1100px, 100%) !important;
 }
 
 body.force-mobile .grid,
