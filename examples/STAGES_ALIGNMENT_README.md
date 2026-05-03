@@ -1,3 +1,5 @@
+Glytch has two lenses: AI capability patterns and agentic workflow maturity.
+
 ![Glytch logo](../assets/glytch-logo.svg)
 
 This document explains how each example (`examples/level1` through `examples/level8`) maps to the Glytch workshop's eight stages of AI capability.

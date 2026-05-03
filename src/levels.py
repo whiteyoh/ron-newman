@@ -1,7 +1,8 @@
 from typing import Any
 
+# ruff: noqa: E501
 from src.agent_runtime import run_constrained_agent_loop
-from src.constants import DEFAULT_USE_CASE_KEY, LEVELS, USE_CASE_OPTIONS
+from src.constants import AGENTICNESS, DEFAULT_USE_CASE_KEY, LEVELS, USE_CASE_OPTIONS
 from src.tools import calculator_tool, retrieve_local_facts
 from src.types import AIChatClient
 
@@ -190,55 +191,59 @@ def run_level(
             calculate_fn=calculator_tool,
             max_iterations=5,
         )
-        lines = ["Objective:", objective, "Agent iteration trace:"]
+        lines = ["Objective:", objective, "Agent loop timeline:"]
         for step in run["trace"]:
             lines.extend(
                 [
                     f"Iteration {step.iteration}",
                     f"Chosen action: {step.action}",
-                    f"Reason: {step.reason}",
-                    f"Tool observation: {step.observation}",
+                    f"Tool input: {step.tool_input}",
+                    f"Observation: {step.observation}",
+                    f"Decision reason: {step.reason}",
                 ]
             )
-        lines.extend(["Final answer:", run["final_answer"]])
+        stop = (
+            "stop condition met: finish action"
+            if run["stopped_on_finish"]
+            else "stop condition met: max iterations"
+        )
+        lines.extend([f"Stop condition: {stop}", "Final answer:", run["final_answer"]])
     else:
         seed = use_case_prompt(
             "Draft guidance for writing effective lesson and revision plans.", use_case
         )
-        candidate = client.chat("Write an initial concise draft.", seed)
-        history: list[str] = []
-        best_text = candidate
-        best_score = -1
-
-        for attempt in range(1, 4):
-            score_text = client.chat(
-                "Score this from 0-100 for clarity and actionability, return only integer.",
-                candidate,
-            )
-            try:
-                score = int(score_text.strip())
-            except ValueError:
-                score = 0
-            history.append(f"Attempt {attempt} score: {score}")
-
-            if score > best_score:
-                best_score = score
-                best_text = candidate
-
-            if score >= 90:
-                history.append("Early stop: quality threshold reached.")
-                break
-
-            candidate = client.chat(
-                "Improve this draft to increase clarity and actionability. Keep it short.",
-                f"Current draft:\n{candidate}\n\nCurrent score:{score}",
-            )
-            history.append(f"Attempt {attempt} revision: {candidate}")
-
-        lines = (
-            ["Seed prompt:", seed, "Improvement loop:"]
-            + history
-            + [f"Best score: {best_score}", "Selected best version:", best_text]
+        planner = client.chat("You are planner. Return a short execution plan.", seed)
+        critic = client.chat("You are critic. Identify two risks and two improvements.", planner)
+        writer = client.chat(
+            "You are teacher-resource-writer. Produce classroom-ready guidance using plan and critique.",
+            f"Plan:\n{planner}\n\nCritique:\n{critic}",
         )
+        verifier = client.chat(
+            "You are verifier. Score 0-100 for clarity/actionability and give one-line verdict.",
+            writer,
+        )
+        final = client.chat(
+            "Merge planner, critic, writer, and verifier into one concise final answer.",
+            f"Planner:\n{planner}\n\nCritic:\n{critic}\n\nWriter:\n{writer}\n\nVerifier:\n{verifier}",
+        )
+        lines = [
+            "Simulated orchestration note: This is not a full production orchestrator. It is a workshop-safe miniature showing the pattern.",
+            "Orchestration trace:",
+            "Worker: planner",
+            planner,
+            "Worker: critic",
+            critic,
+            "Worker: teacher-resource-writer",
+            writer,
+            "Worker: verifier",
+            verifier,
+            "Final merged answer:",
+            final,
+        ]
 
-    return {"level": level, "title": LEVELS[level]["name"], "lines": intro + lines}
+    return {
+        "level": level,
+        "title": LEVELS[level]["name"],
+        "lines": intro + lines,
+        "agenticness": AGENTICNESS[level],
+    }

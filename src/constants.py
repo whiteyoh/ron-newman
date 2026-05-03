@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 LEVELS = {
     1: {
         "name": "Autocomplete",
@@ -86,3 +87,86 @@ USE_CASE_OPTIONS = {
 }
 
 DEFAULT_USE_CASE_KEY = "uk_year10_teacher"
+
+AGENTICNESS = {
+    1: {
+        "score": 1,
+        "explanation": "Autocomplete predicts likely text but does not choose goals or actions.",
+        "chooses_actions": False,
+        "uses_tools": False,
+        "loops": False,
+        "runs_independently": False,
+        "self_verifies": False,
+        "multi_agent": False,
+    },
+    2: {
+        "score": 1,
+        "explanation": "Instruction following obeys prompts, but autonomy remains minimal.",
+        "chooses_actions": False,
+        "uses_tools": False,
+        "loops": False,
+        "runs_independently": False,
+        "self_verifies": False,
+        "multi_agent": False,
+    },
+    3: {
+        "score": 3,
+        "explanation": "Tool use is a small step into action-taking, but still user-directed.",
+        "chooses_actions": True,
+        "uses_tools": True,
+        "loops": False,
+        "runs_independently": False,
+        "self_verifies": False,
+        "multi_agent": False,
+    },
+    4: {
+        "score": 3,
+        "explanation": "Retrieval grounds answers in evidence, improving reliability more than autonomy.",
+        "chooses_actions": True,
+        "uses_tools": True,
+        "loops": False,
+        "runs_independently": False,
+        "self_verifies": True,
+        "multi_agent": False,
+    },
+    5: {
+        "score": 3,
+        "explanation": "Planning shows structured reasoning, but is still single-pass and supervised.",
+        "chooses_actions": True,
+        "uses_tools": False,
+        "loops": False,
+        "runs_independently": False,
+        "self_verifies": False,
+        "multi_agent": False,
+    },
+    6: {
+        "score": 4,
+        "explanation": "Critique and revision adds one self-improvement loop.",
+        "chooses_actions": True,
+        "uses_tools": False,
+        "loops": True,
+        "runs_independently": False,
+        "self_verifies": True,
+        "multi_agent": False,
+    },
+    7: {
+        "score": 6,
+        "explanation": "Bounded agent loop runs observe-act-decide cycles with stop rules.",
+        "chooses_actions": True,
+        "uses_tools": True,
+        "loops": True,
+        "runs_independently": True,
+        "self_verifies": True,
+        "multi_agent": False,
+    },
+    8: {
+        "score": 5,
+        "explanation": "Mini orchestrator coordinates specialist roles and verification, but remains workshop-scale simulation.",
+        "chooses_actions": True,
+        "uses_tools": False,
+        "loops": True,
+        "runs_independently": True,
+        "self_verifies": True,
+        "multi_agent": True,
+    },
+}
