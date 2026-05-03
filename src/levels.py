@@ -125,35 +125,35 @@ def _build_structured_payload(
             {
                 "label": "Demo request",
                 "actor": "human",
-                "status": "complete",
+                "status": "completed",
                 "summary": run_data.get("objective", "Objective set"),
                 "detail": "Human objective provided.",
             },
             {
                 "label": "Policy loaded",
                 "actor": "agent",
-                "status": "complete",
+                "status": "completed",
                 "summary": run_data.get("policy", "Policy loaded"),
                 "detail": "Bounded policy applied.",
             },
             {
                 "label": "Action selected",
                 "actor": "agent",
-                "status": "complete",
+                "status": "completed",
                 "summary": (run_data.get("actions") or ["Action selected"])[0],
                 "detail": "Agent selected a bounded action.",
             },
             {
                 "label": "Observation received",
                 "actor": "tool",
-                "status": "complete",
+                "status": "completed",
                 "summary": (run_data.get("observations") or ["Observation received"])[0],
                 "detail": "Tool/simulation returned observation.",
             },
             {
                 "label": "Verification performed",
                 "actor": "verifier",
-                "status": "complete",
+                "status": "completed",
                 "summary": run_data.get("verification_result", "Verifier check complete"),
                 "detail": "Verification executed before verdict.",
             },
@@ -162,14 +162,14 @@ def _build_structured_payload(
                 "actor": "human",
                 "status": "approved"
                 if run_data.get("approved_for_final", True)
-                else "needs_review",
+                else "needs_human_review",
                 "summary": f"Approval required: {run_data.get('approval_required', True)}",
                 "detail": f"Approved: {run_data.get('approved_for_final', False)}",
             },
             {
                 "label": "Final verdict",
                 "actor": "agent",
-                "status": "complete",
+                "status": "completed",
                 "summary": run_data.get("final_verdict", "Final verdict issued"),
                 "detail": "Workshop-safe simulation outcome.",
             },
@@ -180,7 +180,7 @@ def _build_structured_payload(
             {
                 "label": "Demo request",
                 "actor": "human",
-                "status": "complete",
+                "status": "completed",
                 "summary": run_data.get("objective", "Objective set"),
                 "detail": "Bounded agent loop started.",
             }
@@ -199,14 +199,14 @@ def _build_structured_payload(
             {
                 "label": "Verification performed",
                 "actor": "verifier",
-                "status": "complete",
+                "status": "completed",
                 "summary": run_data.get("final_verifier", "Verifier complete"),
                 "detail": "Final verifier reviewed bounded loop.",
             },
             {
                 "label": "Final verdict",
                 "actor": "agent",
-                "status": "complete",
+                "status": "completed",
                 "summary": run_data.get("final_verdict", "Final verdict issued"),
                 "detail": run_data.get("stop_condition", "Stop condition reached"),
             },
@@ -217,14 +217,14 @@ def _build_structured_payload(
             {
                 "label": "Demo request",
                 "actor": "human",
-                "status": "complete",
+                "status": "completed",
                 "summary": orch.get("run_id", "orchestrator run created"),
                 "detail": orch.get("mode", "parallel"),
             },
             {
                 "label": "Policy loaded",
                 "actor": "orchestrator",
-                "status": "complete",
+                "status": "completed",
                 "summary": "Worker tasks created",
                 "detail": str(len(orch.get("taskboard", []))) + " tasks in taskboard.",
             },
@@ -238,36 +238,53 @@ def _build_structured_payload(
             {
                 "label": "Verification performed",
                 "actor": "verifier",
-                "status": "complete",
+                "status": "completed",
                 "summary": orch.get("verifier_result", "Verifier result pending"),
                 "detail": "Verifier checked objective coverage.",
             },
             {
                 "label": "Human approval gate",
                 "actor": "human",
-                "status": "approved" if orch.get("approved_for_merge") else "needs_review",
+                "status": "approved" if orch.get("approved_for_merge") else "needs_human_review",
                 "summary": f"Approval required: {orch.get('approval_required', True)}",
                 "detail": f"Approved: {orch.get('approved_for_merge', False)}",
             },
             {
                 "label": "Final verdict",
                 "actor": "orchestrator",
-                "status": "merged" if orch.get("approved_for_merge") else "needs_review",
+                "status": "merged" if orch.get("approved_for_merge") else "needs_human_review",
                 "summary": orch.get("status", "needs_human_review"),
                 "detail": orch.get("final_answer", "Needs human review"),
             },
         ]
     replay_steps = [f"{s['label']}: {s['summary']}" for s in theatre_steps]
+    merge_decision = (
+        "approved"
+        if run_data.get("approved_for_merge")
+        else run_data.get("status", "needs_human_review")
+    )
+    if level == 8:
+        final_status = run_data.get("status")
+        if not final_status:
+            if run_data.get("approved_for_merge"):
+                final_status = "merged"
+            elif run_data.get("approval_required", True) and not run_data.get(
+                "approved_for_merge", False
+            ):
+                final_status = "needs_human_review"
+            else:
+                final_status = "unknown"
+    else:
+        final_status = run_data.get("final_verdict", "completed")
     approval_summary = {
         "approval_required": run_data.get("approval_required", True),
         "approved": run_data.get("approved_for_merge", run_data.get("approved_for_final", False)),
-        "merge_decision": "approved"
-        if run_data.get("approved_for_merge")
-        else run_data.get("status", "needs_human_review"),
+        "merge_decision": merge_decision,
         "verifier_result": run_data.get(
             "verifier_result", run_data.get("verification_result", "Available after run")
         ),
         "merge_policy": run_data.get("merge_policy", "Workshop-safe merge policy"),
+        "final_status": final_status,
     }
     audit_summary = {"entries": run_data.get("audit_log") or []}
     taskboard = run_data.get("taskboard")

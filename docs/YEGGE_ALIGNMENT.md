@@ -34,7 +34,7 @@ Avoid: "These 8 capability levels are exactly Yegge's 8 stages."
 
 ## Why Yegge adoption increased by one point
 - Before: Level 8 demonstrated parallel role orchestration with verifier and merger outputs.
-- After: Level 8 now runs a taskboard-based orchestrator simulation with explicit task state, worker lifecycle transitions, retry handling, audit trail, verifier gate, approval gate, and merge policy.
+- After: Level 8 now runs a request-scoped taskboard-based orchestrator simulation with explicit task state, worker lifecycle transitions, retry handling, audit trail, verifier gate, approval gate, and merge policy.
 - Score change: Yegge alignment for Level 8 increased from 8 to 9 (exactly +1) because these orchestration mechanics now exist in implementation.
 - Still missing for production-level orchestration: persistent storage, real worker processes, repository side effects, deployment integration, and multi-run memory.
 
