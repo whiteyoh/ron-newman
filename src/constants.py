@@ -61,116 +61,92 @@ LEVELS = {
 }
 
 USE_CASE_OPTIONS = {
-    "uk_year10_teacher": (
-        "Use case for all levels: help a UK Year 10 teacher create engaging, "
-        "classroom-ready lesson and revision plans with clear sequence, timings, "
-        "activities, assessment, and differentiation. Every response must include "
-        "real, curriculum-relevant subject content (key concepts, worked examples, "
-        "misconceptions, retrieval questions, and success criteria), not just "
-        "templates or layout placeholders. If the user asks for revision or lesson "
-        "planning, produce a complete, teachable plan with topic-specific details "
-        "and model answers. Use provided context and reasonable defaults when "
-        "details are missing; do not ask follow-up questions. End every response "
-        "with a clear, easy-to-scan section titled 'What you should do next' "
-        "that translates the output into practical human steps (for example: "
-        "classroom session breakdown, revision plan, and immediate actions)."
-    ),
-    "year10_exam_student": (
-        "Use case for all levels: support a Year 10 student with exam-prep "
-        "requests only (revision plans, concept explanations, and practice "
-        "support). Every response must include concrete subject knowledge for the "
-        "requested topic (facts, formulas, vocabulary, examples, and short "
-        "self-test questions with answers), not just study structure."
-    ),
-    "curriculum_designer": (
-        "Use case for all levels: help a school curriculum designer "
-        "produce downloadable schemes of work, lesson sequences, and revision "
-        "resources aligned to Year 10 outcomes."
-    ),
+    "uk_year10_teacher": "Use case for all levels: help a UK Year 10 teacher create engaging, classroom-ready lesson and revision plans with clear sequence, timings, activities, assessment, and differentiation. Every response must include real, curriculum-relevant subject content (key concepts, worked examples, misconceptions, retrieval questions, and success criteria), not just templates or layout placeholders. If the user asks for revision or lesson planning, produce a complete, teachable plan with topic-specific details and model answers. Use provided context and reasonable defaults when details are missing; do not ask follow-up questions. End every response with a clear, easy-to-scan section titled 'What you should do next' that translates the output into practical human steps (for example: classroom session breakdown, revision plan, and immediate actions).",
+    "year10_exam_student": "Use case for all levels: support a Year 10 student with exam-prep requests only (revision plans, concept explanations, and practice support). Every response must include concrete subject knowledge for the requested topic (facts, formulas, vocabulary, examples, and short self-test questions with answers), not just study structure.",
+    "curriculum_designer": "Use case for all levels: help a school curriculum designer produce downloadable schemes of work, lesson sequences, and revision resources aligned to Year 10 outcomes.",
 }
-
 DEFAULT_USE_CASE_KEY = "uk_year10_teacher"
 
 AGENTICNESS = {
     1: {
-        "score": 1,
-        "explanation": "Autocomplete predicts likely text but does not choose goals or actions.",
-        "chooses_actions": False,
-        "uses_tools": False,
-        "loops": False,
-        "runs_independently": False,
-        "self_verifies": False,
-        "multi_agent": False,
-        "closest_yegge_stage": 1,
-        "yegge_alignment_score": 1,
-        "yegge_alignment_explanation": "No autonomous workflow behavior.",
-    },
-    2: {
-        "score": 1,
-        "explanation": "Instruction following obeys prompts, but autonomy remains minimal.",
-        "chooses_actions": False,
-        "uses_tools": False,
-        "loops": False,
-        "runs_independently": False,
-        "self_verifies": False,
-        "multi_agent": False,
-        "closest_yegge_stage": 2,
-        "yegge_alignment_score": 1,
-        "yegge_alignment_explanation": "Prompt following but not autonomous execution.",
-    },
-    3: {
-        "score": 4,
-        "explanation": "Model selects between direct answer and calculator, then returns a visible tool trace.",
-        "chooses_actions": True,
-        "system_selected_tool": False,
-        "uses_tools": True,
-        "loops": False,
-        "runs_independently": False,
-        "self_verifies": False,
-        "multi_agent": False,
-        "closest_yegge_stage": 3,
-        "yegge_alignment_score": 4,
-        "yegge_alignment_explanation": "Model chooses tool action but stays workshop bounded.",
-    },
-    4: {
-        "score": 4,
-        "explanation": "Retrieval now includes evidence trace, source, sufficiency check, and support verification.",
-        "chooses_actions": True,
-        "system_selected_tool": False,
-        "uses_tools": True,
-        "loops": False,
-        "runs_independently": False,
-        "self_verifies": True,
-        "multi_agent": False,
-        "closest_yegge_stage": 4,
-        "yegge_alignment_score": 4,
-        "yegge_alignment_explanation": "Evidence-grounded response with support checks resembles wider supervised workflows.",
-    },
-    5: {
-        "score": 5,
-        "explanation": "Plan-execute-verify with one conditional revision pass improves outcome quality.",
-        "chooses_actions": True,
-        "uses_tools": False,
-        "loops": False,
-        "runs_independently": False,
-        "self_verifies": False,
-        "multi_agent": False,
-        "closest_yegge_stage": 5,
-        "yegge_alignment_score": 5,
-        "yegge_alignment_explanation": "Single-agent plan/execute/verify loop with revision decision.",
-    },
-    6: {
-        "score": 5,
-        "explanation": "Bounded critique loop scores attempts and revises up to two times.",
+        "score": 7,
+        "explanation": "Supervised completion agent now runs objective-policy-action-verify flow with approval gate and audit trail.",
         "chooses_actions": True,
         "uses_tools": False,
         "loops": True,
-        "runs_independently": False,
+        "runs_independently": True,
+        "self_verifies": True,
+        "multi_agent": False,
+        "closest_yegge_stage": 2,
+        "yegge_alignment_score": 7,
+        "yegge_alignment_explanation": "Autocomplete is uplifted into a bounded supervised completion agent with verification and human approval.",
+    },
+    2: {
+        "score": 7,
+        "explanation": "Permissioned instruction-following agent uses instruction contract, constraint verification, revision path, and approval gate.",
+        "chooses_actions": True,
+        "uses_tools": False,
+        "loops": True,
+        "runs_independently": True,
+        "self_verifies": True,
+        "multi_agent": False,
+        "closest_yegge_stage": 3,
+        "yegge_alignment_score": 7,
+        "yegge_alignment_explanation": "Mirrors supervised IDE/YOLO transition with explicit permission and verifier gates.",
+    },
+    3: {
+        "score": 7,
+        "explanation": "Tool-action loop now includes model-selected action trace, independent calculator verification, approval gate, and audit trail.",
+        "chooses_actions": True,
+        "system_selected_tool": False,
+        "uses_tools": True,
+        "loops": True,
+        "runs_independently": True,
+        "self_verifies": True,
+        "multi_agent": False,
+        "closest_yegge_stage": 4,
+        "yegge_alignment_score": 7,
+        "yegge_alignment_explanation": "Demonstrates bounded autonomous tool-use and verification resembling wider IDE-to-CLI behavior.",
+    },
+    4: {
+        "score": 7,
+        "explanation": "Grounded research agent now plans evidence lookup, checks sufficiency/support, routes through approval gate, and logs decisions.",
+        "chooses_actions": True,
+        "system_selected_tool": False,
+        "uses_tools": True,
+        "loops": True,
+        "runs_independently": True,
         "self_verifies": True,
         "multi_agent": False,
         "closest_yegge_stage": 5,
-        "yegge_alignment_score": 5,
-        "yegge_alignment_explanation": "Bounded evaluator loop improves drafts iteratively.",
+        "yegge_alignment_score": 7,
+        "yegge_alignment_explanation": "Adds CLI-style bounded evidence workflow with explicit verifier and human control gates.",
+    },
+    5: {
+        "score": 7,
+        "explanation": "Planning capability now executes as CLI-style bounded run with action budget, verifier, stop condition, approval gate, and audit trail.",
+        "chooses_actions": True,
+        "uses_tools": False,
+        "loops": True,
+        "runs_independently": True,
+        "self_verifies": True,
+        "multi_agent": False,
+        "closest_yegge_stage": 5,
+        "yegge_alignment_score": 7,
+        "yegge_alignment_explanation": "Represents single-agent terminal workflow mechanics without production autonomy claims.",
+    },
+    6: {
+        "score": 7,
+        "explanation": "Critique/revision is now a bounded evaluator agent loop with scoring, revision decisions, best-candidate selection, approval gate, and audit trail.",
+        "chooses_actions": True,
+        "uses_tools": False,
+        "loops": True,
+        "runs_independently": True,
+        "self_verifies": True,
+        "multi_agent": False,
+        "closest_yegge_stage": 6,
+        "yegge_alignment_score": 7,
+        "yegge_alignment_explanation": "Shows bounded autonomous evaluator behavior approaching parallel-agent maturity concepts while staying single-agent.",
     },
     7: {
         "score": 7,
