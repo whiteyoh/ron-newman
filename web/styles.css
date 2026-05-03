@@ -76,6 +76,8 @@ body {
 
 .badges { display: flex; gap: 0.5rem; flex-wrap: wrap; margin: 0.65rem 0; }
 .badge { background: rgba(104, 231, 255, 0.12); border: 1px solid rgba(104, 231, 255, 0.35); border-radius: 999px; padding: 0.2rem 0.6rem; font-size: 0.82rem; }
+.view-toggle { display: inline-flex; align-items: center; gap: 0.45rem; margin-top: 0.65rem; flex-wrap: wrap; }
+.view-toggle button.active { background: rgba(104, 231, 255, 0.2); border-color: rgba(104, 231, 255, 0.65); }
 
 button,
 select,
@@ -223,4 +225,33 @@ textarea {
 
 @media (prefers-reduced-motion: reduce) {
   * { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}
+
+body.force-mobile .grid,
+body.force-mobile .choices,
+body.force-mobile .dashboard-grid,
+body.force-mobile .quiz-grid,
+body.force-mobile .taskboard-grid,
+body.force-mobile .status {
+  grid-template-columns: 1fr !important;
+}
+
+body.force-desktop .choices {
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+}
+body.force-desktop .grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+}
+body.force-desktop .dashboard-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+}
+body.force-desktop .quiz-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+}
+body.force-desktop .status {
+  grid-template-columns: auto 1fr !important;
+  align-items: center !important;
+}
+body.force-desktop .taskboard-grid {
+  grid-template-columns: repeat(5, minmax(150px, 1fr)) !important;
 }
