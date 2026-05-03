@@ -47,7 +47,7 @@ body {
   gap: 0.5rem;
 }
 
-.logo { width: min(260px, 100%); }
+.logo { width: clamp(260px, 32vw, 420px); max-width: 100%; min-width: 220px; height: auto; }
 .tagline { margin: 0; color: var(--muted); }
 
 .panel,
