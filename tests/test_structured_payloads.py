@@ -17,6 +17,18 @@ class DummyClient:
         return "ok"
 
 
+ACCEPTED_STATUSES = {
+    "pending",
+    "running",
+    "completed",
+    "approved",
+    "blocked",
+    "needs_human_review",
+    "merged",
+    "failed",
+}
+
+
 def test_structured_payload_fields_all_levels():
     keys = {
         "lines",
@@ -27,6 +39,7 @@ def test_structured_payload_fields_all_levels():
         "theatre_steps",
         "replay_steps",
         "why_not_production",
+        "approval_summary",
     }
     for level in LEVELS:
         payload = run_level(level, DummyClient())
@@ -35,9 +48,20 @@ def test_structured_payload_fields_all_levels():
         assert payload["theatre_steps"]
         for step in payload["theatre_steps"]:
             assert {"label", "actor", "status", "summary", "detail"}.issubset(step)
+            assert step["status"] in ACCEPTED_STATUSES
         assert payload["replay_steps"] == [
             f"{s['label']}: {s['summary']}" for s in payload["theatre_steps"]
         ]
+        approval = payload["approval_summary"]
+        for k in [
+            "approval_required",
+            "approved",
+            "merge_decision",
+            "verifier_result",
+            "merge_policy",
+            "final_status",
+        ]:
+            assert k in approval
 
 
 def test_level7_action_and_swarm_summary():
@@ -54,8 +78,14 @@ def test_level8_taskboard_and_approval_summary_shapes():
     assert p8["taskboard"]
     for rec in p8["taskboard"]:
         assert {"worker_name", "worker_role", "task", "status", "attempt"}.issubset(rec)
-    for k in ["approval_required", "approved", "merge_decision", "verifier_result", "merge_policy"]:
-        assert k in p8["approval_summary"]
+    assert p8["approval_summary"]["final_status"] in {
+        "merged",
+        "needs_human_review",
+        "failed",
+        "blocked",
+        "completed",
+    }
+    assert p8["approval_summary"]["final_status"] != p8["stage_summary"]["name"]
 
 
 def test_no_levels_1_to_7_claim_production_autonomy():
