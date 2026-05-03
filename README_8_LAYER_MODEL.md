@@ -17,6 +17,15 @@ The model provides a consistent way to compare:
 
 It is intended to support architecture decisions, not to imply every use case needs the highest layer.
 
+## Two lenses used in Glytch
+
+| Lens | What it measures |
+|---|---|
+| AI capability patterns | What app behavior is demonstrated (autocomplete, tool use, retrieval, loops, orchestration patterns). |
+| Agentic workflow maturity | How autonomous the human/agent workflow is in practice (who chooses actions, when tools are used, whether loops run independently). |
+
+Prompt-only use is useful, but it is low agenticness because the AI does not choose actions, use tools, loop, or operate independently.
+
 ## Layer definitions
 
 ### 1) Autocomplete
@@ -44,20 +53,20 @@ It is intended to support architecture decisions, not to imply every use case ne
 - Strength: better handling of complex tasks.
 - Limitation: increased latency and workflow complexity.
 
-### 6) Agentic Loop
-- Repeats observe/act/review cycles until conditions are met.
-- Strength: iterative improvement.
-- Limitation: requires robust stop conditions and safeguards.
+### 6) Critique + Revision
+- Performs one critique pass and one revision pass on a draft.
+- Strength: iterative quality improvement in a simple controlled pattern.
+- Limitation: not yet a fully autonomous action loop.
 
 ### 7) Constrained Agent Loop
 - Runs a bounded objective -> action -> tool -> observation -> next action cycle.
 - Strength: adaptive behavior with explicit safeguards and transparent traces.
 - Limitation: still needs careful action constraints and iteration limits.
 
-### 8) Self-improving Workflow
-- Evaluates outputs and selects or updates based on defined criteria.
-- Strength: measurable quality improvement over time.
-- Limitation: requires governance and safe update controls.
+### 8) Mini Orchestrator / Self-improving Workflow
+- Workshop-safe simulation of orchestrating planner, critic, teacher-resource-writer, and verifier roles.
+- Strength: demonstrates role-based coordination and verification in one flow.
+- Limitation: simulation only, not a production orchestrator.
 
 ## Practical guidance
 
