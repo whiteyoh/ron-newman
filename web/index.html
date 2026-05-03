@@ -5,71 +5,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Glytch · 8 Levels of AI Competence Demo</title>
     <meta name="description" content="Glytch is a two-lens AI workshop demo for lesson and revision design with human-in-the-loop checkpoints." />
-    <meta name="robots" content="index,follow" />
-    <meta property="og:title" content="Glytch · 8 Levels of AI Competence Demo" />
-    <meta property="og:description" content="Run guided AI competence levels, confirm direction, and export artifacts." />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://glytch.uk" />
-    <link rel="canonical" href="https://glytch.uk" />
-    <meta name="theme-color" content="#050816" />
     <link rel="stylesheet" href="styles.css" />
-    
   </head>
   <body>
-    <a class="skip-link" href="#app">Skip to demo</a>
-    <main class="shell" aria-label="Glytch demo website">
-      <section id="entry" class="card" aria-labelledby="hero-title">
-        <h1 id="hero-title"><img src="assets/glytch-logo.svg" alt="Glytch" style="max-width: 360px; width: 100%; height: auto;" /></h1>
-        <p>Welcome to Glytch — a workshop demo with two lenses: AI capability patterns and agentic workflow maturity.</p>
-        <p class="muted">Choose a use case, confirm direction, run levels, and export the generated artifact instantly.</p>
-        <p class="muted">Need the conceptual background first? Read <a href="https://justin.abrah.ms/blog/2026-01-08-yegge-s-developer-agent-evolution-model.html" target="_blank" rel="noopener noreferrer">Yegge’s developer-agent evolution model</a>.</p>
-        <button id="start-btn" aria-describedby="hero-title">Enter Demo</button>
+    <main class="shell">
+      <section id="entry" class="card">
+        <h1><img src="assets/glytch-logo.svg" alt="Glytch" style="max-width: 360px; width: 100%;" /></h1>
+        <p>See AI grow from simple prompts into controlled agents.</p>
+        <p class="muted">Watch decisions, checks, approvals, and simulated orchestration happen in real time. Learn what level you are — and what to try next.</p>
+        <button id="start-btn">Enter Demo</button>
       </section>
-
-      <section id="app" class="hidden" aria-live="polite">
-        <p class="muted">Select a use case option. Changing this option clears previous outputs.</p>
-        <div id="use-case-options" class="choices" role="list" aria-label="Use case options"></div>
-        <div class="card">
-          <strong>Human-in-the-loop confirmation:</strong>
-          <p id="selection-label" class="muted">No use case selected yet.</p>
-          <label for="context-input" class="muted">Optional context (topic, lesson length, student constraints)</label>
-          <textarea id="context-input" rows="3" style="width:100%;margin:.5rem 0;border-radius:10px;padding:.6rem;background:rgba(11,19,43,.8);color:#fff;border:1px solid rgba(255,255,255,.2);"></textarea>
-          <button id="confirm-btn" disabled>Confirm this direction</button>
-        </div>
+      <section id="app" class="hidden">
+        <div id="use-case-options" class="choices"></div>
+        <div class="card"><p id="selection-label" class="muted">No use case selected yet.</p><textarea id="context-input" rows="3" style="width:100%"></textarea><button id="confirm-btn" disabled>Confirm this direction</button></div>
         <div class="grid" id="buttons"></div>
-        <div class="status">
-          <div id="api-state"><span class="pill">Waiting</span></div>
-          <div id="meta">Confirm a use case, then run a level to verify API path, model, and request id.</div>
-        </div>
-        <div class="toolbar">
-          <button id="download-artifact" class="ghost" disabled>Download latest artifact (.txt)</button>
-        </div>
-        <div id="log" role="log" aria-live="polite">Select and confirm a use case to begin.</div>
-        <section class="card" id="level-checker">
-          <h2>What level am I?</h2>
-          <p class="muted">Prompt-only use is usually Level 1-2 and not yet highly agentic.</p>
-          <div>
-            <label><input type="radio" name="selfcheck" value="prompt_only" checked> I only ask AI questions / use prompts</label><br>
-            <label><input type="radio" name="selfcheck" value="ai_edits"> I let AI edit files with my review</label><br>
-            <label><input type="radio" name="selfcheck" value="cli_agents"> I run CLI agents</label><br>
-            <label><input type="radio" name="selfcheck" value="orchestrator"> I use multi-agent orchestration</label>
-          </div>
-          <p id="assessment-result" class="muted"></p>
-          <div id="maturity-cards" class="choices"></div>
-        </section>
-
+        <div class="status"><div id="api-state"><span class="pill">Waiting</span></div><div id="meta"></div></div>
+        <div id="log"></div>
+        <section class="card"><h2>Agentic Theatre</h2><div id="theatre-steps" class="choices"></div><button id="replay-btn" class="ghost" disabled>Replay this run</button><div id="taskboard"></div></section>
+        <section class="card"><h2>Agentic Maturity Ladder</h2><div id="maturity-cards" class="choices"></div></section>
+        <section class="card"><h2>What level am I?</h2><div id="quiz-questions"></div><p id="assessment-result" class="muted"></p></section>
+        <button id="download-artifact" class="ghost" disabled>Download latest artifact (.txt)</button>
       </section>
-      <footer class="footer"><strong>Built with Glytch</strong> · Mobile-friendly demo mode enabled · <a href="https://github.com/whiteyoh/ron-newman" target="_blank" rel="noopener noreferrer">GitHub repo</a> · <a href="https://justin.abrah.ms/blog/2026-01-08-yegge-s-developer-agent-evolution-model.html" target="_blank" rel="noopener noreferrer">Design inspiration</a></footer>
     </main>
-    <div id="use-case-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="modal-title">
-      <div class="modal">
-        <header>
-          <h3 id="modal-title">Use case context</h3>
-          <button id="modal-close" class="ghost">Close</button>
-        </header>
-        <p id="modal-body" class="muted"></p>
-      </div>
-    </div>
+    <div id="use-case-modal" class="modal-backdrop hidden"><div class="modal"><h3 id="modal-title">Use case context</h3><button id="modal-close" class="ghost">Close</button><p id="modal-body" class="muted"></p></div></div>
     <script src="main.js"></script>
   </body>
 </html>
