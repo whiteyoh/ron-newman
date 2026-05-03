@@ -5,6 +5,7 @@ const downloadArtifactBtn = el('download-artifact'), useCaseModal = el('use-case
 const modalBody = el('modal-body'), modalCloseBtn = el('modal-close'), contextInput = el('context-input');
 const theatreSteps = el('theatre-steps'), replayBtn = el('replay-btn'), replayState = el('replay-state'), taskboardEl = el('taskboard');
 const scorePanel = el('score-panel'), beforeAfter = el('before-after');
+const mobileViewBtn = el('mobile-view-btn'), desktopViewBtn = el('desktop-view-btn');
 let selectedUseCase = null, confirmedUseCase = null, selectedUseCaseContext = '', latestArtifact = null, runInProgress = false, lastReplaySteps = [], theatreCards = [];
 const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -44,10 +45,20 @@ async function runLevel(level){ if(!confirmedUseCase || runInProgress) return; r
 function renderQuiz(){ const q=el('quiz-questions'); const qs=['Only prompt AI','AI edits files','You approve every action','AI runs tools','Terminal agents','Multiple agents','Taskboard review','Own orchestration system']; q.innerHTML=''; qs.forEach((t,i)=>{ const c=createEl('label','quiz-card'); c.innerHTML=`<strong>${i+1}. ${t}</strong><select data-q="${i}"><option value="0">No</option><option value="1">Yes</option></select>`; q.appendChild(c);}); q.onchange=renderAssessmentResult; renderAssessmentResult(); }
 function renderAssessmentResult(){ const v=[...document.querySelectorAll('#quiz-questions select')].map((s)=>Number(s.value||0)); let stage=1; if(v[7]) stage=8; else if(v[5]||v[6]) stage=6+(v[6]?1:0); else if(v[3]||v[4]) stage=4+(v[4]?1:0); else if(v[1]&&v[2]) stage=3; else if(v[0]) stage=2; const conf = stage>=6?'medium-high':stage>=4?'medium':'early-signal'; const risk = stage>=6?'Risk warning: automation drift without strong verifier gates.':'Risk warning: confidence may exceed safeguards.'; const next = stage<4?'Next safe step: supervised edits with explicit approval.' : stage<7?'Next safe step: bounded tool runs with verification logs.' : 'Next safe step: tighten merge policy and rollback checks.'; el('assessment-result').textContent=`You are probably around Stage ${stage}. Confidence: ${conf}. ${risk} ${next} Try Glytch Level ${Math.min(8,stage+1)} next.`; }
 function renderBeforeAfter(levels){ beforeAfter.innerHTML=''; Object.entries(levels).forEach(([id,l])=>{ const c=createEl('article','card'); c.innerHTML=`<h3>Level ${id}: ${l.name}</h3><p><strong>Before:</strong> ${l.before||'Raw model capability.'}</p><p><strong>Agentic:</strong> ${l.agentic||'Adds checks, approval, and traceable decisions.'}</p>`; beforeAfter.appendChild(c); }); }
+function setForcedView(mode){
+  document.body.classList.remove('force-mobile','force-desktop');
+  if(mode==='mobile') document.body.classList.add('force-mobile');
+  if(mode==='desktop') document.body.classList.add('force-desktop');
+  mobileViewBtn.classList.toggle('active', mode==='mobile');
+  desktopViewBtn.classList.toggle('active', mode==='desktop');
+}
 async function init(){ clearOutput(); const [l,u,m]=await Promise.all([fetch('/api/levels'),fetch('/api/use-cases'),fetch('/api/agentic-maturity')]); const levels=await l.json(), useCases=await u.json(), maturity=await m.json(); renderUseCases(useCases.use_cases||{}); (maturity.stages||[]).forEach((s)=>{ const c=createEl('article','card'); c.innerHTML=`<strong>Stage ${s.id}: ${s.name}</strong><div class="muted">${s.plain_english_summary||''}</div>`; el('maturity-cards').appendChild(c);}); renderQuiz(); renderBeforeAfter(levels.levels||{});
  Object.entries(levels.levels||{}).forEach(([k,v])=>{ const b=createEl('button','level-card'); b.innerHTML=`<strong>Level ${k}: ${v.name}</strong><span>${v.description||''}</span><span class="muted">Agenticness: ${v.agenticness_score||'pending simulation'} · Yegge stage: ${v.closest_yegge_stage||'mapped after run'}</span>`; b.onclick=()=>runLevel(Number(k)); buttons.appendChild(b);}); updateLevelButtonsVisibility(); }
 el('start-btn').onclick=()=>{ el('entry').classList.add('hidden'); el('app').classList.remove('hidden'); };
 confirmBtn.onclick=()=>{ if(!selectedUseCase) return clearOutput('Select a use case before confirming direction.'); selectedUseCaseContext=contextInput.value.trim(); confirmedUseCase=selectedUseCase; selectionLabel.textContent=`Confirmed direction: ${selectedUseCase.replaceAll('_',' ')}${selectedUseCaseContext?` | context: ${selectedUseCaseContext}`:''}`; clearOutput('Direction confirmed. Choose a level to run.'); updateLevelButtonsVisibility(); };
 replayBtn.onclick=replayRun; downloadArtifactBtn.onclick=()=>{ if(!latestArtifact) return; const blob=new Blob([latestArtifact],{type:'text/plain;charset=utf-8'}); const url=URL.createObjectURL(blob); const a=createEl('a'); a.href=url; a.download=`glytch-artifact-${new Date().toISOString().slice(0,10)}.txt`; document.body.append(a); a.click(); a.remove(); URL.revokeObjectURL(url); };
 modalCloseBtn.onclick=()=>useCaseModal.classList.add('hidden'); document.addEventListener('keydown',(e)=>{ if(e.key==='Escape') useCaseModal.classList.add('hidden'); });
+setForcedView(window.matchMedia('(max-width: 759px)').matches ? 'mobile' : 'desktop');
+mobileViewBtn.onclick=()=>setForcedView('mobile');
+desktopViewBtn.onclick=()=>setForcedView('desktop');
 init();
