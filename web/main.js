@@ -144,6 +144,7 @@ async function runLevel(level){
   }
 
   const lines = data.lines || ['No output lines returned.'];
+  if (data.agenticness) { lines.unshift(`Agenticness ${data.agenticness.score}/10: ${data.agenticness.explanation}`); }
   createArtifact(level, lines);
   await streamLines(lines);
   } catch (err) {
@@ -212,11 +213,15 @@ modalCloseBtn.onclick = () => useCaseModal.classList.add('hidden');
 
 async function init(){
   try {
-    const [levelsResponse, useCasesResponse] = await Promise.all([fetch('/api/levels'), fetch('/api/use-cases')]);
+    const [levelsResponse, useCasesResponse, maturityResponse] = await Promise.all([fetch('/api/levels'), fetch('/api/use-cases'), fetch('/api/agentic-maturity')]);
     const levels = await levelsResponse.json();
     const useCases = await useCasesResponse.json();
+    const maturity = await maturityResponse.json();
     if (!levelsResponse.ok || !levels.levels || !useCasesResponse.ok || !useCases.use_cases) return clearOutput('Could not load configuration.');
     renderUseCases(useCases.use_cases);
+    renderMaturityCards(maturity.stages || []);
+    document.querySelectorAll('input[name="selfcheck"]').forEach((el)=>el.addEventListener('change', renderAssessmentResult));
+    renderAssessmentResult();
     Object.entries(levels.levels).forEach(([k,v]) => {
       const btn = document.createElement('button');
       btn.textContent = `Level ${k}: ${v.name}`;
@@ -235,3 +240,25 @@ init();
 document.addEventListener('keydown', (event) => {
   if (event.key === 'Escape') useCaseModal.classList.add('hidden');
 });
+
+
+function renderAssessmentResult() {
+  const selected = document.querySelector('input[name="selfcheck"]:checked')?.value;
+  const out = document.getElementById('assessment-result');
+  if (selected === 'prompt_only') out.textContent = 'You are around Level 1 to Level 2 depending on whether AI touches your files. Prompt-only use is not yet very agentic. Next step: supervised file edits with strict review.';
+  else if (selected === 'ai_edits') out.textContent = 'You are around Level 2 to Level 4. Next step: move to bounded CLI agent runs with clear logs and stop conditions.';
+  else if (selected === 'cli_agents') out.textContent = 'You are around Level 5 to Level 6. Next step: coordinate multiple specialist agents with explicit verification.';
+  else out.textContent = 'You are around Level 7 to Level 8 maturity. Keep improving governance, policy checks, and rollback safety.';
+}
+
+function renderMaturityCards(stages) {
+  const container = document.getElementById('maturity-cards');
+  if (!container) return;
+  container.innerHTML = '';
+  stages.forEach((stage) => {
+    const card = document.createElement('div');
+    card.className = 'option';
+    card.innerHTML = `<strong>Level ${stage.id}: ${stage.name}</strong><div class="muted">${stage.plain_english_summary}</div><div class="muted">Risk: ${stage.risk}</div><div class="muted">Level up: ${stage.next_step_to_level_up}</div>`;
+    container.appendChild(card);
+  });
+}

@@ -12,6 +12,7 @@ from pathlib import Path
 from typing import Any
 from urllib.parse import urlparse
 
+from src.agentic_maturity import AGENTIC_MATURITY_STAGES, ASSESSMENT_QUESTIONS
 from src.ai_client import AIClient, AIClientError
 from src.constants import LEVELS, USE_CASE_OPTIONS
 from src.levels import run_level
@@ -91,6 +92,12 @@ class Handler(SimpleHTTPRequestHandler):
             return
         if path == "/api/use-cases":
             self._send_json(200, {"request_id": request_id, "use_cases": USE_CASE_OPTIONS})
+            return
+        if path == "/api/agentic-maturity":
+            self._send_json(200, {"request_id": request_id, "stages": AGENTIC_MATURITY_STAGES})
+            return
+        if path == "/api/assessment":
+            self._send_json(200, {"request_id": request_id, "questions": ASSESSMENT_QUESTIONS})
             return
         if path.startswith("/api/run/"):
             return self._execute_level(path.split("/")[-1], request_id, path, start)

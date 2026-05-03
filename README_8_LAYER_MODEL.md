@@ -1,3 +1,5 @@
+Glytch has two lenses: AI capability patterns and agentic workflow maturity.
+
 ![Glytch logo](assets/glytch-logo.svg)
 
 ## 8-Layer Capability Model

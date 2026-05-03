@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Glytch · 8 Levels of AI Competence Demo</title>
-    <meta name="description" content="Glytch is an interactive 8-level AI competence studio for lesson and revision design with human-in-the-loop checkpoints." />
+    <meta name="description" content="Glytch is a two-lens AI workshop demo for lesson and revision design with human-in-the-loop checkpoints." />
     <meta name="robots" content="index,follow" />
     <meta property="og:title" content="Glytch · 8 Levels of AI Competence Demo" />
     <meta property="og:description" content="Run guided AI competence levels, confirm direction, and export artifacts." />
@@ -20,7 +20,7 @@
     <main class="shell" aria-label="Glytch demo website">
       <section id="entry" class="card" aria-labelledby="hero-title">
         <h1 id="hero-title"><img src="assets/glytch-logo.svg" alt="Glytch" style="max-width: 360px; width: 100%; height: auto;" /></h1>
-        <p>Welcome to Glytch — an interactive 8-level AI competence studio for lesson and revision design.</p>
+        <p>Welcome to Glytch — a workshop demo with two lenses: AI capability patterns and agentic workflow maturity.</p>
         <p class="muted">Choose a use case, confirm direction, run levels, and export the generated artifact instantly.</p>
         <p class="muted">Need the conceptual background first? Read <a href="https://justin.abrah.ms/blog/2026-01-08-yegge-s-developer-agent-evolution-model.html" target="_blank" rel="noopener noreferrer">Yegge’s developer-agent evolution model</a>.</p>
         <button id="start-btn" aria-describedby="hero-title">Enter Demo</button>
@@ -45,6 +45,19 @@
           <button id="download-artifact" class="ghost" disabled>Download latest artifact (.txt)</button>
         </div>
         <div id="log" role="log" aria-live="polite">Select and confirm a use case to begin.</div>
+        <section class="card" id="level-checker">
+          <h2>What level am I?</h2>
+          <p class="muted">Prompt-only use is usually Level 1-2 and not yet highly agentic.</p>
+          <div>
+            <label><input type="radio" name="selfcheck" value="prompt_only" checked> I only ask AI questions / use prompts</label><br>
+            <label><input type="radio" name="selfcheck" value="ai_edits"> I let AI edit files with my review</label><br>
+            <label><input type="radio" name="selfcheck" value="cli_agents"> I run CLI agents</label><br>
+            <label><input type="radio" name="selfcheck" value="orchestrator"> I use multi-agent orchestration</label>
+          </div>
+          <p id="assessment-result" class="muted"></p>
+          <div id="maturity-cards" class="choices"></div>
+        </section>
+
       </section>
       <footer class="footer"><strong>Built with Glytch</strong> · Mobile-friendly demo mode enabled · <a href="https://github.com/whiteyoh/ron-newman" target="_blank" rel="noopener noreferrer">GitHub repo</a> · <a href="https://justin.abrah.ms/blog/2026-01-08-yegge-s-developer-agent-evolution-model.html" target="_blank" rel="noopener noreferrer">Design inspiration</a></footer>
     </main>
