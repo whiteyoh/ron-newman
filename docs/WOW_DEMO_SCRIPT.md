@@ -10,3 +10,6 @@
 8. Explain the human approval gate and merge decision.
 9. Use **What level am I?** quiz and discuss next safe step.
 10. Close: “Lowest useful level wins. Add autonomy only with controls.”
+
+## Yegge alignment update
+This demo now presents **capability vs Yegge stage** with high-fidelity workshop simulations, explicit human approval gates, and clear non-production limits.
