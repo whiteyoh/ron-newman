@@ -23,7 +23,7 @@ class _SafeMathEvaluator(ast.NodeVisitor):
             raise ValueError("expression too deep")
         try:
             result = super().visit(node)
-            if isinstance(result, (int, float)):
+            if isinstance(result, int | float):
                 return result
             raise ValueError("expression did not evaluate to a numeric value")
         finally:
@@ -58,7 +58,7 @@ class _SafeMathEvaluator(ast.NodeVisitor):
         raise ValueError("unsupported unary operator")
 
     def visit_Constant(self, node: ast.Constant) -> Number:
-        if isinstance(node.value, (int, float)):
+        if isinstance(node.value, int | float):
             return self._check_number(node.value)
         raise ValueError("unsupported constant")
 
