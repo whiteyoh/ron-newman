@@ -1,89 +1,50 @@
 # Reading Glytch output
 
-After you run a Glytch level, the app shows a few different views of the same run. This guide explains what each part means and what to look for.
+After you run a Glytch level, the app shows several views of the same run. This guide explains what each part means and what to look for.
+
+## How to use this guide
+
+Start with the score panel, then read the trace. If you want to understand the run visually, use Agentic Theatre. If you ran Level 8, use the taskboard to see how the simulated orchestration ended.
 
 ## Quick version
 
-- Start with the score panel to understand what kind of run you just saw.
-- Read the simulation trace for a plain-English record of the flow.
-- Use Agentic Theatre to follow the run step by step.
-- If you ran Level 8, check the taskboard for orchestration details.
-- Use the lowest useful level for the job; higher is not always better.
+- Start with the score panel.
+- Read the simulation trace.
+- Use Agentic Theatre for the step-by-step flow.
+- Check the Level 8 taskboard when orchestration is shown.
+- Use the lowest useful level; higher is not always better.
 
 ## The score panel
 
-The score panel helps you separate three different questions: what the model did, how controlled the workflow was, and how closely the run matches the intended maturity stage.
-
-### Capability score
-
-Capability score describes the kind of AI behavior being demonstrated.
-
-Examples include:
-- simple answering
-- tool use
-- evidence grounding
-- planning
-- review loops
-- orchestration
-
-### Agenticness score
-
-Agenticness score describes how much workflow control surrounds the model.
-
-A higher score usually means more structure, more steps, more checks, and more autonomy inside clear boundaries.
-
-### Yegge alignment score
-
-Yegge alignment score shows how closely the run simulates the matching Yegge-style maturity stage.
-
-This is about workflow maturity, not production autonomy. Some early levels can score well because they accurately represent early-stage AI usage.
+The score panel separates what behavior was shown from how much workflow control surrounded it.
 
 | Score | What it tells you |
 |---|---|
-| Capability | What behavior is being shown |
+| Capability | What AI behaviour is being shown |
 | Agenticness | How much workflow surrounds it |
 | Yegge alignment | How closely it matches the maturity stage |
 
 ## The read-only simulation trace
 
-The simulation trace is the text record of what happened during the run. It is not asking you a hidden question, and you do not need to answer anything there.
-
-Use it to check the output in plain English.
+The simulation trace is a text record of what happened during the run. It is not asking the user a hidden question, and there is nothing to answer in the trace.
 
 If it looks like a question, read it as part of the demo trace, not as something you need to respond to.
 
 ## Agentic Theatre
 
-Agentic Theatre turns the same run into a visual sequence.
+Agentic Theatre presents the run as a visual step-by-step sequence.
 
-Each step usually includes:
+Each step includes:
 - actor
 - status
 - summary
 - detail
 
-Common actors:
-- human
-- agent
-- tool
-- verifier
-- orchestrator
-
-Common statuses:
-- pending
-- running
-- completed
-- approved
-- blocked
-- needs human review
-- merged
-- failed
-
 | Actor | Meaning |
 |---|---|
 | Human | The person setting direction or approving work |
-| Agent | The AI behavior being demonstrated |
-| Tool | A bounded helper such as a calculator or retrieval step |
+| Agent | The AI behaviour being demonstrated |
+| Tool | A bounded helper such as calculator or retrieval |
 | Verifier | A check before accepting the result |
 | Orchestrator | The Level 8 controller coordinating work |
 
@@ -91,24 +52,22 @@ Common statuses:
 
 Replay shows the same theatre steps again. It does not rerun the AI.
 
-Use replay when you want to teach or present the flow, or when you want to re-check the order of events.
+It is useful for teaching or presenting the flow.
 
 ## Level 8 taskboard
 
-Level 8 includes an extra view because it simulates request-scoped orchestration.
+The Level 8 taskboard records specialist worker activity and how orchestration finished.
 
-The taskboard tracks:
+It shows:
 - taskboard records
 - specialist workers
-- worker status
+- status
 - attempts
 - output summary
 - verifier result
 - approval gate
 - merge decision
 - final status
-
-The taskboard is the most detailed view of a Level 8 run.
 
 | Field | Meaning |
 |---|---|
@@ -121,17 +80,25 @@ The taskboard is the most detailed view of a Level 8 run.
 
 ## Approval and merge summary
 
-The approval and merge area explains how the run ended:
-- verifier result shows whether the output passed checks
-- approval required shows whether human approval was part of the flow
-- approved for merge shows whether the result was allowed forward
-- merge decision shows whether the output was merged or blocked
-- final status shows the end state of the run
+This summary explains the final control points:
+- verifier result
+- approval required
+- approved for merge
+- merge decision
+- final status
 
 Plain-English examples:
 - “Merged” means the simulated checks passed.
 - “Needs human review” means the run should not be treated as complete.
 - “Blocked” means the verifier or approval gate stopped the merge.
+
+## Common misreadings
+
+- The trace is not asking you to answer.
+- Higher level does not always mean better.
+- Merged does not mean production-ready.
+- Needs human review is a useful outcome, not a failure.
+- Replay does not rerun the AI.
 
 ## What to take away by level
 
@@ -143,19 +110,6 @@ Plain-English examples:
 | 7 | Controlled agent loops and coordination pressure |
 | 8 | Orchestration with taskboard, verifier and approval gate |
 
-Lower levels are not worse. They are often the right choice.
-
-The goal is to use the lowest useful level for the job.
-
-## How to read a result safely
-
-- What level did I run?
-- What behavior was demonstrated?
-- Was evidence or a tool used?
-- Was there a verification step?
-- Did anything need human review?
-- Would a lower level have been enough?
-
 ## What Glytch is not doing
 
 Glytch does not:
@@ -164,8 +118,8 @@ Glytch does not:
 - create GitHub changes
 - run background jobs
 - perform production orchestration
-- remove the need for human judgment
+- remove the need for human judgement
 
 ## Final takeaway
 
-Glytch is there to make AI maturity visible. The output is not just an answer; it is a guided view of how the answer was produced, checked, and controlled.
+Glytch is there to make AI maturity visible. The output is not just an answer; it is a guided view of how the answer was produced, checked and controlled.

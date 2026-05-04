@@ -1,12 +1,14 @@
 # Architecture diagrams
 
-This folder contains the architecture diagram generator for Glytch’s eight levels.
+This folder documents the conceptual flow for each Glytch level. The diagrams are generated from a small Python data structure so they stay consistent and easy to update.
 
-The generated diagrams are conceptual. They show how each level is presented in the workshop-safe Glytch demo. They are not production deployment diagrams.
+## What these diagrams show
+
+These diagrams show the conceptual flow per level and how the demo presents each level.
+
+They do not describe production deployment architecture.
 
 ## Generate diagrams
-
-Run:
 
 ```bash
 python scripts/generate_architecture_diagrams.py
@@ -33,9 +35,10 @@ architecture/generated/level-8.svg
 | 7 | Swarm / multi-agent coordination |
 | 8 | Custom orchestrator |
 
-## Notes
+## Output files
 
-- The diagrams are generated from a small Python data structure.
-- Generated SVG files are intentionally not committed in the first PR.
-- Keep generated outputs small and reviewable if they are committed later.
-- Glytch remains a workshop-safe simulation with no real external action.
+Generated SVGs are ignored by default. Commit them only when they have been reviewed and are small enough for the repo.
+
+## Safety model
+
+These diagrams show the workshop-safe Glytch demo. They do not describe production deployment, real shell execution, real file writes or external side effects.
