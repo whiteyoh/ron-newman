@@ -22,6 +22,14 @@ export const refs = {
   beforeAfter: el('before-after'),
   previewTools: document.querySelector('.preview-tools'),
   maturityCards: el('maturity-cards'),
+  guideStartBtn: el('guided-start-btn'),
+  guideReplayBtn: el('guide-replay-btn'),
+  guideCard: el('guide-card'),
+  guideStep: el('guide-step'),
+  guideMuted: el('guide-muted'),
+  guideRecommendation: el('guide-recommendation'),
+  guideSkipBtn: el('guide-skip-btn'),
+  guideLevel3Btn: el('guide-level3-btn'),
 };
 
 export const createEl = (tag, cls, text) => {

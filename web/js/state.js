@@ -7,6 +7,12 @@ export const state = {
   runInProgress: false,
   lastReplaySteps: [],
   theatreCards: [],
+  guideActive: false,
+  guideStep: 0,
+  guideCompleted: false,
+  guidedScenarioKey: 'uk_year10_teacher',
+  guidedContext: 'Year 10 revision lesson on nutrition and healthy eating',
+  guidedRecommendedLevel: 1,
 };
 
 export const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;

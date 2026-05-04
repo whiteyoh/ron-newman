@@ -306,3 +306,18 @@ body.force-desktop .taskboard-grid {
 .theatre-step.needs_review,.theatre-step.needs_human_review{border-left-color:#f9b64d}
 .theatre-step.failed{border-left-color:#ff6b90}
 .theatre-step.merged{border-left-color:#44d79a}
+
+.guide-card {
+  margin-bottom: 1rem;
+  padding: 0.9rem;
+  border-radius: 14px;
+  border: 1px solid rgba(223, 94, 255, 0.4);
+  background: linear-gradient(145deg, rgba(14, 23, 51, 0.95), rgba(18, 15, 48, 0.94));
+  box-shadow: 0 0 20px rgba(104, 231, 255, 0.16);
+}
+.guide-actions { display: flex; flex-wrap: wrap; gap: 0.55rem; margin-top: 0.65rem; }
+.guide-step { font-weight: 650; margin: 0; }
+.guide-muted { color: var(--muted); margin: 0.45rem 0; }
+.guide-dismiss { border-color: rgba(255, 107, 144, 0.5); }
+.guide-highlight { outline: 2px solid rgba(104, 231, 255, 0.85); outline-offset: 4px; border-radius: 10px; }
+.guide-recommendation { margin: 0.45rem 0; color: #d8edff; }

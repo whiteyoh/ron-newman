@@ -27,6 +27,10 @@ It is built as a workshop-safe simulation: no real external action is taken.
 
 New to Glytch? Start with [Reading Glytch output](docs/READING_GLYTCH_OUTPUT.md). It explains the scores, simulation trace, Agentic Theatre, replay and Level 8 taskboard.
 
+## Guided first run
+
+New users can start with **Try your first Glytch run**, which walks through a simple scenario, recommends Level 1 first, explains the output panels, and suggests comparing the same task at Level 3.
+
 ## Architecture
 
 Architecture notes live in [architecture/](architecture/README.md). The diagrams are generated from `scripts/generate_architecture_diagrams.py` and describe the conceptual flow for each Glytch level.
