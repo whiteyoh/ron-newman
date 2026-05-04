@@ -88,6 +88,30 @@ def _contextual_tip(level: int, use_case_context: str | None, use_case: str) -> 
     return template.format(topic=topic)
 
 
+def _clip_text(value: Any, limit: int = 140) -> str:
+    text = str(value or "")
+    return text if len(text) <= limit else text[: limit - 1] + "…"
+
+
+def _normalized_status(raw: Any) -> str:
+    value = str(raw or "pending").lower().replace("taskstatus.", "").strip()
+    if "needs human review" in value or "needs_human_review" in value or "needs review" in value:
+        return "needs_human_review"
+    if "merge" in value:
+        return "merged"
+    if "run" in value:
+        return "running"
+    if "complete" in value:
+        return "completed"
+    if "approve" in value:
+        return "approved"
+    if "block" in value:
+        return "blocked"
+    if "fail" in value:
+        return "failed"
+    return "pending"
+
+
 def use_case_prompt(text: str, use_case: str | None = None) -> str:
     if use_case is None:
         use_case = USE_CASE_OPTIONS[DEFAULT_USE_CASE_KEY]
@@ -213,50 +237,88 @@ def _build_structured_payload(
         ]
     elif level == 8 and run_data:
         orch = run_data
+        taskboard = orch.get("taskboard", [])
         theatre_steps = [
             {
-                "label": "Demo request",
-                "actor": "human",
+                "label": "Orchestrator run created",
+                "actor": "orchestrator",
                 "status": "completed",
-                "summary": orch.get("run_id", "orchestrator run created"),
-                "detail": orch.get("mode", "parallel"),
+                "summary": f"Run id: {orch.get('run_id', 'unknown')}",
+                "detail": f"Request-scoped orchestration mode: {orch.get('mode', 'parallel')}",
             },
             {
                 "label": "Policy loaded",
                 "actor": "orchestrator",
                 "status": "completed",
-                "summary": "Worker tasks created",
-                "detail": str(len(orch.get("taskboard", []))) + " tasks in taskboard.",
+                "summary": _clip_text(orch.get("policy", "Workshop-safe policy loaded")),
+                "detail": "Bounded workflow policy prepared for simulation.",
             },
             {
-                "label": "Action selected",
+                "label": "Worker tasks created",
                 "actor": "orchestrator",
-                "status": "running",
-                "summary": "Workers started and executed",
-                "detail": "See taskboard for status transitions.",
-            },
-            {
-                "label": "Verification performed",
-                "actor": "verifier",
                 "status": "completed",
-                "summary": orch.get("verifier_result", "Verifier result pending"),
-                "detail": "Verifier checked objective coverage.",
-            },
-            {
-                "label": "Human approval gate",
-                "actor": "human",
-                "status": "approved" if orch.get("approved_for_merge") else "needs_human_review",
-                "summary": f"Approval required: {orch.get('approval_required', True)}",
-                "detail": f"Approved: {orch.get('approved_for_merge', False)}",
-            },
-            {
-                "label": "Final verdict",
-                "actor": "orchestrator",
-                "status": "merged" if orch.get("approved_for_merge") else "needs_human_review",
-                "summary": orch.get("status", "needs_human_review"),
-                "detail": orch.get("final_answer", "Needs human review"),
+                "summary": f"{len(taskboard)} worker tasks created",
+                "detail": "Taskboard initialized for simulated agentic workflow.",
             },
         ]
+        for record in taskboard:
+            worker = record.get("worker_name") or record.get("worker") or "worker"
+            attempt = record.get("attempt", 1)
+            status = _normalized_status(record.get("status"))
+            task = _clip_text(record.get("task", "No task description"))
+            output = _clip_text(
+                record.get("output")
+                or record.get("output_summary")
+                or record.get("summary")
+                or "No output yet"
+            )
+            error = _clip_text(record.get("error", ""))
+            detail = f"Task: {task} · Output: {output}"
+            if error:
+                detail += f" · Error: {error}"
+            theatre_steps.append(
+                {
+                    "label": "Worker completed",
+                    "actor": "orchestrator",
+                    "status": status,
+                    "summary": f"{worker} completed attempt {attempt}",
+                    "detail": detail,
+                }
+            )
+        theatre_steps.extend(
+            [
+                {
+                    "label": "Verification performed",
+                    "actor": "verifier",
+                    "status": "completed",
+                    "summary": _clip_text(orch.get("verifier_result", "Verifier result pending")),
+                    "detail": "Verifier checked objective coverage before merge decision.",
+                },
+                {
+                    "label": "Human approval gate",
+                    "actor": "human",
+                    "status": "approved"
+                    if orch.get("approved_for_merge")
+                    else "needs_human_review",
+                    "summary": f"Approval required: {orch.get('approval_required', True)}",
+                    "detail": f"Approved for merge: {orch.get('approved_for_merge', False)}",
+                },
+                {
+                    "label": "Merge decision",
+                    "actor": "orchestrator",
+                    "status": "merged" if orch.get("approved_for_merge") else "blocked",
+                    "summary": _clip_text(orch.get("status", "needs_human_review")),
+                    "detail": _clip_text(orch.get("merge_policy", "Workshop-safe merge policy")),
+                },
+                {
+                    "label": "Final verdict",
+                    "actor": "orchestrator",
+                    "status": "merged" if orch.get("approved_for_merge") else "needs_human_review",
+                    "summary": _clip_text(orch.get("status", "needs_human_review")),
+                    "detail": _clip_text(orch.get("final_answer", "Needs human review")),
+                },
+            ]
+        )
     replay_steps = [f"{s['label']}: {s['summary']}" for s in theatre_steps]
     merge_decision = (
         "approved"
