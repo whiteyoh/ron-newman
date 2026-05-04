@@ -24,6 +24,7 @@ export const refs = {
   maturityCards: el('maturity-cards'),
   guideStartBtn: el('guided-start-btn'),
   guideReplayBtn: el('guide-replay-btn'),
+  guideInlineBtn: el('guide-inline-btn'),
   guideCard: el('guide-card'),
   guideStep: el('guide-step'),
   guideMuted: el('guide-muted'),

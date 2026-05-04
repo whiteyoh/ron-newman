@@ -7,10 +7,20 @@ const GUIDED_SCENARIO = 'uk_year10_teacher';
 const GUIDED_CONTEXT = 'Year 10 revision lesson on nutrition and healthy eating';
 const RECOMMENDED_LEVEL = 1;
 
+function focusGuideCard() {
+  if (!refs.guideCard || refs.guideCard.classList.contains('hidden')) return;
+  refs.guideCard.focus({ preventScroll: true });
+}
+
 function setGuideStep(text, muted = '') {
   refs.guideStep.textContent = text;
   refs.guideMuted.textContent = muted;
-  refs.guideCard.focus({ preventScroll: true });
+  focusGuideCard();
+}
+
+function setGuideReplayControlsVisible(visible) {
+  if (refs.guideReplayBtn) refs.guideReplayBtn.hidden = !visible;
+  if (refs.guideInlineBtn) refs.guideInlineBtn.hidden = !visible;
 }
 
 function highlight(id) {
@@ -26,7 +36,7 @@ function ensureVisible(id) {
 
 export function initOnboarding({ runLevel }) {
   state.guideCompleted = localStorage.getItem(GUIDE_KEY) === 'completed';
-  refs.guideReplayBtn.hidden = !state.guideCompleted;
+  setGuideReplayControlsVisible(state.guideCompleted);
 
   const openApp = () => {
     el('entry').classList.add('hidden');
@@ -38,11 +48,13 @@ export function initOnboarding({ runLevel }) {
     state.guideActive = true;
     state.guideStep = 'setup';
     state.waitingForLevel3Comparison = false;
+    state.level3StartedFromGuide = false;
     refs.guideCard.classList.remove('hidden');
-    refs.guideReplayBtn.hidden = true;
+    setGuideReplayControlsVisible(false);
     refs.guideSkipBtn.classList.remove('hidden');
     refs.guideLevel3Btn.classList.add('hidden');
     refs.guideFinishBtn.classList.add('hidden');
+    refs.guideRecommendation.textContent = '';
 
     state.selectedUseCase = GUIDED_SCENARIO;
     state.confirmedUseCase = null;
@@ -71,14 +83,17 @@ export function initOnboarding({ runLevel }) {
   const completeGuide = () => {
     state.guideActive = false;
     state.guideCompleted = true;
+    state.waitingForLevel3Comparison = false;
+    state.level3StartedFromGuide = false;
     localStorage.setItem(GUIDE_KEY, 'completed');
     refs.guideCard.classList.add('hidden');
-    refs.guideReplayBtn.hidden = false;
     document.querySelectorAll('.guide-highlight').forEach((n) => n.classList.remove('guide-highlight'));
+    setGuideReplayControlsVisible(true);
   };
 
   refs.guideStartBtn.onclick = startGuide;
   refs.guideReplayBtn.onclick = startGuide;
+  refs.guideInlineBtn.onclick = startGuide;
   refs.guideSkipBtn.onclick = completeGuide;
   refs.guideFinishBtn.onclick = completeGuide;
 
@@ -88,6 +103,7 @@ export function initOnboarding({ runLevel }) {
       highlight('confirm-btn');
       return;
     }
+    state.level3StartedFromGuide = true;
     state.waitingForLevel3Comparison = true;
     state.guideStep = 'level3Comparison';
     refs.guideFinishBtn.classList.add('hidden');
@@ -107,6 +123,7 @@ export function initOnboarding({ runLevel }) {
       if (level === RECOMMENDED_LEVEL) {
         state.guideStep = 'explainOutput';
         state.waitingForLevel3Comparison = true;
+        state.level3StartedFromGuide = false;
         setGuideStep(
           'This score panel shows capability, workflow control, and stage fidelity. Agentic theatre turns this run into a step-by-step visual story.',
           'Raw output transcript is read-only trace. If it looks like a question, it is part of the trace, not something you need to answer. Replay repeats the same steps and does not rerun AI. Level 8 adds a taskboard for orchestrator simulation.'
@@ -118,9 +135,10 @@ export function initOnboarding({ runLevel }) {
         return;
       }
 
-      if (level === 3 && state.waitingForLevel3Comparison) {
+      if (level === 3 && state.waitingForLevel3Comparison && state.level3StartedFromGuide) {
         state.guideStep = 'final';
         state.waitingForLevel3Comparison = false;
+        state.level3StartedFromGuide = false;
         setGuideStep(
           'You’ve now compared Level 1 and Level 3. Level 1 showed simple prompt-only AI. Level 3 added a bounded tool path. That is the Glytch idea: start simple, then move up only when the task needs more control.',
           'You can now keep exploring the levels freely.'

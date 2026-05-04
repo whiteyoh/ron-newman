@@ -4,20 +4,33 @@ from pathlib import Path
 def test_onboarding_static_content():
     html = Path("web/index.html").read_text(encoding="utf-8")
     js = Path("web/js/onboarding.js").read_text(encoding="utf-8")
+    dom_js = Path("web/js/dom.js").read_text(encoding="utf-8")
 
     assert "Try your first Glytch run" in html
     assert "Show guide again" in html
+    assert "guide-inline-btn" in html
+    assert "Show guide" in html
     assert "Skip guide" in html
     assert "Finish guide" in html
     assert "js/main.js" in html
+    assert "footer-disclaimer" in html
+
     assert "glytch.firstRunGuide.completed" in js
     assert "lowest useful level" in js
     assert "Level 1" in js
     assert "Level 3" in js
     assert "confirm-btn" in js
     assert "guideFinishBtn" in js
+    assert "Try Level 3 next" in html
+    assert "Finish guide" in html
     assert "You’ve now compared Level 1 and Level 3" in js
-    assert "footer-disclaimer" in html
+    assert "level3StartedFromGuide" in js
+    assert "waitingForLevel3Comparison" in js
+    assert "setGuideReplayControlsVisible" in js
+    assert "focusGuideCard" in js
+    assert "guideInlineBtn.onclick" in js
+
+    assert "guideInlineBtn" in dom_js
 
 
 def test_onboarding_module_referenced():
