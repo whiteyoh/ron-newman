@@ -48,14 +48,14 @@ LEVELS = {
         ),
     },
     8: {
-        "name": "Mini Orchestrator / Self-improving Workflow",
+        "name": "Mini Orchestrator",
         "desc": (
-            "Workshop-safe simulation that coordinates planner, critic, "
-            "teacher-resource-writer, and verifier roles."
+            "Workshop-safe simulation that coordinates planner, researcher, "
+            "teacher-resource-writer, critic, verifier and merge policy."
         ),
         "nourishment": (
-            "Delivers stronger final answers by iterating and selecting the "
-            "best-performing version."
+            "Shows how specialist workers, verification, approval and merge "
+            "policy can coordinate a safer final result."
         ),
     },
 }

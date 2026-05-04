@@ -170,7 +170,9 @@ def _build_structured_payload(
         ),
     }
     theatre_steps = []
-    if level == 1 and run_data:
+    if run_data.get("theatre_steps") and run_data.get("verification_result") == "not run":
+        theatre_steps = run_data.get("theatre_steps", [])
+    elif level == 1 and run_data:
         theatre_steps = run_data.get("theatre_steps", [])
     elif level <= 6 and run_data:
         theatre_steps = [
@@ -348,7 +350,8 @@ def _build_structured_payload(
             ]
         )
     replay_steps = [f"{s['label']}: {s['summary']}" for s in theatre_steps]
-    merge_decision = (
+    explicit_merge_decision = run_data.get("merge_decision")
+    merge_decision = explicit_merge_decision or (
         "approved"
         if run_data.get("approved_for_merge")
         else run_data.get("status", "needs_human_review")
@@ -409,6 +412,88 @@ def _build_structured_payload(
     }
 
 
+def _build_backend_missing_run_data(level: int, level_info: dict[str, str]) -> dict[str, Any]:
+    if level == 1:
+        return {
+            "objective": "Show prompt-only autocomplete behaviour.",
+            "policy": "no external action, no model call",
+            "verification_result": "not run",
+            "approval_required": True,
+            "approved_for_final": False,
+            "final_verdict": "needs_human_review",
+            "final_status": "needs_human_review",
+            "final_answer": "AI backend not configured",
+            "audit_log": [
+                "backend missing: OPENAI_API_KEY not configured",
+                "no model call attempted",
+            ],
+            "merge_policy": "not applicable",
+            "merge_decision": "human_decides",
+            "theatre_steps": [
+                {
+                    "label": "Human prompt provided",
+                    "actor": "human",
+                    "status": "completed",
+                    "summary": "Prompt-only baseline",
+                    "detail": "Human supplied the prompt and context.",
+                },
+                {
+                    "label": "Model continuation not generated",
+                    "actor": "agent",
+                    "status": "blocked",
+                    "summary": "Backend not configured",
+                    "detail": "Model continuation was not generated because the backend is not configured.",
+                },
+                {
+                    "label": "Human decides next",
+                    "actor": "human",
+                    "status": "needs_human_review",
+                    "summary": "Configure backend, then retry",
+                    "detail": "Level 1 stops here. The human owns the next action.",
+                },
+            ],
+        }
+    return {
+        "objective": f"Level {level} could not run because the AI backend is not configured.",
+        "policy": "no external action, no model call",
+        "verification_result": "not run",
+        "approval_required": True,
+        "approved_for_final": False,
+        "final_verdict": "needs_human_review",
+        "final_status": "needs_human_review",
+        "final_answer": "AI backend not configured",
+        "merge_decision": "not_run",
+        "merge_policy": "not applicable",
+        "audit_log": [
+            "backend missing: OPENAI_API_KEY not configured",
+            "no model call attempted",
+        ],
+        "theatre_steps": [
+            {
+                "label": "Level could not run",
+                "actor": "system",
+                "status": "blocked",
+                "summary": f"Level {level}: {level_info['name']}",
+                "detail": "The AI backend is not configured, so this level was not executed.",
+            },
+            {
+                "label": "No model call attempted",
+                "actor": "system",
+                "status": "blocked",
+                "summary": "OPENAI_API_KEY is missing",
+                "detail": "No model call, tool use, retrieval, planning or orchestration was attempted.",
+            },
+            {
+                "label": "Human decides next",
+                "actor": "human",
+                "status": "needs_human_review",
+                "summary": "Configure backend or use fallback view",
+                "detail": "Set OPENAI_API_KEY to run this level with the live backend.",
+            },
+        ],
+    }
+
+
 def run_level(
     level: int,
     client: AIChatClient,
@@ -438,45 +523,7 @@ def run_level(
     run_data: dict[str, Any] = {}
 
     if not client.available():
-        run_data = {
-            "objective": "Show prompt-only autocomplete behaviour.",
-            "policy": "no external action, no model call",
-            "verification_result": "not run",
-            "approval_required": True,
-            "approved_for_final": False,
-            "final_verdict": "needs_human_review",
-            "final_status": "needs_human_review",
-            "final_answer": "AI backend not configured",
-            "audit_log": [
-                "backend missing: OPENAI_API_KEY not configured",
-                "no model call attempted",
-            ],
-            "merge_policy": "not applicable",
-            "merge_decision": "human_decides",
-            "theatre_steps": [
-                {
-                    "label": "Human prompt provided",
-                    "actor": "human",
-                    "status": "completed",
-                    "summary": "Prompt-only baseline",
-                    "detail": "Human supplied the prompt and context.",
-                },
-                {
-                    "label": "Model continuation generated",
-                    "actor": "agent",
-                    "status": "blocked",
-                    "summary": "Backend not configured",
-                    "detail": "Model continuation was not generated because AI backend is not configured.",
-                },
-                {
-                    "label": "Human decides next",
-                    "actor": "human",
-                    "status": "needs_human_review",
-                    "summary": "Configure backend, then retry",
-                    "detail": "Level 1 stops here. The human owns the next action.",
-                },
-            ],
-        }
+        run_data = _build_backend_missing_run_data(level, level_info)
         lines = intro + [
             "AI backend not configured.",
             "Set OPENAI_API_KEY (and optionally OPENAI_BASE_URL, OPENAI_MODEL), then retry.",

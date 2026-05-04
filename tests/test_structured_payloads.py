@@ -161,9 +161,14 @@ def test_level1_runtime_is_single_completion_baseline():
         f"{s['label']}: {s['summary']}" for s in payload["theatre_steps"]
     ]
     text = " ".join(payload["lines"]).lower()
-    assert "tool use" in text
+    assert "no tools used" in text
+    assert "no tool use" in text
+    assert "tool-action" not in text
+    assert "tool result" not in text
+    assert "selected action" not in text
     assert "orchestration" not in text
     assert "production autonomy" not in text
+    assert payload["approval_summary"]["merge_decision"] == "human_decides"
 
 
 def test_level1_no_key_fallback_is_structured_and_no_chat():
@@ -171,8 +176,35 @@ def test_level1_no_key_fallback_is_structured_and_no_chat():
     payload = run_level(1, client)
     assert client.chat_calls == 0
     assert payload["approval_summary"]["final_status"] == "needs_human_review"
+    assert payload["approval_summary"]["merge_decision"] == "human_decides"
     assert any("AI backend not configured" in line for line in payload["lines"])
     continuation_step = next(
-        s for s in payload["theatre_steps"] if s["label"] == "Model continuation generated"
+        s for s in payload["theatre_steps"] if s["label"] == "Model continuation not generated"
     )
     assert "not generated" in continuation_step["detail"].lower()
+
+
+def test_no_key_fallback_levels_2_to_8_are_level_aware_and_no_chat():
+    client = UnavailableClient()
+    for level in range(2, 9):
+        payload = run_level(level, client)
+        assert payload["score_summary"]
+        assert payload["theatre_steps"]
+        assert payload["replay_steps"]
+        assert payload["approval_summary"]
+        assert payload["stage_summary"]
+        assert payload["lines"]
+        assert any("AI backend not configured" in line for line in payload["lines"])
+        assert payload["approval_summary"]["final_status"] == "needs_human_review"
+        assert payload["approval_summary"]["merge_decision"] == "not_run"
+        theatre_labels = [s["label"] for s in payload["theatre_steps"]]
+        assert "Level could not run" in theatre_labels
+        assert "No model call attempted" in theatre_labels
+        assert "Model continuation generated" not in theatre_labels
+        assert "Human prompt provided" not in theatre_labels
+        text = str(payload).lower()
+        assert "level could not run" in text
+        assert "was not executed" in text
+        assert "merged final answer" not in text
+        assert "production-ready" not in text
+    assert client.chat_calls == 0
