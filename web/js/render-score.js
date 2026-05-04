@@ -7,7 +7,7 @@ export function renderScorePanel(agenticness, data) {
   const fields = [
     ['Capability score', safeScore(agenticness.capability_score ?? data?.score_summary?.capability_score), 'Capability score = what AI behaviour is being demonstrated'],
     ['Agenticness score', safeScore(agenticness.agenticness_score ?? agenticness.score), 'Agenticness score = how much workflow control/autonomy surrounds it'],
-    ['Yegge alignment score', safeScore(agenticness.yegge_alignment_score, 'Not applicable to this level'), 'Yegge alignment = how closely this simulates the matching Yegge stage'],
+    ['Stage fidelity score', safeScore(agenticness.yegge_alignment_score, 'Not applicable to this level'), 'Stage fidelity = how clearly this level demonstrates its intended maturity stage'],
   ];
   fields.forEach(([k, v, e]) => {
     const c = createEl('article', 'score-card');
