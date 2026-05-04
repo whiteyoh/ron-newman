@@ -3,10 +3,14 @@ from src.levels import run_level
 
 
 class DummyClient:
+    def __init__(self):
+        self.chat_calls = 0
+
     def available(self):
         return True
 
     def chat(self, prompt, _context):
+        self.chat_calls += 1
         p = prompt.lower()
         if "verifier" in p:
             return "supported: objective covered"
@@ -15,6 +19,11 @@ class DummyClient:
         if "score this draft" in p:
             return "89"
         return "ok"
+
+
+class UnavailableClient(DummyClient):
+    def available(self):
+        return False
 
 
 ACCEPTED_STATUSES = {
@@ -123,3 +132,47 @@ def test_level8_theatre_lifecycle_and_worker_mapping():
     assert p8["replay_steps"] == [f"{s['label']}: {s['summary']}" for s in p8["theatre_steps"]]
     for step in p8["theatre_steps"]:
         assert step["status"] in ACCEPTED_STATUSES
+
+
+def test_level1_score_and_baseline_metadata():
+    l1 = AGENTICNESS[1]
+    assert l1["score"] == 10
+    assert l1["capability_score"] == 1
+    assert l1["agenticness_score"] <= 2
+    assert l1["yegge_alignment_score"] == 10
+    assert l1["uses_tools"] is False
+    assert l1["loops"] is False
+    assert l1["runs_independently"] is False
+    assert l1["self_verifies"] is False
+    assert l1["multi_agent"] is False
+
+
+def test_level1_runtime_is_single_completion_baseline():
+    client = DummyClient()
+    payload = run_level(1, client)
+    assert client.chat_calls == 1
+    assert payload["approval_summary"]["final_status"] == "needs_human_review"
+    assert payload["approval_summary"]["verifier_result"] == "not run"
+    labels = [s["label"] for s in payload["theatre_steps"]]
+    assert "Human prompt provided" in labels
+    assert "Model continuation generated" in labels
+    assert "Human decides next" in labels
+    assert payload["replay_steps"] == [
+        f"{s['label']}: {s['summary']}" for s in payload["theatre_steps"]
+    ]
+    text = " ".join(payload["lines"]).lower()
+    assert "tool use" in text
+    assert "orchestration" not in text
+    assert "production autonomy" not in text
+
+
+def test_level1_no_key_fallback_is_structured_and_no_chat():
+    client = UnavailableClient()
+    payload = run_level(1, client)
+    assert client.chat_calls == 0
+    assert payload["approval_summary"]["final_status"] == "needs_human_review"
+    assert any("AI backend not configured" in line for line in payload["lines"])
+    continuation_step = next(
+        s for s in payload["theatre_steps"] if s["label"] == "Model continuation generated"
+    )
+    assert "not generated" in continuation_step["detail"].lower()

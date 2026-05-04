@@ -24,6 +24,9 @@ The score panel separates what behavior was shown from how much workflow control
 | Agenticness | How much workflow surrounds it |
 | Yegge alignment | How closely it matches the maturity stage |
 
+A score of 10 does **not** mean a level is more autonomous or more powerful.  
+For example, Level 1 can score highly when it is a clean prompt-only baseline with a clear human decision point.
+
 ## The read-only simulation trace
 
 The simulation trace is a text record of what happened during the run. It is not asking the user a hidden question, and there is nothing to answer in the trace.

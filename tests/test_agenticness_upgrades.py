@@ -21,8 +21,21 @@ def text(level):
     return "\n".join(run_level(level, DummyClient())["lines"])
 
 
-def test_levels_1_to_6_agentic_mechanics_visible():
-    for lvl in range(1, 7):
+def test_level1_is_prompt_only_baseline():
+    t = text(1).lower()
+    for phrase in [
+        "prompt-only baseline",
+        "one model continuation",
+        "no tools used",
+        "no verification performed",
+        "human decides next",
+        "final suggestion",
+    ]:
+        assert phrase in t
+
+
+def test_levels_2_to_6_agentic_mechanics_visible():
+    for lvl in range(2, 7):
         t = text(lvl)
         assert ("Policy" in t) or ("policy" in t.lower())
         assert ("Verification" in t) or ("verification" in t.lower())
@@ -31,10 +44,15 @@ def test_levels_1_to_6_agentic_mechanics_visible():
         assert "Audit trail" in t
 
 
-def test_levels_1_to_6_scores_and_yegge_alignment_are_7_not_higher():
-    for lvl in range(1, 7):
+def test_level1_score_is_perfect_baseline_alignment():
+    assert AGENTICNESS[1]["score"] == 10
+    assert AGENTICNESS[1]["agenticness_score"] <= 2
+    assert AGENTICNESS[1]["yegge_alignment_score"] == 10
+
+
+def test_levels_2_to_6_scores_and_yegge_alignment():
+    for lvl in range(2, 7):
         assert AGENTICNESS[lvl]["score"] == 7
-        assert AGENTICNESS[lvl]["score"] <= 7
         assert AGENTICNESS[lvl]["yegge_alignment_score"] >= 7
 
 

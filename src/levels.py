@@ -170,7 +170,9 @@ def _build_structured_payload(
         ),
     }
     theatre_steps = []
-    if level <= 6 and run_data:
+    if level == 1 and run_data:
+        theatre_steps = run_data.get("theatre_steps", [])
+    elif level <= 6 and run_data:
         theatre_steps = [
             {
                 "label": "Demo request",
@@ -363,7 +365,7 @@ def _build_structured_payload(
             else:
                 final_status = "unknown"
     else:
-        final_status = run_data.get("final_verdict", "completed")
+        final_status = run_data.get("final_status", run_data.get("final_verdict", "completed"))
     approval_summary = {
         "approval_required": run_data.get("approval_required", True),
         "approved": run_data.get("approved_for_merge", run_data.get("approved_for_final", False)),
@@ -437,21 +439,43 @@ def run_level(
 
     if not client.available():
         run_data = {
-            "objective": "demo unavailable until backend configured",
+            "objective": "Show prompt-only autocomplete behaviour.",
             "policy": "no external action, no model call",
-            "actions": ["backend_missing"],
-            "observations": ["OPENAI_API_KEY not configured"],
             "verification_result": "not run",
             "approval_required": True,
             "approved_for_final": False,
             "final_verdict": "needs_human_review",
+            "final_status": "needs_human_review",
             "final_answer": "AI backend not configured",
             "audit_log": [
                 "backend missing: OPENAI_API_KEY not configured",
                 "no model call attempted",
             ],
-            "merge_policy": "not run",
-            "merge_decision": "not run",
+            "merge_policy": "not applicable",
+            "merge_decision": "human_decides",
+            "theatre_steps": [
+                {
+                    "label": "Human prompt provided",
+                    "actor": "human",
+                    "status": "completed",
+                    "summary": "Prompt-only baseline",
+                    "detail": "Human supplied the prompt and context.",
+                },
+                {
+                    "label": "Model continuation generated",
+                    "actor": "agent",
+                    "status": "blocked",
+                    "summary": "Backend not configured",
+                    "detail": "Model continuation was not generated because AI backend is not configured.",
+                },
+                {
+                    "label": "Human decides next",
+                    "actor": "human",
+                    "status": "needs_human_review",
+                    "summary": "Configure backend, then retry",
+                    "detail": "Level 1 stops here. The human owns the next action.",
+                },
+            ],
         }
         lines = intro + [
             "AI backend not configured.",
@@ -466,50 +490,60 @@ def run_level(
         return payload
 
     if level == 1:
-        objective = use_case_prompt("Produce a useful one-line continuation.", use_case)
+        objective = "Show prompt-only autocomplete behaviour."
         prompt = "The teacher begins the lesson: 'Today we're mastering key ideas by'"
-        allowed = ["draft_completion", "verify_completion", "revise_completion", "finish"]
-
-        def exec_l1(action: str, _state: dict[str, Any]) -> tuple[str, str]:
-            if action == "draft_completion":
-                draft = client.chat("Continue the text naturally in one short phrase.", prompt)
-                return draft, f"drafted continuation: {draft}"
-            if action == "verify_completion":
-                verdict = client.chat(
-                    "Verify if this continuation is useful, specific, and safe. Return strong/weak plus reason.",
-                    f"prompt={prompt}",
-                )
-                return "", f"verification: {verdict}"
-            if action == "revise_completion":
-                revised = client.chat(
-                    "Revise the completion to be more useful and specific.", prompt
-                )
-                return revised, f"revised completion: {revised}"
-            return "", "finish selected"
-
-        run = run_agentic_capability_demo(
-            client,
-            1,
-            objective,
-            "Supervised completion agent",
-            allowed,
-            "draft_completion",
-            exec_l1,
-            "Final verifier: is the continuation classroom-useful and safe?",
-        )
+        continuation = client.chat("Continue the text naturally in one short phrase.", prompt)
         lines = [
-            f"Objective: {run['objective']}",
-            f"Policy: {run['policy']}",
-            f"Allowed actions: {', '.join(allowed)}",
-            f"Action trace: {run['actions']}",
-            f"Verification: {run['verification_result']}",
-            "Approval gate: simulated human approval required before final use.",
-            f"Final verdict: {run['final_verdict']}",
-            "Audit trail:",
-            *run["audit_log"],
-            f"Final answer: {run['final_answer']}",
+            "Prompt-only baseline",
+            f"Objective: {objective}",
+            f"Prompt supplied by human: {prompt}",
+            f"One model continuation: {continuation}",
+            "No tools used",
+            "No verification performed",
+            "Human decides next",
+            "Limitation: No tool use, no verification, no memory and no external action.",
+            f"Final suggestion: {continuation}",
         ]
-        run_data = run
+        run_data = {
+            "objective": objective,
+            "policy": "single completion, no tools, no loop",
+            "verification_result": "not run",
+            "approval_required": True,
+            "approved_for_final": False,
+            "final_verdict": "needs_human_review",
+            "final_status": "needs_human_review",
+            "merge_decision": "human_decides",
+            "merge_policy": "not applicable",
+            "final_answer": continuation,
+            "theatre_steps": [
+                {
+                    "label": "Human prompt provided",
+                    "actor": "human",
+                    "status": "completed",
+                    "summary": "Prompt-only baseline",
+                    "detail": "Human supplied the prompt and context.",
+                },
+                {
+                    "label": "Model continuation generated",
+                    "actor": "agent",
+                    "status": "completed",
+                    "summary": "One suggestion produced",
+                    "detail": "Model produced one continuation. No tools, retrieval or loop were used.",
+                },
+                {
+                    "label": "Human decides next",
+                    "actor": "human",
+                    "status": "needs_human_review",
+                    "summary": "Use, edit or discard",
+                    "detail": "Level 1 stops here. The human owns the next action.",
+                },
+            ],
+            "audit_log": [
+                "human provided prompt",
+                "model generated one continuation",
+                "human review required",
+            ],
+        }
     elif level == 2:
         objective = use_case_prompt("Follow instruction contract with permission gate.", use_case)
         instruction = (
