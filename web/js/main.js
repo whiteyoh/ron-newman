@@ -7,9 +7,11 @@ import { renderTaskboard } from './render-taskboard.js';
 import { renderTheatre } from './render-theatre.js';
 import { runReplay } from './replay.js';
 import { appendMessage, clearOutput, clearRunPanels, updateLevelButtonsVisibility } from './run-ui.js';
+import { initOnboarding } from './onboarding.js';
 import { prefersReducedMotion, sleep, state } from './state.js';
 
 async function runLevel(level) {
+  state.lastRunLevel = level;
   if (!state.confirmedUseCase || state.runInProgress) return;
   state.runInProgress = true;
   setStatus('Running…', 'running');
@@ -37,7 +39,9 @@ async function runLevel(level) {
     refs.replayBtn.disabled = true;
     refs.downloadArtifactBtn.disabled = true;
   } finally { state.runInProgress = false; }
+  onboarding?.onRunComplete(level);
 }
+
 
 async function init() {
   clearOutput();
@@ -59,7 +63,8 @@ async function init() {
   }
 }
 
-el('start-btn').onclick = () => { el('entry').classList.add('hidden'); el('app').classList.remove('hidden'); };
+const onboarding = initOnboarding({ runLevel });
+el('start-btn').onclick = () => onboarding.openApp();
 refs.confirmBtn.onclick = () => {
   if (!state.selectedUseCase) return clearOutput('Select a use case before confirming direction.');
   state.selectedUseCaseContext = refs.contextInput.value.trim();
@@ -67,6 +72,7 @@ refs.confirmBtn.onclick = () => {
   refs.selectionLabel.textContent = `Confirmed direction: ${state.selectedUseCase.replaceAll('_', ' ')}${state.selectedUseCaseContext ? ` | context: ${state.selectedUseCaseContext}` : ''}`;
   clearOutput('Direction confirmed. Choose a level to run.');
   updateLevelButtonsVisibility();
+  onboarding.onConfirmed();
 };
 refs.replayBtn.onclick = runReplay;
 refs.downloadArtifactBtn.onclick = () => {

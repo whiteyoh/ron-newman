@@ -43,7 +43,12 @@
       <section id="entry" class="panel hero" aria-labelledby="hero-title">
         <h1 id="hero-title">Understand AI maturity in 10 seconds.</h1>
         <p class="lead">Choose a scenario, confirm direction, launch a level, and watch a simulated agentic run with visible checks and approval gates.</p>
-        <button id="start-btn">Start the demo</button>
+        <p class="guide-muted">New here? Try a guided first run and see how Glytch works in under a minute.</p>
+        <div class="guide-actions">
+          <button id="guided-start-btn">Try your first Glytch run</button>
+          <button id="start-btn" class="ghost">Start the demo</button>
+          <button id="guide-replay-btn" class="ghost" hidden>Show guide again</button>
+        </div>
       </section>
 
       <section id="app" class="hidden" aria-label="Glytch demo application">
@@ -56,6 +61,16 @@
             <p class="muted helper-text">Add audience, constraints, or workshop focus. You can leave this blank.</p>
             <textarea id="context-input" rows="4" placeholder="Example: healthcare policy briefing for non-technical team"></textarea>
             <button id="confirm-btn" disabled>Confirm this direction</button>
+          </div>
+        </section>
+
+        <section id="guide-card" class="guide-card hidden" aria-live="polite">
+          <p class="guide-step" id="guide-step"></p>
+          <p class="guide-muted" id="guide-muted"></p>
+          <p class="guide-recommendation" id="guide-recommendation"></p>
+          <div class="guide-actions">
+            <button id="guide-level3-btn" class="ghost hidden">Try Level 3 next</button>
+            <button id="guide-skip-btn" class="guide-dismiss ghost">Skip guide</button>
           </div>
         </section>
 
