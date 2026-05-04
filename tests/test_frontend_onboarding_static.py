@@ -28,7 +28,13 @@ def test_onboarding_static_content():
     assert "waitingForLevel3Comparison" in js
     assert "setGuideReplayControlsVisible" in js
     assert "focusGuideCard" in js
-    assert "guideInlineBtn.onclick" in js
+    assert "addEventListener" in js
+    assert "guideInlineBtn" in js
+    assert "setGuideReplayControlsVisible" in js
+    assert "readGuideCompleted" in js
+    assert "writeGuideCompleted" in js
+    assert "try {" in js
+    assert "refs.guideInlineBtn.onclick" not in js
 
     assert "guideInlineBtn" in dom_js
 

@@ -13,9 +13,30 @@ function focusGuideCard() {
 }
 
 function setGuideStep(text, muted = '') {
-  refs.guideStep.textContent = text;
-  refs.guideMuted.textContent = muted;
+  if (refs.guideStep) refs.guideStep.textContent = text;
+  if (refs.guideMuted) refs.guideMuted.textContent = muted;
   focusGuideCard();
+}
+
+function on(node, event, handler) {
+  if (!node) return;
+  node.addEventListener(event, handler);
+}
+
+function readGuideCompleted() {
+  try {
+    return localStorage.getItem(GUIDE_KEY) === 'completed';
+  } catch {
+    return false;
+  }
+}
+
+function writeGuideCompleted() {
+  try {
+    writeGuideCompleted();
+  } catch {
+    // ignore storage failure; guide should still work for this session
+  }
 }
 
 function setGuideReplayControlsVisible(visible) {
@@ -35,7 +56,7 @@ function ensureVisible(id) {
 }
 
 export function initOnboarding({ runLevel }) {
-  state.guideCompleted = localStorage.getItem(GUIDE_KEY) === 'completed';
+  state.guideCompleted = readGuideCompleted();
   setGuideReplayControlsVisible(state.guideCompleted);
 
   const openApp = () => {
@@ -49,12 +70,12 @@ export function initOnboarding({ runLevel }) {
     state.guideStep = 'setup';
     state.waitingForLevel3Comparison = false;
     state.level3StartedFromGuide = false;
-    refs.guideCard.classList.remove('hidden');
+    if (refs.guideCard) refs.guideCard.classList.remove('hidden');
     setGuideReplayControlsVisible(false);
-    refs.guideSkipBtn.classList.remove('hidden');
-    refs.guideLevel3Btn.classList.add('hidden');
-    refs.guideFinishBtn.classList.add('hidden');
-    refs.guideRecommendation.textContent = '';
+    if (refs.guideSkipBtn) refs.guideSkipBtn.classList.remove('hidden');
+    if (refs.guideLevel3Btn) refs.guideLevel3Btn.classList.add('hidden');
+    if (refs.guideFinishBtn) refs.guideFinishBtn.classList.add('hidden');
+    if (refs.guideRecommendation) refs.guideRecommendation.textContent = '';
 
     state.selectedUseCase = GUIDED_SCENARIO;
     state.confirmedUseCase = null;
@@ -75,7 +96,7 @@ export function initOnboarding({ runLevel }) {
       'We’ll start with a familiar teaching example. Confirm this direction first, then Glytch will recommend a simple starting level.',
       'Start with the lowest useful level. For a first run, that means Level 1 or Level 2.'
     );
-    refs.guideRecommendation.textContent = 'Guided scenario: Year 10 revision lesson on nutrition and healthy eating.';
+    if (refs.guideRecommendation) refs.guideRecommendation.textContent = 'Guided scenario: Year 10 revision lesson on nutrition and healthy eating.';
     highlight('confirm-btn');
     ensureVisible('confirm-btn');
   };
@@ -85,19 +106,19 @@ export function initOnboarding({ runLevel }) {
     state.guideCompleted = true;
     state.waitingForLevel3Comparison = false;
     state.level3StartedFromGuide = false;
-    localStorage.setItem(GUIDE_KEY, 'completed');
-    refs.guideCard.classList.add('hidden');
+    writeGuideCompleted();
+    if (refs.guideCard) refs.guideCard.classList.add('hidden');
     document.querySelectorAll('.guide-highlight').forEach((n) => n.classList.remove('guide-highlight'));
     setGuideReplayControlsVisible(true);
   };
 
-  refs.guideStartBtn.onclick = startGuide;
-  refs.guideReplayBtn.onclick = startGuide;
-  refs.guideInlineBtn.onclick = startGuide;
-  refs.guideSkipBtn.onclick = completeGuide;
-  refs.guideFinishBtn.onclick = completeGuide;
+  on(refs.guideStartBtn, 'click', startGuide);
+  on(refs.guideReplayBtn, 'click', startGuide);
+  on(refs.guideInlineBtn, 'click', startGuide);
+  on(refs.guideSkipBtn, 'click', completeGuide);
+  on(refs.guideFinishBtn, 'click', completeGuide);
 
-  refs.guideLevel3Btn.onclick = async () => {
+  on(refs.guideLevel3Btn, 'click', async () => {
     if (!state.confirmedUseCase) {
       setGuideStep('Before trying Level 3, confirm this direction first.', 'Use Confirm this direction, then run Level 3.');
       highlight('confirm-btn');
@@ -106,16 +127,16 @@ export function initOnboarding({ runLevel }) {
     state.level3StartedFromGuide = true;
     state.waitingForLevel3Comparison = true;
     state.guideStep = 'level3Comparison';
-    refs.guideFinishBtn.classList.add('hidden');
+    if (refs.guideFinishBtn) refs.guideFinishBtn.classList.add('hidden');
     await runLevel(3);
-  };
+  });
 
   return {
     onConfirmed() {
       if (!state.guideActive) return;
       state.guideStep = 'level1';
       setGuideStep('Great. Now run Level 1 to see the baseline: prompt in, answer out, and human decides what to do next.');
-      refs.guideRecommendation.textContent = 'Recommended: Level 1 — Baseline. This shows simple prompt-only AI. Run it first, then compare it with Level 3.';
+      if (refs.guideRecommendation) refs.guideRecommendation.textContent = 'Recommended: Level 1 — Baseline. This shows simple prompt-only AI. Run it first, then compare it with Level 3.';
       highlight('buttons');
     },
     onRunComplete(level) {
@@ -128,8 +149,8 @@ export function initOnboarding({ runLevel }) {
           'This score panel shows capability, workflow control, and stage fidelity. Agentic theatre turns this run into a step-by-step visual story.',
           'Raw output transcript is read-only trace. If it looks like a question, it is part of the trace, not something you need to answer. Replay repeats the same steps and does not rerun AI. Level 8 adds a taskboard for orchestrator simulation.'
         );
-        refs.guideLevel3Btn.classList.remove('hidden');
-        refs.guideFinishBtn.classList.add('hidden');
+        if (refs.guideLevel3Btn) refs.guideLevel3Btn.classList.remove('hidden');
+        if (refs.guideFinishBtn) refs.guideFinishBtn.classList.add('hidden');
         highlight('score-panel');
         ensureVisible('dashboard-title');
         return;
@@ -143,9 +164,9 @@ export function initOnboarding({ runLevel }) {
           'You’ve now compared Level 1 and Level 3. Level 1 showed simple prompt-only AI. Level 3 added a bounded tool path. That is the Glytch idea: start simple, then move up only when the task needs more control.',
           'You can now keep exploring the levels freely.'
         );
-        refs.guideLevel3Btn.classList.add('hidden');
-        refs.guideFinishBtn.classList.remove('hidden');
-        refs.guideRecommendation.textContent = '';
+        if (refs.guideLevel3Btn) refs.guideLevel3Btn.classList.add('hidden');
+        if (refs.guideFinishBtn) refs.guideFinishBtn.classList.remove('hidden');
+        if (refs.guideRecommendation) refs.guideRecommendation.textContent = '';
         highlight('theatre-steps');
         ensureVisible('theatre-steps');
       }
