@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from html import escape
 from pathlib import Path
 from typing import Any
 
@@ -146,8 +147,9 @@ def svg_header(title: str) -> str:
         f'fill="{COLORS["background"]}" />\n'
     )
     return (
-        f'<svg xmlns="http://www.w3.org/2000/svg" width="{CANVAS_WIDTH}" height="{CANVAS_HEIGHT}" '
-        f'viewBox="0 0 {CANVAS_WIDTH} {CANVAS_HEIGHT}">\n<title>{title}</title>\n{marker}{bg}'
+        f'<svg xmlns="http://www.w3.org/2000/svg" width="{CANVAS_WIDTH}" '
+        f'height="{CANVAS_HEIGHT}" viewBox="0 0 {CANVAS_WIDTH} {CANVAS_HEIGHT}">\n'
+        f"<title>{escape(title)}</title>\n{marker}{bg}"
     )
 
 
@@ -163,14 +165,14 @@ def box(
         f'stroke="{COLORS[accent]}" stroke-width="2" />\n'
         f'<text x="{x + w / 2}" y="{y + 42}" text-anchor="middle" fill="{COLORS["white"]}" '
         'font-family="Inter, Arial, sans-serif" font-size="20" font-weight="600">'
-        f"{title}</text>\n"
+        f"{escape(title)}</text>\n"
     )
     if not subtitle:
         return body
-    return body + (
-        f'<text x="{x + w / 2}" y="{y + 64}" text-anchor="middle" fill="{COLORS["muted"]}" '
+    return (
+        body + f'<text x="{x + w / 2}" y="{y + 64}" text-anchor="middle" fill="{COLORS["muted"]}" '
         'font-family="Inter, Arial, sans-serif" font-size="15">'
-        f"{subtitle}</text>\n"
+        f"{escape(subtitle)}</text>\n"
     )
 
 
@@ -188,11 +190,47 @@ def loop_arrow(x: int, y: int, up: int = 56, right: int = 76) -> str:
     )
 
 
-def _node_positions(count: int) -> list[tuple[int, int]]:
+def _horizontal_positions(count: int, y: int = 280) -> list[tuple[int, int]]:
     start_x = 80
-    y = 280
-    gap = (CANVAS_WIDTH - start_x * 2 - BOX_W) // max(count - 1, 1)
-    return [(start_x + idx * gap, y) for idx in range(count)]
+    row_gap = 140
+    max_per_row = max(1, (CANVAS_WIDTH - (start_x * 2)) // (BOX_W + 24))
+    if count <= max_per_row:
+        gap = (CANVAS_WIDTH - start_x * 2 - BOX_W) // max(count - 1, 1)
+        return [(start_x + idx * gap, y) for idx in range(count)]
+    positions: list[tuple[int, int]] = []
+    for idx in range(count):
+        row = idx // max_per_row
+        col = idx % max_per_row
+        x = start_x + col * (BOX_W + 24)
+        positions.append((x, y + (row * row_gap)))
+    return positions
+
+
+def get_node_positions(level_definition: dict[str, Any]) -> list[tuple[int, int]]:
+    level = level_definition["level"]
+    if level == 7:
+        return [
+            (80, 120),
+            (320, 120),
+            (580, 40),
+            (580, 180),
+            (580, 320),
+            (800, 180),
+            (1010, 180),
+            (1220, 180),
+        ]
+    if level == 8:
+        return [
+            (80, 90),
+            (320, 90),
+            (560, 90),
+            (560, 280),
+            (800, 280),
+            (1020, 280),
+            (1020, 470),
+            (1220, 470),
+        ]
+    return _horizontal_positions(len(level_definition["nodes"]))
 
 
 def render_level(level_definition: dict[str, Any]) -> str:
@@ -205,15 +243,17 @@ def render_level(level_definition: dict[str, Any]) -> str:
 
     pieces = [svg_header(f"Glytch Level {level}: {title}")]
     pieces.append(
-        f'<text x="80" y="84" fill="{COLORS["white"]}" font-family="Inter, Arial, sans-serif" '
-        f'font-size="36" font-weight="700">Level {level}: {title}</text>\n'
+        f'<text x="80" y="84" fill="{COLORS["white"]}" '
+        'font-family="Inter, Arial, sans-serif" font-size="36" font-weight="700">'
+        f"Level {level}: {escape(title)}</text>\n"
     )
     pieces.append(
-        f'<text x="80" y="120" fill="{COLORS["muted"]}" font-family="Inter, Arial, sans-serif" '
-        f'font-size="20">{subtitle}</text>\n'
+        f'<text x="80" y="120" fill="{COLORS["muted"]}" '
+        'font-family="Inter, Arial, sans-serif" font-size="20">'
+        f"{escape(subtitle)}</text>\n"
     )
 
-    positions = _node_positions(len(nodes))
+    positions = get_node_positions(level_definition)
     for idx, node in enumerate(nodes):
         x, y = positions[idx]
         pieces.append(box(x, y, BOX_W, BOX_H, node, accent="magenta" if idx % 2 else "cyan"))

@@ -37,8 +37,8 @@ LEVEL_ADVANCEMENT_REASONS = {
         "observe-act-replan iterations and stop conditions."
     ),
     8: (
-        "It advances beyond Level 7 by scoring multiple candidate outputs and selecting "
-        "the best improved result."
+        "It advances beyond Level 7 by coordinating specialist workers through a "
+        "taskboard, verifier, approval gate and merge policy."
     ),
 }
 
@@ -110,6 +110,32 @@ def _normalized_status(raw: Any) -> str:
     if "fail" in value:
         return "failed"
     return "pending"
+
+
+def _worker_label_for_status(status: str) -> str:
+    return {
+        "completed": "Worker completed",
+        "merged": "Worker merged",
+        "failed": "Worker failed",
+        "needs_human_review": "Worker needs review",
+        "blocked": "Worker blocked",
+        "running": "Worker running",
+        "pending": "Worker pending",
+        "approved": "Worker approved",
+    }.get(status, "Worker pending")
+
+
+def _worker_human_status_text(status: str) -> str:
+    return {
+        "needs_human_review": "needs review after",
+        "merged": "merged",
+        "failed": "failed",
+        "blocked": "blocked",
+        "running": "running",
+        "pending": "pending",
+        "approved": "approved",
+        "completed": "completed",
+    }.get(status, "completed")
 
 
 def use_case_prompt(text: str, use_case: str | None = None) -> str:
@@ -278,10 +304,10 @@ def _build_structured_payload(
                 detail += f" · Error: {error}"
             theatre_steps.append(
                 {
-                    "label": "Worker completed",
+                    "label": _worker_label_for_status(status),
                     "actor": "orchestrator",
                     "status": status,
-                    "summary": f"{worker} completed attempt {attempt}",
+                    "summary": f"{worker} {_worker_human_status_text(status)} attempt {attempt}",
                     "detail": detail,
                 }
             )
@@ -410,15 +436,34 @@ def run_level(
     run_data: dict[str, Any] = {}
 
     if not client.available():
-        return {
-            "level": level,
-            "title": level_info["name"],
-            "lines": intro
-            + [
-                "AI backend not configured.",
-                "Set OPENAI_API_KEY (and optionally OPENAI_BASE_URL, OPENAI_MODEL), then retry.",
+        run_data = {
+            "objective": "demo unavailable until backend configured",
+            "policy": "no external action, no model call",
+            "actions": ["backend_missing"],
+            "observations": ["OPENAI_API_KEY not configured"],
+            "verification_result": "not run",
+            "approval_required": True,
+            "approved_for_final": False,
+            "final_verdict": "needs_human_review",
+            "final_answer": "AI backend not configured",
+            "audit_log": [
+                "backend missing: OPENAI_API_KEY not configured",
+                "no model call attempted",
             ],
+            "merge_policy": "not run",
+            "merge_decision": "not run",
         }
+        lines = intro + [
+            "AI backend not configured.",
+            "Set OPENAI_API_KEY (and optionally OPENAI_BASE_URL, OPENAI_MODEL), then retry.",
+            "Fallback mode: safe structured output only; no model run occurred.",
+        ]
+        payload = _build_structured_payload(
+            level, level_info, lines, AGENTICNESS[level], simulation, run_data
+        )
+        payload["level"] = level
+        payload["title"] = level_info["name"]
+        return payload
 
     if level == 1:
         objective = use_case_prompt("Produce a useful one-line continuation.", use_case)

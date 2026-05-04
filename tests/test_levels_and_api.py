@@ -30,8 +30,17 @@ def test_run_level_all_levels_with_mock_client():
 
 
 def test_run_level_when_client_unavailable():
-    payload = run_level(1, DummyClient(available=False))
-    assert any("AI backend not configured" in line for line in payload["lines"])
+    for level in LEVELS:
+        payload = run_level(level, DummyClient(available=False))
+        assert payload["level"] == level
+        assert any("AI backend not configured" in line for line in payload["lines"])
+        assert "score_summary" in payload
+        assert "theatre_steps" in payload and payload["theatre_steps"]
+        assert "approval_summary" in payload
+        assert "replay_steps" in payload
+        blob = str(payload).lower()
+        assert "production-ready" not in blob
+        assert "final_status': 'merged'" not in blob
 
 
 def test_api_levels_shape_contains_request_id():
