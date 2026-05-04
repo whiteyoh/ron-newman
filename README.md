@@ -60,7 +60,7 @@ If `OPENAI_API_KEY` is missing, `/api/run` returns a graceful non-crashing demo 
 - Level 7: upgraded with explicit AgentPolicy, action budget visibility, tool-error counting, final verifier gate, and structured run summary.
 - Level 8: upgraded to mini-orchestrator abstraction in `src/orchestrator.py` with planner/researcher/writer/critic workers plus verifier and merger, running in safe parallel mode with fallback.
 - Added Yegge fields per level in `AGENTICNESS`: `closest_yegge_stage`, `yegge_alignment_score`, and `yegge_alignment_explanation`.
-- Limitation: this remains workshop-safe and is not a production orchestrator (no external side effects, no deployment automation, limited policy depth).
+- Limitation: this remains workshop-safe and is a workshop-safe simulation, not a production system (no external side effects, no deployment automation, limited policy depth).
 
 
 
@@ -83,3 +83,8 @@ This demo now presents **capability vs Yegge stage** with high-fidelity workshop
 ## Workshop simulation fidelity updates
 
 All 8 levels now include a Yegge workflow simulation object. These are high-fidelity workshop simulations, not production autonomous agents. Level 8 taskboard uses real orchestrator run state and theatre/replay views now derive from actual run data.
+
+
+## Rate limiting note
+
+Rate limiting is intentionally lightweight and in-memory for this workshop/demo app. It is process-local and not a distributed production rate limiter.

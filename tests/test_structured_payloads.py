@@ -101,3 +101,25 @@ def test_no_levels_1_to_7_claim_production_autonomy():
         text = str(payload).lower()
         for phrase in banned:
             assert phrase not in text
+
+
+def test_level8_theatre_lifecycle_and_worker_mapping():
+    p8 = run_level(8, DummyClient())
+    labels = [s["label"] for s in p8["theatre_steps"]]
+    assert "Orchestrator run created" in labels
+    assert "Policy loaded" in labels
+    assert "Verification performed" in labels
+    assert "Human approval gate" in labels
+    assert "Final verdict" in labels
+
+    worker_steps = [s for s in p8["theatre_steps"] if s["label"] == "Worker completed"]
+    assert worker_steps
+    assert len(worker_steps) >= len(p8["taskboard"])
+    worker_names = {rec["worker_name"] for rec in p8["taskboard"]}
+    joined = " ".join(f"{s['summary']} {s['detail']}" for s in worker_steps)
+    for worker in worker_names:
+        assert worker in joined
+
+    assert p8["replay_steps"] == [f"{s['label']}: {s['summary']}" for s in p8["theatre_steps"]]
+    for step in p8["theatre_steps"]:
+        assert step["status"] in ACCEPTED_STATUSES

@@ -17,3 +17,6 @@
 - [ ] Transcript remains read-only and does not ask the user for input.
 - [ ] No horizontal scroll on iPhone-sized viewport.
 - [ ] Page remains mobile-friendly after startup or run failures.
+- [ ] Follow `docs/FRONTEND_SMOKE_TEST.md` end-to-end at least once per frontend refactor.
+- [ ] Level 8 theatre includes worker lifecycle cards derived from taskboard records.
+- [ ] Run failure message stays plain-English and includes request id when available.
