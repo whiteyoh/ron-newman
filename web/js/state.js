@@ -13,6 +13,8 @@ export const state = {
   guidedScenarioKey: 'uk_year10_teacher',
   guidedContext: 'Year 10 revision lesson on nutrition and healthy eating',
   guidedRecommendedLevel: 1,
+  waitingForLevel3Comparison: false,
+  level3StartedFromGuide: false,
 };
 
 export const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;

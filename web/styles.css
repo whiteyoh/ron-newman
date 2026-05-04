@@ -66,6 +66,12 @@ body {
 .hero { text-align: left; }
 .lead { font-size: 1.02rem; max-width: 58ch; }
 
+.guide-inline-control {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 0.75rem;
+}
+
 .section-header {
   display: flex;
   justify-content: space-between;
@@ -225,6 +231,12 @@ textarea {
 }
 
 .site-footer a { color: var(--accent); }
+
+@media (max-width: 759px) {
+  .guide-inline-control {
+    justify-content: flex-start;
+  }
+}
 
 @media (min-width: 760px) {
   .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
