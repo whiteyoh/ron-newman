@@ -88,3 +88,14 @@ All 8 levels now include a Yegge workflow simulation object. These are high-fide
 ## Rate limiting note
 
 Rate limiting is intentionally lightweight and in-memory for this workshop/demo app. It is process-local and not a distributed production rate limiter.
+
+## Pre-merge checks
+
+Pull requests should pass the GitHub Actions pre-merge pipeline:
+- Python quality gate (`make check` on Python 3.11 and 3.12)
+- App smoke test (startup + endpoint validation)
+- Frontend module serving check (`/main.js` and `/js/*.js`)
+- Dependency audit (`pip-audit`)
+- Secret scan (Gitleaks), if enabled
+
+Rate limiting is intentionally lightweight and in-memory for the workshop/demo app. It is not a distributed production rate limiter.
