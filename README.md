@@ -34,6 +34,23 @@ make run
 ```
 Open <http://127.0.0.1:8000>.
 
+## Pre-merge checks
+
+Pull requests should pass the GitHub Actions workflow `pre-merge-checks`.
+
+- `python-checks` runs `make check` (format, lint, type checks, tests) on Python 3.11 and 3.12.
+- `smoke-test` starts the app locally and verifies health endpoints, API endpoints, and frontend module serving paths.
+- `dependency-audit` runs `pip-audit` against runtime and dev requirements.
+- `secret-scan` runs Gitleaks to detect accidentally committed secrets.
+
+Local equivalents:
+
+```bash
+make check
+bash scripts/smoke_test.sh
+pip-audit -r requirements.txt -r requirements-dev.txt
+```
+
 ## API endpoints
 - `GET /healthz` -> `{ "status": "ok" }`
 - `GET /api/levels`
@@ -87,4 +104,4 @@ All 8 levels now include a Yegge workflow simulation object. These are high-fide
 
 ## Rate limiting note
 
-Rate limiting is intentionally lightweight and in-memory for this workshop/demo app. It is process-local and not a distributed production rate limiter.
+Rate limiting is intentionally lightweight and in-memory for this workshop/demo app. It is not a distributed production rate limiter.
