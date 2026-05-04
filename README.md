@@ -40,6 +40,16 @@ make run
 
 Open <http://127.0.0.1:8000>.
 
+### Optional AI backend
+
+Glytch runs without an API key and shows a safe fallback. To use a live OpenAI-compatible backend, set:
+
+```bash
+export OPENAI_API_KEY="your_api_key_here"
+export OPENAI_MODEL="gpt-4.1-mini"
+export OPENAI_BASE_URL="https://api.openai.com/v1"
+```
+
 ## Checks
 
 ```bash

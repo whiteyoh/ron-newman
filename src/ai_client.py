@@ -1,11 +1,14 @@
 from __future__ import annotations
 
 import json
+import logging
 import os
 from dataclasses import dataclass
 from typing import Any
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -48,8 +51,9 @@ class AIClient:
                 detail = err.read().decode("utf-8", errors="ignore").strip()[:180]
             except Exception:
                 pass
+            logger.warning("Upstream AI HTTP error status=%s detail=%s", err.code, detail)
             raise AIClientError(
-                f"upstream HTTP error: {err.code}{f' ({detail})' if detail else ''}",
+                "Upstream AI provider returned an error.",
                 code="upstream_http",
                 status=502,
             ) from err

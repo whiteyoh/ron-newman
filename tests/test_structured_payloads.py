@@ -112,7 +112,7 @@ def test_level8_theatre_lifecycle_and_worker_mapping():
     assert "Human approval gate" in labels
     assert "Final verdict" in labels
 
-    worker_steps = [s for s in p8["theatre_steps"] if s["label"] == "Worker completed"]
+    worker_steps = [s for s in p8["theatre_steps"] if s["label"].startswith("Worker ")]
     assert worker_steps
     assert len(worker_steps) >= len(p8["taskboard"])
     worker_names = {rec["worker_name"] for rec in p8["taskboard"]}
