@@ -30,6 +30,7 @@ export const refs = {
   guideRecommendation: el('guide-recommendation'),
   guideSkipBtn: el('guide-skip-btn'),
   guideLevel3Btn: el('guide-level3-btn'),
+  guideFinishBtn: el('guide-finish-btn'),
 };
 
 export const createEl = (tag, cls, text) => {

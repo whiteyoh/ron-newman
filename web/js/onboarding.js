@@ -10,6 +10,7 @@ const RECOMMENDED_LEVEL = 1;
 function setGuideStep(text, muted = '') {
   refs.guideStep.textContent = text;
   refs.guideMuted.textContent = muted;
+  refs.guideCard.focus({ preventScroll: true });
 }
 
 function highlight(id) {
@@ -25,7 +26,7 @@ function ensureVisible(id) {
 
 export function initOnboarding({ runLevel }) {
   state.guideCompleted = localStorage.getItem(GUIDE_KEY) === 'completed';
-  refs.guideReplayBtn.hidden = false;
+  refs.guideReplayBtn.hidden = !state.guideCompleted;
 
   const openApp = () => {
     el('entry').classList.add('hidden');
@@ -35,11 +36,13 @@ export function initOnboarding({ runLevel }) {
   const startGuide = () => {
     openApp();
     state.guideActive = true;
-    state.guideStep = 1;
+    state.guideStep = 'setup';
+    state.waitingForLevel3Comparison = false;
     refs.guideCard.classList.remove('hidden');
-    refs.guideReplayBtn.classList.add('hidden');
+    refs.guideReplayBtn.hidden = true;
     refs.guideSkipBtn.classList.remove('hidden');
     refs.guideLevel3Btn.classList.add('hidden');
+    refs.guideFinishBtn.classList.add('hidden');
 
     state.selectedUseCase = GUIDED_SCENARIO;
     state.confirmedUseCase = null;
@@ -57,12 +60,12 @@ export function initOnboarding({ runLevel }) {
     updateLevelButtonsVisibility();
 
     setGuideStep(
-      'We’ll start with a familiar teaching example. Glytch works best when you start simple, then move up only when the task needs more control.',
-      'For a first run, start at Level 1 or Level 2. Start with the lowest useful level.'
+      'We’ll start with a familiar teaching example. Confirm this direction first, then Glytch will recommend a simple starting level.',
+      'Start with the lowest useful level. For a first run, that means Level 1 or Level 2.'
     );
-    refs.guideRecommendation.textContent = 'Recommended: Level 1 — Baseline. This shows simple prompt-only AI. Run it first, then compare it with Level 3.';
-    highlight('levels-title');
-    ensureVisible('setup-title');
+    refs.guideRecommendation.textContent = 'Guided scenario: Year 10 revision lesson on nutrition and healthy eating.';
+    highlight('confirm-btn');
+    ensureVisible('confirm-btn');
   };
 
   const completeGuide = () => {
@@ -70,13 +73,14 @@ export function initOnboarding({ runLevel }) {
     state.guideCompleted = true;
     localStorage.setItem(GUIDE_KEY, 'completed');
     refs.guideCard.classList.add('hidden');
-    refs.guideReplayBtn.classList.remove('hidden');
+    refs.guideReplayBtn.hidden = false;
     document.querySelectorAll('.guide-highlight').forEach((n) => n.classList.remove('guide-highlight'));
   };
 
   refs.guideStartBtn.onclick = startGuide;
   refs.guideReplayBtn.onclick = startGuide;
   refs.guideSkipBtn.onclick = completeGuide;
+  refs.guideFinishBtn.onclick = completeGuide;
 
   refs.guideLevel3Btn.onclick = async () => {
     if (!state.confirmedUseCase) {
@@ -84,26 +88,49 @@ export function initOnboarding({ runLevel }) {
       highlight('confirm-btn');
       return;
     }
+    state.waitingForLevel3Comparison = true;
+    state.guideStep = 'level3Comparison';
+    refs.guideFinishBtn.classList.add('hidden');
     await runLevel(3);
   };
 
   return {
     onConfirmed() {
       if (!state.guideActive) return;
-      state.guideStep = 2;
+      state.guideStep = 'level1';
       setGuideStep('Great. Now run Level 1 to see the baseline: prompt in, answer out, and human decides what to do next.');
+      refs.guideRecommendation.textContent = 'Recommended: Level 1 — Baseline. This shows simple prompt-only AI. Run it first, then compare it with Level 3.';
       highlight('buttons');
     },
     onRunComplete(level) {
-      if (!state.guideActive || level !== RECOMMENDED_LEVEL) return;
-      state.guideStep = 3;
-      setGuideStep(
-        'This score panel shows capability, workflow control, and stage fidelity. Agentic theatre turns this run into a step-by-step visual story.',
-        'Raw output transcript is read-only trace. If it looks like a question, it is part of the trace, not something you need to answer. Replay repeats the same steps and does not rerun AI. Level 8 adds a taskboard for orchestrator simulation.'
-      );
-      refs.guideLevel3Btn.classList.remove('hidden');
-      highlight('score-panel');
-      ensureVisible('dashboard-title');
+      if (!state.guideActive) return;
+      if (level === RECOMMENDED_LEVEL) {
+        state.guideStep = 'explainOutput';
+        state.waitingForLevel3Comparison = true;
+        setGuideStep(
+          'This score panel shows capability, workflow control, and stage fidelity. Agentic theatre turns this run into a step-by-step visual story.',
+          'Raw output transcript is read-only trace. If it looks like a question, it is part of the trace, not something you need to answer. Replay repeats the same steps and does not rerun AI. Level 8 adds a taskboard for orchestrator simulation.'
+        );
+        refs.guideLevel3Btn.classList.remove('hidden');
+        refs.guideFinishBtn.classList.add('hidden');
+        highlight('score-panel');
+        ensureVisible('dashboard-title');
+        return;
+      }
+
+      if (level === 3 && state.waitingForLevel3Comparison) {
+        state.guideStep = 'final';
+        state.waitingForLevel3Comparison = false;
+        setGuideStep(
+          'You’ve now compared Level 1 and Level 3. Level 1 showed simple prompt-only AI. Level 3 added a bounded tool path. That is the Glytch idea: start simple, then move up only when the task needs more control.',
+          'You can now keep exploring the levels freely.'
+        );
+        refs.guideLevel3Btn.classList.add('hidden');
+        refs.guideFinishBtn.classList.remove('hidden');
+        refs.guideRecommendation.textContent = '';
+        highlight('theatre-steps');
+        ensureVisible('theatre-steps');
+      }
     },
     isCompleted: () => state.guideCompleted,
     openApp,
