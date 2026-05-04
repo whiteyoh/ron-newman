@@ -126,3 +126,5 @@ Glytch does not:
 ## Final takeaway
 
 Glytch is there to make AI maturity visible. The output is not just an answer; it is a guided view of how the answer was produced, checked and controlled.
+
+The footer repeats this safety reminder: outputs are simulated for learning, no real external actions are taken, and a human should review the result.
