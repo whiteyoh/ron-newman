@@ -6,6 +6,11 @@ Glytch has two lenses: AI capability patterns and agentic workflow maturity.
 
 8-level Glytch workshop demo with a stdlib Python API and static frontend.
 
+
+## Architecture
+
+Architecture diagram generation lives in [`architecture/`](architecture/README.md). The diagrams are generated from `scripts/generate_architecture_diagrams.py` and describe the workshop-safe flow for each Glytch level.
+
 ## Local development
 
 ### Prerequisites
