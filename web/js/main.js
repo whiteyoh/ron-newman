@@ -35,8 +35,7 @@ async function runLevel(level) {
         `Reason: ${data.runtime_error.message || 'Unknown runtime warning'}`,
         `Code: ${data.runtime_error.code || 'unavailable'}`,
         'No external action was taken.',
-      ].join('
-'));
+      ].join(String.fromCharCode(10)));
     }
     renderScorePanel(data.agenticness, data); renderTheatre(data); renderTaskboard(data);
     const lines = Array.isArray(data.lines) && data.lines.length ? data.lines : ['No output lines returned.'];
@@ -61,7 +60,7 @@ async function runLevel(level) {
         'Hint: Check OPENAI_MODEL in your hosting environment. If you recently tried gpt-5.2, set OPENAI_MODEL back to gpt-4.1-mini or confirm your OpenAI project has access to the configured model.'
       );
     }
-    appendMessage('system', lines.join('\n'));
+    appendMessage('system', lines.join(String.fromCharCode(10)));
     refs.replayBtn.disabled = true;
     refs.downloadArtifactBtn.disabled = true;
   } finally { state.runInProgress = false; }
