@@ -9,6 +9,8 @@ def test_frontend_run_error_display_static() -> None:
     assert "error.status" in api_js
     assert "error.field" in api_js
 
+    assert "runtime_error" in main_js
+    assert "Completed with warning" in main_js or "runtime warning" in main_js
     assert "Simulation could not complete" in main_js
     assert "Reason:" in main_js
     assert "HTTP status:" in main_js
