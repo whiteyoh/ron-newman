@@ -52,14 +52,11 @@ Glytch runs without an API key and shows a safe fallback. To use a live OpenAI-c
 
 ```bash
 export OPENAI_API_KEY="your_api_key_here"
-export OPENAI_MODEL="gpt-5.2"
+export OPENAI_MODEL="gpt-4.1-mini"
 export OPENAI_BASE_URL="https://api.openai.com/v1"
 ```
 
-`gpt-5.2` is the recommended premium default for Glytch when output quality matters most.
-
-For lower-cost public demo usage, set `OPENAI_MODEL` to `gpt-5-mini`.
-If `/api/run` returns an upstream model error, verify your OpenAI project can access the configured model; for broader-access testing, set `OPENAI_MODEL="gpt-5-mini"`.
+gpt-4.1-mini is the recommended default for Glytch because it is stable for the current Chat Completions implementation. You can still override OPENAI_MODEL for testing other supported models.
 
 ## Checks
 
