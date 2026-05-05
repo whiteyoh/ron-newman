@@ -29,17 +29,44 @@ async function runLevel(level) {
     setStatus(backend.configured ? 'OpenAI API Connected' : 'OpenAI API Not Connected', backend.configured ? 'ok' : 'err');
     refs.meta.textContent = `request_id=${data?.request_id || 'Available after run'} · provider=${backend.provider || 'Workshop-safe simulation'} · model=${backend.model || 'Workshop-safe simulation'}`;
     renderScorePanel(data.agenticness, data); renderTheatre(data); renderTaskboard(data);
+    if (refs.runSummaryPanel) refs.runSummaryPanel.classList.remove('hidden');
+    if (refs.runSummaryList) refs.runSummaryList.textContent = '';
     const lines = Array.isArray(data.lines) && data.lines.length ? data.lines : ['No output lines returned.'];
     refs.log.textContent = '';
     appendMessage('trace', 'Read-only simulation trace. Nothing here requires you to answer.');
     if (data?.runtime_error) {
       setStatus('Completed with warning', 'failed');
+      if (refs.runSummaryPanel) refs.runSummaryPanel.classList.add('warning');
+      if (refs.runSummaryStatus) refs.runSummaryStatus.textContent = 'Rendered with warning';
+      if (refs.runSummaryCopy) refs.runSummaryCopy.textContent = 'This level returned structured output, but one or more AI calls failed safely. No external action was taken.';
+      [
+        `Warning: ${data.runtime_error.message || 'Unknown runtime warning'}`,
+        `Code: ${data.runtime_error.code || 'unavailable'}`,
+        'Action: Check OPENAI_MODEL, model access, quota or billing',
+        'Next step: Review the trace, retry, or try a lower level',
+      ].forEach((line) => {
+        const item = createEl('li', '', line);
+        refs.runSummaryList?.appendChild(item);
+      });
       appendMessage('system', [
-        'This level returned structured output with a runtime warning.',
+        'This level rendered with a runtime warning.',
         `Reason: ${data.runtime_error.message || 'Unknown runtime warning'}`,
         `Code: ${data.runtime_error.code || 'unavailable'}`,
         'No external action was taken.',
       ].join('\n'));
+    } else {
+      if (refs.runSummaryStatus) refs.runSummaryStatus.textContent = 'Completed';
+      if (refs.runSummaryCopy) refs.runSummaryCopy.textContent = 'Glytch rendered this level as a workshop-safe simulation. Review the score, theatre steps and transcript before using the output.';
+      const backendLabel = backend.configured ? 'OpenAI API Connected' : 'Workshop-safe simulation';
+      [
+        `Level: Level ${level}`,
+        `Use case: ${state.confirmedUseCase || 'Available after run'}`,
+        `Backend: ${backendLabel}`,
+        'Next step: Review the trace or compare with another level',
+      ].forEach((line) => {
+        const item = createEl('li', '', line);
+        refs.runSummaryList?.appendChild(item);
+      });
     }
     for (const line of lines) { appendMessage('trace', line); await sleep(prefersReducedMotion ? 0 : 120); }
     state.latestArtifact = `Glytch Export\nGenerated: ${new Date().toISOString()}\nLevel: ${level}\nUse case: ${state.confirmedUseCase}\n\n${lines.join('\n')}`;

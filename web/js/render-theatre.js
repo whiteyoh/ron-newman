@@ -13,6 +13,14 @@ export function normalizeStatus(raw) {
   return 'pending';
 }
 
+function humanizeTheatreLabel(label) {
+  if (label === 'Human approval gate') return 'Human review checkpoint';
+  if (label === 'Approved') return 'Simulated approval';
+  if (label === 'Final approved output') return 'Candidate output';
+  if (label === 'Merge approved') return 'Merge would be allowed';
+  return label;
+}
+
 export function renderTheatre(data) {
   refs.theatreSteps.textContent = '';
   state.theatreCards = [];
@@ -22,7 +30,7 @@ export function renderTheatre(data) {
     const card = createEl('article', `theatre-step ${status}`);
     const header = createEl('div', 'section-header');
     header.append(createEl('span', 'actor', (s.actor || 'agent').toLowerCase()), createEl('span', `pill ${status}`, status));
-    card.append(header, createEl('strong', '', s.label || 'Step'), createEl('div', '', s.summary || ''), createEl('div', 'muted', s.detail || ''));
+    card.append(header, createEl('strong', '', humanizeTheatreLabel(s.label || 'Step')), createEl('div', '', s.summary || ''), createEl('div', 'muted', s.detail || ''));
     state.theatreCards.push(card);
     refs.theatreSteps.appendChild(card);
   });

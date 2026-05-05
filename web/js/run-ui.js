@@ -8,6 +8,11 @@ export function clearRunPanels() {
   refs.replayState.textContent = '';
   refs.replayBtn.disabled = true;
   state.theatreCards = [];
+  if (refs.runSummaryPanel) refs.runSummaryPanel.classList.add('hidden');
+  if (refs.runSummaryPanel) refs.runSummaryPanel.classList.remove('warning');
+  if (refs.runSummaryStatus) refs.runSummaryStatus.textContent = 'Waiting';
+  if (refs.runSummaryCopy) refs.runSummaryCopy.textContent = '';
+  if (refs.runSummaryList) refs.runSummaryList.textContent = '';
 }
 
 export function appendMessage(role, text) {
