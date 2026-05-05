@@ -126,6 +126,14 @@ function setSetupMode(mode) {
   if (refs.setupModeHelp) refs.setupModeHelp.textContent = helpText[mode];
 }
 
+
+function clearGuidedContextIfPresent() {
+  const guidedContext = 'Year 10 revision lesson on nutrition and healthy eating';
+  const currentContext = refs.contextInput?.value.trim() || '';
+  if (currentContext === guidedContext && refs.contextInput) refs.contextInput.value = '';
+  if (state.selectedUseCaseContext === guidedContext) state.selectedUseCaseContext = '';
+}
+
 function buildCustomContext() {
   const lines = [];
   if (state.customUseCaseGoal) lines.push(`Goal: ${state.customUseCaseGoal}`);
@@ -163,10 +171,22 @@ function updateCustomScenario() {
   updateLevelButtonsVisibility();
 }
 
-on(el('start-btn'), 'click', () => onboarding.openApp());
-on(refs.setupModeExampleBtn, 'click', () => setSetupMode('example'));
-on(refs.setupModeCustomBtn, 'click', () => setSetupMode('custom'));
-on(refs.setupModeSurpriseBtn, 'click', () => setSetupMode('surprise'));
+on(el('start-btn'), 'click', () => {
+  onboarding.openApp();
+  clearGuidedContextIfPresent();
+});
+on(refs.setupModeExampleBtn, 'click', () => {
+  setSetupMode('example');
+  clearGuidedContextIfPresent();
+});
+on(refs.setupModeCustomBtn, 'click', () => {
+  setSetupMode('custom');
+  clearGuidedContextIfPresent();
+});
+on(refs.setupModeSurpriseBtn, 'click', () => {
+  setSetupMode('surprise');
+  clearGuidedContextIfPresent();
+});
 on(refs.customGoalInput, 'input', updateCustomScenario);
 on(refs.customAudienceInput, 'input', updateCustomScenario);
 on(refs.customConstraintsInput, 'input', updateCustomScenario);

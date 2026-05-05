@@ -86,3 +86,35 @@ def test_onboarding_module_referenced():
     assert "selectedUseCaseContext" in main_js
     assert "custom use case" in main_js.lower()
     assert "uk_year10_teacher" in Path("web/js/state.js").read_text(encoding="utf-8")
+
+
+def test_context_input_not_prefilled_in_normal_flow():
+    html = Path("web/index.html").read_text(encoding="utf-8")
+    onboarding_js = Path("web/js/onboarding.js").read_text(encoding="utf-8")
+    main_js = Path("web/js/main.js").read_text(encoding="utf-8")
+
+    guided = "Year 10 revision lesson on nutrition and healthy eating"
+    assert f">{guided}</textarea>" not in html
+
+    context_input = re.search(
+        (
+            r'<textarea id="context-input"[^>]*placeholder="(?P<placeholder>[^"]*)"[^>]*>'
+            r"\s*</textarea>"
+        ),
+        html,
+    )
+    assert context_input is not None
+    assert guided not in context_input.group("placeholder")
+    assert "Example: audience, constraints, or workshop focus" in context_input.group("placeholder")
+
+    assert guided in onboarding_js
+    assert "refs.contextInput.value = GUIDED_CONTEXT;" in onboarding_js
+
+    assert (
+        "refs.contextInput.value = 'Year 10 revision lesson on nutrition and healthy eating'"
+        not in main_js
+    )
+    assert (
+        "state.selectedUseCaseContext = 'Year 10 revision lesson on nutrition and healthy eating'"
+        not in main_js
+    )
