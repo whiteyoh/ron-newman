@@ -60,8 +60,10 @@ export function initOnboarding({ runLevel }) {
   setGuideReplayControlsVisible(state.guideCompleted);
 
   const openApp = () => {
-    el('entry').classList.add('hidden');
-    el('app').classList.remove('hidden');
+    const entry = el('entry');
+    const app = el('app');
+    if (entry) entry.classList.add('hidden');
+    if (app) app.classList.remove('hidden');
   };
 
   const startGuide = () => {
@@ -80,15 +82,15 @@ export function initOnboarding({ runLevel }) {
     state.selectedUseCase = GUIDED_SCENARIO;
     state.confirmedUseCase = null;
     state.selectedUseCaseContext = GUIDED_CONTEXT;
-    refs.contextInput.value = GUIDED_CONTEXT;
-    refs.confirmBtn.disabled = false;
+    if (refs.contextInput) refs.contextInput.value = GUIDED_CONTEXT;
+    if (refs.confirmBtn) refs.confirmBtn.disabled = false;
 
-    const options = [...refs.useCaseOptions.querySelectorAll('.option')];
+    const options = refs.useCaseOptions ? [...refs.useCaseOptions.querySelectorAll('.option')] : [];
     options.forEach((o) => o.classList.remove('active'));
     const match = options.find((o) => o.textContent.toLowerCase().includes('uk year10 teacher'));
     if (match) match.classList.add('active');
 
-    refs.selectionLabel.textContent = 'Selected (not confirmed): uk year10 teacher';
+    if (refs.selectionLabel) refs.selectionLabel.textContent = 'Selected (not confirmed): uk year10 teacher';
     clearOutput('Guided setup ready. Confirm this direction, then run Level 1.');
     updateLevelButtonsVisibility();
 
