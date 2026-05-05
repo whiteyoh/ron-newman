@@ -16,6 +16,7 @@ from src.agentic_maturity import AGENTIC_MATURITY_STAGES, ASSESSMENT_QUESTIONS
 from src.ai_client import AIClient, AIClientError
 from src.constants import LEVELS, USE_CASE_OPTIONS
 from src.levels import run_level
+from src.runtime_client import CapturedAIClient
 
 ROOT = Path(__file__).parent
 WEB = ROOT / "web"
@@ -215,15 +216,56 @@ class Handler(SimpleHTTPRequestHandler):
                     "use_case",
                 )
                 return
-            client = AIClient()
+            real_client = AIClient()
+            run_client = CapturedAIClient(real_client)
             payload = run_level(
-                level, client, use_case_key=use_case_key, use_case_context=use_case_context
+                level, run_client, use_case_key=use_case_key, use_case_context=use_case_context
             )
+            if run_client.has_errors:
+                first = run_client.errors[0]
+                payload["runtime_error"] = {
+                    "message": first.message,
+                    "code": first.code,
+                    "status": first.status,
+                    "count": len(run_client.errors),
+                }
+                payload["runtime_errors"] = [
+                    {"message": e.message, "code": e.code, "status": e.status}
+                    for e in run_client.errors
+                ]
+                payload.setdefault("lines", []).extend(
+                    [
+                        "Runtime warning: one or more AI calls failed safely.",
+                        f"Reason: {first.message}",
+                        f"Code: {first.code}",
+                        "No external action was taken.",
+                    ]
+                )
+                payload.setdefault("theatre_steps", []).append(
+                    {
+                        "label": "AI call failed safely",
+                        "actor": "system",
+                        "status": "failed",
+                        "summary": first.message,
+                        "detail": (
+                            "The run continued with a safe placeholder so the workshop "
+                            "output could still render."
+                        ),
+                    }
+                )
+                payload["replay_steps"] = payload.get("replay_steps", []) + [
+                    f"AI call failed safely: {first.message}"
+                ]
+                approval = payload.setdefault("approval_summary", {})
+                approval["approved"] = False
+                approval["final_status"] = "needs_human_review"
+                approval["merge_decision"] = "not_run"
+                approval["verifier_result"] = approval.get("verifier_result") or first.message
             payload["backend"] = {
                 "provider": "OpenAI",
-                "configured": client.available(),
-                "model": client.model,
-                "base_url": client.base_url,
+                "configured": real_client.available(),
+                "model": real_client.model,
+                "base_url": real_client.base_url,
             }
             payload["request_id"] = request_id
             self._send_json(status, payload)

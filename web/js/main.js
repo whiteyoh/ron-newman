@@ -28,6 +28,16 @@ async function runLevel(level) {
     const backend = data?.backend || {};
     setStatus(backend.configured ? 'OpenAI API Connected' : 'OpenAI API Not Connected', backend.configured ? 'ok' : 'err');
     refs.meta.textContent = `request_id=${data?.request_id || 'Available after run'} · provider=${backend.provider || 'Workshop-safe simulation'} · model=${backend.model || 'Workshop-safe simulation'}`;
+    if (data?.runtime_error) {
+      setStatus('Completed with warning', 'failed');
+      appendMessage('system', [
+        'This level returned structured output with a runtime warning.',
+        `Reason: ${data.runtime_error.message || 'Unknown runtime warning'}`,
+        `Code: ${data.runtime_error.code || 'unavailable'}`,
+        'No external action was taken.',
+      ].join('
+'));
+    }
     renderScorePanel(data.agenticness, data); renderTheatre(data); renderTaskboard(data);
     const lines = Array.isArray(data.lines) && data.lines.length ? data.lines : ['No output lines returned.'];
     refs.log.textContent = '';
