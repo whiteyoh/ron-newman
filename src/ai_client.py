@@ -22,7 +22,7 @@ class AIClient:
     def __init__(self) -> None:
         self.api_key = os.getenv("OPENAI_API_KEY", "").strip()
         self.base_url = os.getenv("OPENAI_BASE_URL", "https://api.openai.com/v1").rstrip("/")
-        self.model = os.getenv("OPENAI_MODEL", "gpt-5.2")
+        self.model = os.getenv("OPENAI_MODEL", "gpt-4.1-mini")
 
     def available(self) -> bool:
         return bool(self.api_key)
@@ -30,15 +30,12 @@ class AIClient:
     def _build_chat_payload(self, system: str, user: str, temperature: float) -> dict[str, Any]:
         payload: dict[str, Any] = {
             "model": self.model,
-            "messages": [{"role": "system", "content": system}, {"role": "user", "content": user}],
+            "temperature": temperature,
+            "messages": [
+                {"role": "system", "content": system},
+                {"role": "user", "content": user},
+            ],
         }
-
-        if self.model.startswith("gpt-5.2"):
-            payload["reasoning"] = {"effort": "none"}
-            payload["temperature"] = temperature
-        elif not self.model.startswith("gpt-5"):
-            payload["temperature"] = temperature
-
         return payload
 
     def chat(self, system: str, user: str, temperature: float = 0.2) -> str:

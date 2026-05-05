@@ -9,7 +9,7 @@ from src.ai_client import AIClient, AIClientError
 
 def test_ai_client_default_model_when_unset(monkeypatch):
     monkeypatch.delenv("OPENAI_MODEL", raising=False)
-    assert AIClient().model == "gpt-5.2"
+    assert AIClient().model == "gpt-4.1-mini"
 
 
 def test_ai_client_model_override_from_env(monkeypatch):
@@ -17,57 +17,19 @@ def test_ai_client_model_override_from_env(monkeypatch):
     assert AIClient().model == "gpt-5-mini"
 
 
-def test_build_chat_payload_for_gpt_5_2():
-    client = AIClient()
-    client.model = "gpt-5.2"
-
-    payload = client._build_chat_payload("sys", "user", 0.2)
-
-    assert payload["model"] == "gpt-5.2"
-    assert payload["reasoning"] == {"effort": "none"}
-    assert payload["temperature"] == 0.2
-    assert payload["messages"] == [
-        {"role": "system", "content": "sys"},
-        {"role": "user", "content": "user"},
-    ]
-
-
-def test_build_chat_payload_for_gpt_5_2_chat_latest():
-    client = AIClient()
-    client.model = "gpt-5.2-chat-latest"
-
-    payload = client._build_chat_payload("sys", "user", 0.2)
-
-    assert payload["reasoning"] == {"effort": "none"}
-    assert payload["temperature"] == 0.2
-
-
-def test_build_chat_payload_for_gpt_5_mini():
-    client = AIClient()
-    client.model = "gpt-5-mini"
-
-    payload = client._build_chat_payload("sys", "user", 0.2)
-
-    assert "temperature" not in payload
-    assert "reasoning" not in payload
-
-
-def test_build_chat_payload_for_gpt_4_1():
-    client = AIClient()
-    client.model = "gpt-4.1"
-
-    payload = client._build_chat_payload("sys", "user", 0.2)
-
-    assert payload["temperature"] == 0.2
-
-
-def test_build_chat_payload_for_gpt_4_1_mini():
+def test_build_chat_payload_shape():
     client = AIClient()
     client.model = "gpt-4.1-mini"
 
     payload = client._build_chat_payload("sys", "user", 0.2)
 
+    assert payload["model"] == "gpt-4.1-mini"
     assert payload["temperature"] == 0.2
+    assert payload["messages"] == [
+        {"role": "system", "content": "sys"},
+        {"role": "user", "content": "user"},
+    ]
+    assert "reasoning" not in payload
 
 
 def test_ai_client_unavailable_raises(monkeypatch):
