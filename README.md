@@ -52,9 +52,13 @@ Glytch runs without an API key and shows a safe fallback. To use a live OpenAI-c
 
 ```bash
 export OPENAI_API_KEY="your_api_key_here"
-export OPENAI_MODEL="gpt-4.1-mini"
+export OPENAI_MODEL="gpt-5.2"
 export OPENAI_BASE_URL="https://api.openai.com/v1"
 ```
+
+`gpt-5.2` is the recommended premium default for Glytch when output quality matters most.
+
+For lower-cost public demo usage, set `OPENAI_MODEL` to `gpt-5-mini`.
 
 ## Checks
 

@@ -7,6 +7,16 @@ import src.ai_client as ai
 from src.ai_client import AIClient, AIClientError
 
 
+def test_ai_client_default_model_when_unset(monkeypatch):
+    monkeypatch.delenv("OPENAI_MODEL", raising=False)
+    assert AIClient().model == "gpt-5.2"
+
+
+def test_ai_client_model_override_from_env(monkeypatch):
+    monkeypatch.setenv("OPENAI_MODEL", "gpt-5-mini")
+    assert AIClient().model == "gpt-5-mini"
+
+
 def test_ai_client_unavailable_raises(monkeypatch):
     monkeypatch.delenv("OPENAI_API_KEY", raising=False)
     with pytest.raises(AIClientError, match="OPENAI_API_KEY"):

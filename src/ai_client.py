@@ -22,7 +22,7 @@ class AIClient:
     def __init__(self) -> None:
         self.api_key = os.getenv("OPENAI_API_KEY", "").strip()
         self.base_url = os.getenv("OPENAI_BASE_URL", "https://api.openai.com/v1").rstrip("/")
-        self.model = os.getenv("OPENAI_MODEL", "gpt-4.1-mini")
+        self.model = os.getenv("OPENAI_MODEL", "gpt-5.2")
 
     def available(self) -> bool:
         return bool(self.api_key)
