@@ -10,6 +10,11 @@ import { appendMessage, clearOutput, clearRunPanels, updateLevelButtonsVisibilit
 import { initOnboarding } from './onboarding.js';
 import { prefersReducedMotion, sleep, state } from './state.js';
 
+function on(node, event, handler) {
+  if (!node) return;
+  node.addEventListener(event, handler);
+}
+
 async function runLevel(level) {
   state.lastRunLevel = level;
   if (!state.confirmedUseCase || state.runInProgress) return;
@@ -87,18 +92,18 @@ const onboarding = initOnboarding({ runLevel });
 
 function setSetupMode(mode) {
   state.setupMode = mode;
-  refs.setupModeExampleBtn.classList.toggle('active', mode === 'example');
-  refs.setupModeCustomBtn.classList.toggle('active', mode === 'custom');
-  refs.setupModeSurpriseBtn.classList.toggle('active', mode === 'surprise');
-  refs.useCaseOptions.classList.toggle('hidden', mode !== 'example');
-  refs.customUseCaseForm.classList.toggle('hidden', mode !== 'custom');
-  refs.surpriseUseCaseOptions.classList.toggle('hidden', mode !== 'surprise');
+  if (refs.setupModeExampleBtn) refs.setupModeExampleBtn.classList.toggle('active', mode === 'example');
+  if (refs.setupModeCustomBtn) refs.setupModeCustomBtn.classList.toggle('active', mode === 'custom');
+  if (refs.setupModeSurpriseBtn) refs.setupModeSurpriseBtn.classList.toggle('active', mode === 'surprise');
+  if (refs.useCaseOptions) refs.useCaseOptions.classList.toggle('hidden', mode !== 'example');
+  if (refs.customUseCaseForm) refs.customUseCaseForm.classList.toggle('hidden', mode !== 'custom');
+  if (refs.surpriseUseCaseOptions) refs.surpriseUseCaseOptions.classList.toggle('hidden', mode !== 'surprise');
   const helpText = {
     example: 'Start with a ready-made scenario.',
     custom: 'Describe what you want to use AI for.',
     surprise: 'Pick from two quick examples.',
   };
-  refs.setupModeHelp.textContent = helpText[mode];
+  if (refs.setupModeHelp) refs.setupModeHelp.textContent = helpText[mode];
 }
 
 function buildCustomContext() {
@@ -110,12 +115,15 @@ function buildCustomContext() {
 }
 
 function updateCustomScenario() {
-  state.customUseCaseGoal = refs.customGoalInput.value.trim();
-  state.customUseCaseAudience = refs.customAudienceInput.value.trim();
-  state.customUseCaseConstraints = refs.customConstraintsInput.value.trim();
+  const goal = refs.customGoalInput?.value.trim() || '';
+  const audience = refs.customAudienceInput?.value.trim() || '';
+  const constraints = refs.customConstraintsInput?.value.trim() || '';
+  state.customUseCaseGoal = goal;
+  state.customUseCaseAudience = audience;
+  state.customUseCaseConstraints = constraints;
   if (state.customUseCaseGoal.length < 8) {
-    refs.selectionLabel.textContent = 'Enter your goal to enable confirmation.';
-    refs.confirmBtn.disabled = true;
+    if (refs.selectionLabel) refs.selectionLabel.textContent = 'Enter your goal to enable confirmation.';
+    if (refs.confirmBtn) refs.confirmBtn.disabled = true;
     return;
   }
   state.selectedUseCase = 'custom';
@@ -129,19 +137,19 @@ function updateCustomScenario() {
   };
   state.selectedUseCaseContext = buildCustomContext();
   state.confirmedUseCase = null;
-  refs.selectionLabel.textContent = `Selected custom use case: ${state.customUseCaseGoal.slice(0, 72)}`;
-  refs.confirmBtn.disabled = false;
+  if (refs.selectionLabel) refs.selectionLabel.textContent = `Selected custom use case: ${state.customUseCaseGoal.slice(0, 72)}`;
+  if (refs.confirmBtn) refs.confirmBtn.disabled = false;
   clearOutput('Custom use case updated. Confirm direction to continue.');
   updateLevelButtonsVisibility();
 }
 
 el('start-btn').onclick = () => onboarding.openApp();
-refs.setupModeExampleBtn.onclick = () => setSetupMode('example');
-refs.setupModeCustomBtn.onclick = () => setSetupMode('custom');
-refs.setupModeSurpriseBtn.onclick = () => setSetupMode('surprise');
-refs.customGoalInput.addEventListener('input', updateCustomScenario);
-refs.customAudienceInput.addEventListener('input', updateCustomScenario);
-refs.customConstraintsInput.addEventListener('input', updateCustomScenario);
+on(refs.setupModeExampleBtn, 'click', () => setSetupMode('example'));
+on(refs.setupModeCustomBtn, 'click', () => setSetupMode('custom'));
+on(refs.setupModeSurpriseBtn, 'click', () => setSetupMode('surprise'));
+on(refs.customGoalInput, 'input', updateCustomScenario);
+on(refs.customAudienceInput, 'input', updateCustomScenario);
+on(refs.customConstraintsInput, 'input', updateCustomScenario);
 refs.confirmBtn.onclick = () => {
   if (!state.selectedUseCase) return clearOutput('Select a use case before confirming direction.');
   if (state.setupMode === 'example') state.selectedUseCaseContext = refs.contextInput.value.trim();
