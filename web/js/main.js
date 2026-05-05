@@ -164,35 +164,35 @@ function updateCustomScenario() {
   updateLevelButtonsVisibility();
 }
 
-el('start-btn').onclick = () => onboarding.openApp();
+on(el('start-btn'), 'click', () => onboarding.openApp());
 on(refs.setupModeExampleBtn, 'click', () => setSetupMode('example'));
 on(refs.setupModeCustomBtn, 'click', () => setSetupMode('custom'));
 on(refs.setupModeSurpriseBtn, 'click', () => setSetupMode('surprise'));
 on(refs.customGoalInput, 'input', updateCustomScenario);
 on(refs.customAudienceInput, 'input', updateCustomScenario);
 on(refs.customConstraintsInput, 'input', updateCustomScenario);
-refs.confirmBtn.onclick = () => {
+on(refs.confirmBtn, 'click', () => {
   if (!state.selectedUseCase) return clearOutput('Select a use case before confirming direction.');
-  if (state.setupMode === 'example') state.selectedUseCaseContext = refs.contextInput.value.trim();
+  if (state.setupMode === 'example') state.selectedUseCaseContext = refs.contextInput?.value.trim() || '';
   if (state.setupMode === 'custom' && !state.selectedUseCaseContext) return clearOutput('Add a clear custom goal before confirming.');
   state.confirmedUseCase = state.selectedUseCase;
   const label = state.setupMode === 'custom' ? 'custom use case' : state.selectedUseCase.replaceAll('_', ' ');
-  refs.selectionLabel.textContent = `Confirmed direction: ${label}${state.selectedUseCaseContext ? ` | context: ${state.selectedUseCaseContext}` : ''}`;
+  if (refs.selectionLabel) refs.selectionLabel.textContent = `Confirmed direction: ${label}${state.selectedUseCaseContext ? ` | context: ${state.selectedUseCaseContext}` : ''}`;
   clearOutput('Direction confirmed. Choose a level to run.');
   updateLevelButtonsVisibility();
   onboarding.onConfirmed();
-};
-refs.replayBtn.onclick = runReplay;
-refs.downloadArtifactBtn.onclick = () => {
+});
+on(refs.replayBtn, 'click', runReplay);
+on(refs.downloadArtifactBtn, 'click', () => {
   if (!state.latestArtifact) return;
   const blob = new Blob([state.latestArtifact], { type: 'text/plain;charset=utf-8' });
   const url = URL.createObjectURL(blob);
   const a = createEl('a');
   a.href = url; a.download = `glytch-artifact-${new Date().toISOString().slice(0, 10)}.txt`;
   document.body.append(a); a.click(); a.remove(); URL.revokeObjectURL(url);
-};
-refs.modalCloseBtn.onclick = () => refs.useCaseModal.classList.add('hidden');
-document.addEventListener('keydown', (e) => { if (e.key === 'Escape') refs.useCaseModal.classList.add('hidden'); });
+});
+on(refs.modalCloseBtn, 'click', () => refs.useCaseModal?.classList.add('hidden'));
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') refs.useCaseModal?.classList.add('hidden'); });
 if (new URLSearchParams(window.location.search).get('debug') !== '1' && refs.previewTools) refs.previewTools.hidden = true;
 setSetupMode('example');
 init();

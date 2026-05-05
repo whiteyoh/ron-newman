@@ -72,6 +72,16 @@ def test_onboarding_module_referenced():
     assert "refs.customGoalInput.addEventListener" not in main_js
     assert "refs.customAudienceInput.addEventListener" not in main_js
     assert "refs.customConstraintsInput.addEventListener" not in main_js
+    assert "on(el('start-btn'), 'click'" in main_js
+    assert "on(refs.confirmBtn, 'click'" in main_js
+    assert "on(refs.replayBtn, 'click'" in main_js
+    assert "on(refs.downloadArtifactBtn, 'click'" in main_js
+    assert "on(refs.modalCloseBtn, 'click'" in main_js
+    assert "el('start-btn').onclick" not in main_js
+    assert "refs.confirmBtn.onclick" not in main_js
+    assert "refs.replayBtn.onclick" not in main_js
+    assert "refs.downloadArtifactBtn.onclick" not in main_js
+    assert "refs.modalCloseBtn.onclick" not in main_js
     assert "from './onboarding.js'" in main_js
     assert "selectedUseCaseContext" in main_js
     assert "custom use case" in main_js.lower()
