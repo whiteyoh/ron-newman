@@ -1,3 +1,4 @@
+import re
 from pathlib import Path
 
 
@@ -45,6 +46,14 @@ def test_onboarding_static_content():
     assert "readGuideCompleted" in js
     assert "writeGuideCompleted" in js
     assert "try {" in js
+    assert "localStorage.setItem(GUIDE_KEY, 'completed')" in js
+    match = re.search(
+        r"function writeGuideCompleted\(\)\s*\{(?P<body>.*?)\n\}",
+        js,
+        re.DOTALL,
+    )
+    assert match is not None
+    assert "writeGuideCompleted();" not in match.group("body")
     assert "refs.guideInlineBtn.onclick" not in js
 
     assert "guideInlineBtn" in dom_js

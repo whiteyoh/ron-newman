@@ -33,7 +33,7 @@ function readGuideCompleted() {
 
 function writeGuideCompleted() {
   try {
-    writeGuideCompleted();
+    localStorage.setItem(GUIDE_KEY, 'completed');
   } catch {
     // ignore storage failure; guide should still work for this session
   }
