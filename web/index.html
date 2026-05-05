@@ -58,7 +58,25 @@
 
         <section class="panel" aria-labelledby="setup-title">
           <h2 id="setup-title">1) Setup your scenario</h2>
+          <h3>Choose your starting point</h3>
+          <div class="setup-mode-tabs" role="group" aria-label="Choose your starting point">
+            <button id="setup-mode-example-btn" class="setup-mode-btn active" type="button">Use an example</button>
+            <button id="setup-mode-custom-btn" class="setup-mode-btn ghost" type="button">Create my own</button>
+            <button id="setup-mode-surprise-btn" class="setup-mode-btn ghost" type="button">Surprise me</button>
+          </div>
+          <p id="setup-mode-help" class="muted">Start with a ready-made scenario.</p>
           <div id="use-case-options" class="choices"></div>
+          <div id="custom-use-case-form" class="custom-use-case-form hidden">
+            <h3>Create your own use case</h3>
+            <p class="muted helper-text">Write a real task. Glytch will use it as the context for each level.</p>
+            <label for="custom-goal-input">What do you want to use AI for?</label>
+            <textarea id="custom-goal-input" rows="3" placeholder="I need to plan a revision lesson for Year 10 food technology"></textarea>
+            <label for="custom-audience-input">Who is it for? optional</label>
+            <textarea id="custom-audience-input" rows="2" placeholder="A team of non-technical managers"></textarea>
+            <label for="custom-constraints-input">Any constraints? optional</label>
+            <textarea id="custom-constraints-input" rows="2" placeholder="Keep it plain English and suitable for a 20-minute session"></textarea>
+          </div>
+          <div id="surprise-use-case-options" class="choices hidden"></div>
           <div class="confirm-panel">
             <p id="selection-label" class="muted">No use case selected yet.</p>
             <label for="context-input">Optional context</label>

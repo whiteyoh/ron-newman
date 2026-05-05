@@ -2,7 +2,7 @@ import { loadStartupData, runLevelRequest } from './api.js';
 import { createEl, el, refs, setStatus } from './dom.js';
 import { renderQuiz } from './quiz.js';
 import { renderScorePanel } from './render-score.js';
-import { renderMaturityStages, renderBeforeAfter, renderLevelCards, renderUseCases } from './render-static.js';
+import { renderMaturityStages, renderBeforeAfter, renderLevelCards, renderSurpriseUseCases, renderUseCases } from './render-static.js';
 import { renderTaskboard } from './render-taskboard.js';
 import { renderTheatre } from './render-theatre.js';
 import { runReplay } from './replay.js';
@@ -47,7 +47,27 @@ async function init() {
   clearOutput();
   try {
     const [levels, useCases, maturity] = await loadStartupData();
+    state.surpriseUseCases = [
+      {
+        title: 'Small business launch',
+        description: 'Create a simple launch plan for a new product.',
+        goal: 'create a simple launch plan for a new sustainable coffee brand',
+        audience: 'busy small business owner',
+        constraints: 'plain English, practical next steps, no jargon',
+      },
+      {
+        title: 'Student revision plan',
+        description: 'Build a revision plan for an upcoming exam.',
+        goal: 'build a revision plan for a GCSE student preparing for exams',
+        audience: 'student and parent',
+        constraints: 'short daily actions, confidence-building, easy to follow',
+      },
+    ].map((item) => ({
+      ...item,
+      context: `Goal: ${item.goal}\nAudience: ${item.audience}\nConstraints: ${item.constraints}`,
+    }));
     renderUseCases(useCases.use_cases || {});
+    renderSurpriseUseCases(state.surpriseUseCases);
     renderMaturityStages(maturity.stages || []);
     renderQuiz();
     renderBeforeAfter(levels.levels || {});
@@ -64,12 +84,71 @@ async function init() {
 }
 
 const onboarding = initOnboarding({ runLevel });
+
+function setSetupMode(mode) {
+  state.setupMode = mode;
+  refs.setupModeExampleBtn.classList.toggle('active', mode === 'example');
+  refs.setupModeCustomBtn.classList.toggle('active', mode === 'custom');
+  refs.setupModeSurpriseBtn.classList.toggle('active', mode === 'surprise');
+  refs.useCaseOptions.classList.toggle('hidden', mode !== 'example');
+  refs.customUseCaseForm.classList.toggle('hidden', mode !== 'custom');
+  refs.surpriseUseCaseOptions.classList.toggle('hidden', mode !== 'surprise');
+  const helpText = {
+    example: 'Start with a ready-made scenario.',
+    custom: 'Describe what you want to use AI for.',
+    surprise: 'Pick from two quick examples.',
+  };
+  refs.setupModeHelp.textContent = helpText[mode];
+}
+
+function buildCustomContext() {
+  const lines = [];
+  if (state.customUseCaseGoal) lines.push(`Goal: ${state.customUseCaseGoal}`);
+  if (state.customUseCaseAudience) lines.push(`Audience: ${state.customUseCaseAudience}`);
+  if (state.customUseCaseConstraints) lines.push(`Constraints: ${state.customUseCaseConstraints}`);
+  return lines.join('\n');
+}
+
+function updateCustomScenario() {
+  state.customUseCaseGoal = refs.customGoalInput.value.trim();
+  state.customUseCaseAudience = refs.customAudienceInput.value.trim();
+  state.customUseCaseConstraints = refs.customConstraintsInput.value.trim();
+  if (state.customUseCaseGoal.length < 8) {
+    refs.selectionLabel.textContent = 'Enter your goal to enable confirmation.';
+    refs.confirmBtn.disabled = true;
+    return;
+  }
+  state.selectedUseCase = 'custom';
+  state.selectedCustomScenario = {
+    key: 'custom',
+    title: 'Custom use case',
+    description: 'User-created scenario',
+    goal: state.customUseCaseGoal,
+    audience: state.customUseCaseAudience,
+    constraints: state.customUseCaseConstraints,
+  };
+  state.selectedUseCaseContext = buildCustomContext();
+  state.confirmedUseCase = null;
+  refs.selectionLabel.textContent = `Selected custom use case: ${state.customUseCaseGoal.slice(0, 72)}`;
+  refs.confirmBtn.disabled = false;
+  clearOutput('Custom use case updated. Confirm direction to continue.');
+  updateLevelButtonsVisibility();
+}
+
 el('start-btn').onclick = () => onboarding.openApp();
+refs.setupModeExampleBtn.onclick = () => setSetupMode('example');
+refs.setupModeCustomBtn.onclick = () => setSetupMode('custom');
+refs.setupModeSurpriseBtn.onclick = () => setSetupMode('surprise');
+refs.customGoalInput.addEventListener('input', updateCustomScenario);
+refs.customAudienceInput.addEventListener('input', updateCustomScenario);
+refs.customConstraintsInput.addEventListener('input', updateCustomScenario);
 refs.confirmBtn.onclick = () => {
   if (!state.selectedUseCase) return clearOutput('Select a use case before confirming direction.');
-  state.selectedUseCaseContext = refs.contextInput.value.trim();
+  if (state.setupMode === 'example') state.selectedUseCaseContext = refs.contextInput.value.trim();
+  if (state.setupMode === 'custom' && !state.selectedUseCaseContext) return clearOutput('Add a clear custom goal before confirming.');
   state.confirmedUseCase = state.selectedUseCase;
-  refs.selectionLabel.textContent = `Confirmed direction: ${state.selectedUseCase.replaceAll('_', ' ')}${state.selectedUseCaseContext ? ` | context: ${state.selectedUseCaseContext}` : ''}`;
+  const label = state.setupMode === 'custom' ? 'custom use case' : state.selectedUseCase.replaceAll('_', ' ');
+  refs.selectionLabel.textContent = `Confirmed direction: ${label}${state.selectedUseCaseContext ? ` | context: ${state.selectedUseCaseContext}` : ''}`;
   clearOutput('Direction confirmed. Choose a level to run.');
   updateLevelButtonsVisibility();
   onboarding.onConfirmed();
@@ -86,4 +165,5 @@ refs.downloadArtifactBtn.onclick = () => {
 refs.modalCloseBtn.onclick = () => refs.useCaseModal.classList.add('hidden');
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape') refs.useCaseModal.classList.add('hidden'); });
 if (new URLSearchParams(window.location.search).get('debug') !== '1' && refs.previewTools) refs.previewTools.hidden = true;
+setSetupMode('example');
 init();

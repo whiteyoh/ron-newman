@@ -20,6 +20,7 @@ from src.levels import run_level
 ROOT = Path(__file__).parent
 WEB = ROOT / "web"
 MAX_BODY_BYTES = 16 * 1024
+MAX_CUSTOM_CONTEXT_CHARS = 1200
 RATE_LIMIT_WINDOW_SECONDS = 60
 RATE_LIMIT_MAX_REQUESTS = 20
 _rate_limit_store: dict[str, list[float]] = {}
@@ -187,6 +188,33 @@ class Handler(SimpleHTTPRequestHandler):
             level = int(level_text)
             if level not in LEVELS:
                 raise ValueError("out of range")
+            use_case_key = (use_case_key or "").strip()
+            use_case_context = (use_case_context or "").strip()
+            if use_case_key == "custom":
+                if not use_case_context:
+                    self._validation_error(
+                        request_id,
+                        "use_case_context is required when use_case is custom",
+                        "invalid_field",
+                        "use_case_context",
+                    )
+                    return
+                if len(use_case_context) > MAX_CUSTOM_CONTEXT_CHARS:
+                    self._validation_error(
+                        request_id,
+                        f"use_case_context must be {MAX_CUSTOM_CONTEXT_CHARS} characters or fewer",
+                        "invalid_field",
+                        "use_case_context",
+                    )
+                    return
+            elif use_case_key not in USE_CASE_OPTIONS:
+                self._validation_error(
+                    request_id,
+                    "use_case must be a known preset or custom",
+                    "invalid_field",
+                    "use_case",
+                )
+                return
             client = AIClient()
             payload = run_level(
                 level, client, use_case_key=use_case_key, use_case_context=use_case_context

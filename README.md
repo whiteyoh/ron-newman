@@ -31,6 +31,8 @@ New to Glytch? Start with [Reading Glytch output](docs/READING_GLYTCH_OUTPUT.md)
 
 New users can start with **Try your first Glytch run**, which walks through a simple scenario, recommends Level 1 first, explains the output panels, and suggests comparing the same task at Level 3.
 
+Scenario setup supports preset examples, custom use cases, and two “Surprise me” examples. Custom use cases are request-scoped and are not stored.
+
 ## Architecture
 
 Architecture notes live in [architecture/](architecture/README.md). The diagrams are generated from `scripts/generate_architecture_diagrams.py` and describe the conceptual flow for each Glytch level.

@@ -79,6 +79,61 @@ def test_http_endpoints() -> None:
         )
         payload = json.loads(data)
         assert status == 200 and any("not configured" in line.lower() for line in payload["lines"])
+        assert {
+            "level",
+            "title",
+            "lines",
+            "score_summary",
+            "theatre_steps",
+            "replay_steps",
+            "approval_summary",
+            "backend",
+        }.issubset(payload)
+
+        status, data = _request(
+            port,
+            "POST",
+            "/api/run",
+            json.dumps(
+                {
+                    "level": 1,
+                    "use_case": "custom",
+                    "use_case_context": (
+                        "Goal: create a simple revision plan. Audience: Year 10 student."
+                    ),
+                }
+            ).encode(),
+            {"Content-Type": "application/json"},
+        )
+        custom_payload = json.loads(data)
+        assert status == 200
+        assert custom_payload["level"] == 1
+        assert "backend" in custom_payload
+
+        status, data = _request(
+            port,
+            "POST",
+            "/api/run",
+            json.dumps({"level": 1, "use_case": "custom", "use_case_context": "   "}).encode(),
+            {"Content-Type": "application/json"},
+        )
+        invalid_custom_payload = json.loads(data)
+        assert status == 400
+        assert (
+            "use_case_context is required when use_case is custom"
+            in invalid_custom_payload["error"]
+        )
+
+        status, _ = _request(
+            port,
+            "POST",
+            "/api/run",
+            json.dumps(
+                {"level": 1, "use_case": "not_a_real_use_case", "use_case_context": ""}
+            ).encode(),
+            {"Content-Type": "application/json"},
+        )
+        assert status == 400
 
         status, _ = _request(
             port, "POST", "/api/run", b"{bad", {"Content-Type": "application/json"}
