@@ -244,6 +244,7 @@ class Handler(SimpleHTTPRequestHandler):
                 status, {"request_id": request_id, "error": err.message, "code": err.code}
             )
         except Exception:
+            logger.exception("request_id=%s unhandled error while executing level", request_id)
             status = 500
             self._send_json(
                 status,

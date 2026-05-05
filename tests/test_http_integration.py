@@ -162,3 +162,41 @@ def test_http_endpoints() -> None:
     finally:
         server.shutdown()
         server.server_close()
+
+
+def test_http_run_propagates_safe_ai_client_error(monkeypatch) -> None:
+    from src.ai_client import AIClientError
+
+    def _boom(*_args, **_kwargs):
+        raise AIClientError(
+            (
+                "Upstream AI provider returned an error for the configured model. "
+                "Check OPENAI_MODEL, model access, quota, and billing."
+            ),
+            code="upstream_http",
+            status=502,
+        )
+
+    monkeypatch.setattr("app.run_level", _boom)
+    server = ThreadingHTTPServer(("127.0.0.1", 0), Handler)
+    port = server.server_port
+    t = threading.Thread(target=_serve, args=(server,), daemon=True)
+    t.start()
+    try:
+        status, data = _request(
+            port,
+            "POST",
+            "/api/run",
+            json.dumps({"level": 1}).encode(),
+            {"Content-Type": "application/json"},
+        )
+        payload = json.loads(data)
+        assert status == 502
+        assert payload["code"] == "upstream_http"
+        assert payload["error"].startswith("Upstream AI provider returned an error")
+        assert "request_id" in payload
+        assert "Authorization" not in payload["error"]
+        assert "api_key" not in payload["error"].lower()
+    finally:
+        server.shutdown()
+        server.server_close()

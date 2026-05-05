@@ -37,10 +37,21 @@ async function runLevel(level) {
     refs.downloadArtifactBtn.disabled = false;
   } catch (err) {
     console.error('Level run failed', err);
-    const requestId = err?.requestId ? ` Request ID: ${err.requestId}` : '';
     setStatus('Request failed', 'failed');
     refs.log.textContent = '';
-    appendMessage('system', `Something went wrong while running the simulation. No action was taken. Please try again.${requestId}`);
+    const lines = [
+      'Simulation could not complete. No action was taken.',
+      `Reason: ${err?.message || 'Unknown error'}`,
+    ];
+    if (err?.code) lines.push(`Code: ${err.code}`);
+    if (err?.status) lines.push(`HTTP status: ${err.status}`);
+    if (err?.requestId) lines.push(`Request ID: ${err.requestId}`);
+    if (err?.code === 'upstream_http') {
+      lines.push(
+        'Hint: Check OPENAI_MODEL in your hosting environment. If you recently tried gpt-5.2, set OPENAI_MODEL back to gpt-4.1-mini or confirm your OpenAI project has access to the configured model.'
+      );
+    }
+    appendMessage('system', lines.join('\n'));
     refs.replayBtn.disabled = true;
     refs.downloadArtifactBtn.disabled = true;
   } finally { state.runInProgress = false; }
