@@ -52,6 +52,14 @@ def test_onboarding_static_content():
 
 def test_onboarding_module_referenced():
     main_js = Path("web/js/main.js").read_text(encoding="utf-8")
+    assert "addEventListener" in main_js
+    assert "setupModeExampleBtn" in main_js
+    assert "setupModeCustomBtn" in main_js
+    assert "setupModeSurpriseBtn" in main_js
+    assert "refs.setupModeExampleBtn.onclick" not in main_js
+    assert "refs.setupModeCustomBtn.onclick" not in main_js
+    assert "refs.setupModeSurpriseBtn.onclick" not in main_js
+    assert "refs.customGoalInput.addEventListener" not in main_js
     assert "from './onboarding.js'" in main_js
     assert "selectedUseCaseContext" in main_js
     assert "custom use case" in main_js.lower()
