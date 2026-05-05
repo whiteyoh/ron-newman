@@ -17,6 +17,59 @@ def test_ai_client_model_override_from_env(monkeypatch):
     assert AIClient().model == "gpt-5-mini"
 
 
+def test_build_chat_payload_for_gpt_5_2():
+    client = AIClient()
+    client.model = "gpt-5.2"
+
+    payload = client._build_chat_payload("sys", "user", 0.2)
+
+    assert payload["model"] == "gpt-5.2"
+    assert payload["reasoning"] == {"effort": "none"}
+    assert payload["temperature"] == 0.2
+    assert payload["messages"] == [
+        {"role": "system", "content": "sys"},
+        {"role": "user", "content": "user"},
+    ]
+
+
+def test_build_chat_payload_for_gpt_5_2_chat_latest():
+    client = AIClient()
+    client.model = "gpt-5.2-chat-latest"
+
+    payload = client._build_chat_payload("sys", "user", 0.2)
+
+    assert payload["reasoning"] == {"effort": "none"}
+    assert payload["temperature"] == 0.2
+
+
+def test_build_chat_payload_for_gpt_5_mini():
+    client = AIClient()
+    client.model = "gpt-5-mini"
+
+    payload = client._build_chat_payload("sys", "user", 0.2)
+
+    assert "temperature" not in payload
+    assert "reasoning" not in payload
+
+
+def test_build_chat_payload_for_gpt_4_1():
+    client = AIClient()
+    client.model = "gpt-4.1"
+
+    payload = client._build_chat_payload("sys", "user", 0.2)
+
+    assert payload["temperature"] == 0.2
+
+
+def test_build_chat_payload_for_gpt_4_1_mini():
+    client = AIClient()
+    client.model = "gpt-4.1-mini"
+
+    payload = client._build_chat_payload("sys", "user", 0.2)
+
+    assert payload["temperature"] == 0.2
+
+
 def test_ai_client_unavailable_raises(monkeypatch):
     monkeypatch.delenv("OPENAI_API_KEY", raising=False)
     with pytest.raises(AIClientError, match="OPENAI_API_KEY"):
@@ -32,7 +85,12 @@ def test_ai_client_http_error(monkeypatch):
     monkeypatch.setattr(ai, "urlopen", boom)
     with pytest.raises(AIClientError) as err:
         AIClient().chat("s", "u")
+    assert err.value.status == 502
     assert err.value.code == "upstream_http"
+    assert "configured model" in err.value.message
+    assert "OPENAI_MODEL" in err.value.message
+    assert '{"error":"bad"}' not in err.value.message
+    assert "sk-" not in err.value.message
 
 
 def test_ai_client_connection_error(monkeypatch):

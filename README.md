@@ -59,6 +59,7 @@ export OPENAI_BASE_URL="https://api.openai.com/v1"
 `gpt-5.2` is the recommended premium default for Glytch when output quality matters most.
 
 For lower-cost public demo usage, set `OPENAI_MODEL` to `gpt-5-mini`.
+If `/api/run` returns an upstream model error, verify your OpenAI project can access the configured model; for broader-access testing, set `OPENAI_MODEL="gpt-5-mini"`.
 
 ## Checks
 
