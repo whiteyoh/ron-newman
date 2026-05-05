@@ -28,6 +28,10 @@ async function runLevel(level) {
     const backend = data?.backend || {};
     setStatus(backend.configured ? 'OpenAI API Connected' : 'OpenAI API Not Connected', backend.configured ? 'ok' : 'err');
     refs.meta.textContent = `request_id=${data?.request_id || 'Available after run'} · provider=${backend.provider || 'Workshop-safe simulation'} · model=${backend.model || 'Workshop-safe simulation'}`;
+    renderScorePanel(data.agenticness, data); renderTheatre(data); renderTaskboard(data);
+    const lines = Array.isArray(data.lines) && data.lines.length ? data.lines : ['No output lines returned.'];
+    refs.log.textContent = '';
+    appendMessage('trace', 'Read-only simulation trace. Nothing here requires you to answer.');
     if (data?.runtime_error) {
       setStatus('Completed with warning', 'failed');
       appendMessage('system', [
@@ -35,12 +39,8 @@ async function runLevel(level) {
         `Reason: ${data.runtime_error.message || 'Unknown runtime warning'}`,
         `Code: ${data.runtime_error.code || 'unavailable'}`,
         'No external action was taken.',
-      ].join(String.fromCharCode(10)));
+      ].join('\n'));
     }
-    renderScorePanel(data.agenticness, data); renderTheatre(data); renderTaskboard(data);
-    const lines = Array.isArray(data.lines) && data.lines.length ? data.lines : ['No output lines returned.'];
-    refs.log.textContent = '';
-    appendMessage('trace', 'Read-only simulation trace. Nothing here requires you to answer.');
     for (const line of lines) { appendMessage('trace', line); await sleep(prefersReducedMotion ? 0 : 120); }
     state.latestArtifact = `Glytch Export\nGenerated: ${new Date().toISOString()}\nLevel: ${level}\nUse case: ${state.confirmedUseCase}\n\n${lines.join('\n')}`;
     refs.downloadArtifactBtn.disabled = false;
@@ -102,9 +102,15 @@ async function init() {
     console.error('Startup failed', err);
     clearOutput('Glytch could not load the demo data. No action was taken. Please refresh and try again.');
     setStatus('Startup failed', 'failed');
-    refs.buttons.querySelectorAll('button').forEach((b) => { b.disabled = true; });
-    if (!refs.maturityCards.children.length) refs.maturityCards.appendChild(createEl('p', 'muted', 'Maturity ladder is unavailable until startup data loads.'));
-    if (!refs.beforeAfter.children.length) refs.beforeAfter.appendChild(createEl('p', 'muted', 'Level preview is unavailable until startup data loads.'));
+    if (refs.buttons) {
+      refs.buttons.querySelectorAll('button').forEach((b) => { b.disabled = true; });
+    }
+    if (refs.maturityCards && !refs.maturityCards.children.length) {
+      refs.maturityCards.appendChild(createEl('p', 'muted', 'Maturity ladder is unavailable until startup data loads.'));
+    }
+    if (refs.beforeAfter && !refs.beforeAfter.children.length) {
+      refs.beforeAfter.appendChild(createEl('p', 'muted', 'Level preview is unavailable until startup data loads.'));
+    }
   }
 }
 
@@ -173,7 +179,8 @@ function updateCustomScenario() {
 
 on(el('start-btn'), 'click', () => {
   onboarding.openApp();
-  clearGuidedContextIfPresent();
+  state.selectedUseCaseContext = '';
+  if (refs.contextInput) refs.contextInput.value = '';
 });
 on(refs.setupModeExampleBtn, 'click', () => {
   setSetupMode('example');
