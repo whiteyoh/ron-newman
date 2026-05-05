@@ -27,6 +27,13 @@ def test_onboarding_static_content():
     assert "guideFinishBtn" in js
     assert "Try Level 3 next" in html
     assert "Finish guide" in html
+    assert "Use an example" in html
+    assert "Create my own" in html
+    assert "Surprise me" in html
+    assert "custom-goal-input" in html
+    assert "custom-audience-input" in html
+    assert "custom-constraints-input" in html
+    assert "surprise-use-case-options" in html
     assert "You’ve now compared Level 1 and Level 3" in js
     assert "level3StartedFromGuide" in js
     assert "waitingForLevel3Comparison" in js
@@ -46,3 +53,6 @@ def test_onboarding_static_content():
 def test_onboarding_module_referenced():
     main_js = Path("web/js/main.js").read_text(encoding="utf-8")
     assert "from './onboarding.js'" in main_js
+    assert "selectedUseCaseContext" in main_js
+    assert "custom use case" in main_js.lower()
+    assert "uk_year10_teacher" in Path("web/js/state.js").read_text(encoding="utf-8")
