@@ -15,6 +15,9 @@ export async function fetchJson(url, options) {
     const msg = data?.error || `Backend returned ${res.status}`;
     const error = new Error(msg);
     error.requestId = data?.request_id;
+    error.code = data?.code;
+    error.status = res.status;
+    error.field = data?.field;
     throw error;
   }
   return data;
