@@ -186,6 +186,14 @@ function buildCustomContext() {
   return lines.join('\n');
 }
 
+function mergeOptionalContext(baseContext, optionalContext) {
+  const base = String(baseContext || '').trim();
+  const extra = String(optionalContext || '').trim();
+  if (!extra) return base;
+  if (!base) return extra;
+  return `${base}\nUser refinement: ${extra}`;
+}
+
 function updateCustomScenario() {
   const goal = refs.customGoalInput?.value.trim() || '';
   const audience = refs.customAudienceInput?.value.trim() || '';
@@ -240,8 +248,24 @@ on(refs.customAudienceInput, 'input', updateCustomScenario);
 on(refs.customConstraintsInput, 'input', updateCustomScenario);
 on(refs.confirmBtn, 'click', () => {
   if (!state.selectedUseCase) return clearOutput('Select a use case before confirming direction.');
-  if (state.setupMode === 'example') state.selectedUseCaseContext = refs.contextInput?.value.trim() || '';
-  if (state.setupMode === 'custom' && !state.selectedUseCaseContext) return clearOutput('Add a clear custom goal before confirming.');
+  const optionalContext = refs.contextInput?.value.trim() || '';
+  if (state.setupMode === 'example') {
+    state.selectedUseCaseContext = optionalContext;
+  }
+  if (state.setupMode === 'surprise') {
+    const baseContext = state.selectedCustomScenario
+      ? [
+          `Goal: ${state.selectedCustomScenario.goal}`,
+          `Audience: ${state.selectedCustomScenario.audience}`,
+          `Constraints: ${state.selectedCustomScenario.constraints}`,
+        ].filter(Boolean).join('\n')
+      : state.selectedUseCaseContext;
+    state.selectedUseCaseContext = mergeOptionalContext(baseContext, optionalContext);
+  }
+  if (state.setupMode === 'custom') {
+    if (!state.selectedUseCaseContext) return clearOutput('Add a clear custom goal before confirming.');
+    state.selectedUseCaseContext = mergeOptionalContext(buildCustomContext(), optionalContext);
+  }
   state.confirmedUseCase = state.selectedUseCase;
   state.confirmedUseCaseLabel = state.selectedUseCaseLabel || state.selectedUseCase;
   const label = state.confirmedUseCaseLabel;
