@@ -112,10 +112,10 @@ async function init() {
     state.surpriseUseCases = [
       {
         title: 'Small business launch',
-        description: 'Create a simple launch plan for a new product.',
-        goal: 'create a simple launch plan for a new sustainable coffee brand',
+        description: 'Create a simple launch plan for a new product or service.',
+        goal: 'create a simple launch plan for a new product or service for a small business',
         audience: 'busy small business owner',
-        constraints: 'plain English, practical next steps, no jargon',
+        constraints: 'plain English, practical next steps, no jargon, do not assume a specific industry unless the user provides one',
       },
       {
         title: 'Student revision plan',

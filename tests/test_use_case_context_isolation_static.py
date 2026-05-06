@@ -53,3 +53,14 @@ def test_confirm_handler_merges_optional_context_for_surprise_and_custom_without
         "state.selectedUseCaseContext = mergeOptionalContext("
         "buildCustomContext(), optionalContext);" in text
     )
+
+
+def test_small_business_launch_surprise_context_is_generic_and_not_coffee_default():
+    text = Path("web/js/main.js").read_text(encoding="utf-8")
+    assert "title: 'Small business launch'" in text
+    assert "new product or service" in text
+    assert "do not assume a specific industry" in text
+    assert "sustainable coffee brand" not in text
+    assert "coffee brand" not in text
+    assert "coffee suppliers" not in text
+    assert "eco-friendly packaging" not in text
