@@ -65,3 +65,24 @@ def test_context_input_has_no_default_value_or_guided_placeholder():
         "placeholder"
     )
     assert "Example: audience, constraints, or workshop focus" in match.group("placeholder")
+
+
+def test_main_js_final_answer_priority_and_trace_intro_once():
+    text = Path("web/js/main.js").read_text(encoding="utf-8")
+
+    assert "data?.final_answer || data?.approval_summary?.final_answer" in text
+
+    run_idx = text.index("const data = await runLevelRequest")
+    trace_intro = (
+        "appendMessage('trace', "
+        "'Read-only simulation trace. Nothing here requires you to answer.');"
+    )
+    first_intro_idx = text.find(trace_intro)
+    assert first_intro_idx > run_idx
+
+    clear_after_idx = text.index("refs.log.textContent = '';", run_idx)
+    intro_after_idx = text.index(trace_intro, clear_after_idx)
+    assert intro_after_idx > clear_after_idx
+
+    assert "if (refs.finalOutputPanel && isUsefulFinalAnswer) {" in text
+    assert "else if (refs.finalOutputPanel) refs.finalOutputPanel.classList.add('hidden');" in text

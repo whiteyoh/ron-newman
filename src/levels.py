@@ -172,6 +172,32 @@ def _resolve_use_case_prompt(use_case_key: str, use_case_context: str | None) ->
     return base
 
 
+def _pick_final_answer(run_data: dict[str, Any], lines: list[str]) -> str:
+    for key in ("final_answer", "answer", "merged_output"):
+        value = str(run_data.get(key, "")).strip()
+        if value:
+            return value
+
+    blocked_prefixes = (
+        "honest limitation note",
+        "workshop-safe",
+        "simulation note",
+        "audit trail",
+        "approval gate",
+        "policy",
+        "taskboard",
+    )
+    for line in reversed(lines):
+        candidate = str(line or "").strip()
+        if not candidate:
+            continue
+        normalized = candidate.lower()
+        if any(normalized.startswith(prefix) for prefix in blocked_prefixes):
+            continue
+        return candidate
+    return ""
+
+
 def _build_structured_payload(
     level: int,
     level_info: dict[str, str],
@@ -397,6 +423,7 @@ def _build_structured_payload(
                 final_status = "unknown"
     else:
         final_status = run_data.get("final_status", run_data.get("final_verdict", "completed"))
+    final_answer = _pick_final_answer(run_data, lines)
     approval_summary = {
         "approval_required": run_data.get("approval_required", True),
         "approved": run_data.get("approved_for_merge", run_data.get("approved_for_final", False)),
@@ -434,6 +461,7 @@ def _build_structured_payload(
         ),
         "review_gate": yegge_simulation.get("review_gate"),
         "workflow_preview": workflow_preview,
+        "final_answer": final_answer,
         "why_not_production": yegge_simulation.get("why_not_production"),
         "lines": lines,
         "agenticness": agenticness,
