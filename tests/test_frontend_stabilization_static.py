@@ -86,3 +86,36 @@ def test_main_js_final_answer_priority_and_trace_intro_once():
 
     assert "if (refs.finalOutputPanel && isUsefulFinalAnswer) {" in text
     assert "else if (refs.finalOutputPanel) refs.finalOutputPanel.classList.add('hidden');" in text
+
+
+def test_raw_trace_details_has_no_static_intro_and_keeps_log_container():
+    html = Path("web/index.html").read_text(encoding="utf-8")
+
+    assert '<details id="raw-trace-details" class="raw-trace-details">' in html
+    assert '<div id="log"' in html
+
+    details_section = re.search(
+        r'<details id="raw-trace-details" class="raw-trace-details">(?P<body>.*?)</details>',
+        html,
+        re.DOTALL,
+    )
+    assert details_section is not None
+    assert (
+        "Read-only simulation trace. Nothing here requires you to answer."
+        not in details_section.group("body")
+    )
+
+
+def test_main_js_has_single_post_response_trace_intro_and_no_pre_request_intro():
+    text = Path("web/js/main.js").read_text(encoding="utf-8")
+
+    trace_intro = (
+        "appendMessage('trace', "
+        "'Read-only simulation trace. Nothing here requires you to answer.');"
+    )
+
+    assert text.count(trace_intro) == 1
+
+    run_idx = text.index("const data = await runLevelRequest")
+    intro_idx = text.index(trace_intro)
+    assert intro_idx > run_idx

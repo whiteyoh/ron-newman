@@ -44,7 +44,7 @@ async function runLevel(level) {
       if (refs.finalOutputStatus) refs.finalOutputStatus.textContent = data?.approval_summary?.final_status || 'Candidate';
     } else if (refs.finalOutputPanel) refs.finalOutputPanel.classList.add('hidden');
     if (refs.rawTraceDetails) refs.rawTraceDetails.open = Boolean(data?.runtime_error);
-        if (data?.runtime_error) {
+    if (data?.runtime_error) {
       setStatus('Completed with warning', 'failed');
       if (refs.runSummaryPanel) refs.runSummaryPanel.classList.add('warning');
       if (refs.runSummaryStatus) refs.runSummaryStatus.textContent = 'Rendered with warning';
