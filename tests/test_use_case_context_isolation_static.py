@@ -35,3 +35,21 @@ def test_guided_context_lives_only_in_onboarding_and_not_in_index_value():
     assert "Year 10 revision lesson on nutrition and healthy eating" not in html
     assert 'id="context-input"' in html
     assert ">Year 10 revision lesson on nutrition and healthy eating</textarea>" not in html
+
+
+def test_confirm_handler_merges_optional_context_for_surprise_and_custom_without_duplication():
+    text = Path("web/js/main.js").read_text(encoding="utf-8")
+    assert "function mergeOptionalContext(baseContext, optionalContext) {" in text
+    assert "User refinement:" in text
+    assert "if (state.setupMode === 'example') {" in text
+    assert "state.selectedUseCaseContext = optionalContext;" in text
+    assert "if (state.setupMode === 'surprise') {" in text
+    assert "const baseContext = state.selectedCustomScenario" in text
+    assert (
+        "state.selectedUseCaseContext = mergeOptionalContext(baseContext, optionalContext);" in text
+    )
+    assert "if (state.setupMode === 'custom') {" in text
+    assert (
+        "state.selectedUseCaseContext = mergeOptionalContext("
+        "buildCustomContext(), optionalContext);" in text
+    )
