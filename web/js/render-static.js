@@ -19,7 +19,9 @@ export function renderUseCases(data) {
     b.append(createEl('strong', '', `${i + 1}. ${key.replaceAll('_', ' ')}`), createEl('div', 'muted', `${text.split('.')[0]}.`), createEl('span', 'pill', 'Select scenario'));
     b.onclick = () => {
       state.selectedUseCase = key;
+      state.selectedUseCaseLabel = key.replaceAll('_', ' ');
       state.confirmedUseCase = null;
+      state.confirmedUseCaseLabel = null;
       clearPresetSelectionState();
       if (state.selectedUseCaseContext === GUIDED_CONTEXT) state.selectedUseCaseContext = '';
       if (refs.contextInput?.value.trim() === GUIDED_CONTEXT) refs.contextInput.value = '';
@@ -51,7 +53,9 @@ export function renderSurpriseUseCases(cases) {
     );
     card.onclick = () => {
       state.selectedUseCase = 'custom';
+      state.selectedUseCaseLabel = useCase.title;
       state.confirmedUseCase = null;
+      state.confirmedUseCaseLabel = null;
       state.selectedCustomScenario = {
         key: 'custom',
         title: useCase.title,

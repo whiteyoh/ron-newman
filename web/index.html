@@ -130,9 +130,18 @@
             <span id="replay-state" class="muted"></span>
           </div>
           <div id="taskboard"></div>
-          <h3>Raw output transcript</h3>
-          <p class="muted">Read-only simulation trace. Nothing here requires you to answer.</p>
-          <div id="log" aria-live="polite"></div>
+          <section id="final-output-panel" class="panel final-output-panel hidden" aria-labelledby="final-output-title">
+            <div class="section-header">
+              <h3 id="final-output-title">Final output</h3>
+              <span id="final-output-status" class="badge">Candidate</span>
+            </div>
+            <div id="final-output-body" class="final-output-body"></div>
+          </section>
+          <details id="raw-trace-details" class="raw-trace-details">
+            <summary>Raw output transcript</summary>
+            <p class="muted">Read-only simulation trace. Nothing here requires you to answer.</p>
+            <div id="log" aria-live="polite"></div>
+          </details>
           <button id="download-artifact" class="ghost" disabled>Download latest artifact (.txt)</button>
         </section>
 

@@ -23,30 +23,34 @@ export function renderTaskboard(data) {
   }));
   const columns = ['pending', 'running', 'completed', 'needs_human_review', 'merged', 'failed'];
   const wrap = createEl('div', 'taskboard-grid');
+  let visibleColumns = 0;
   columns.forEach((status) => {
+    const workers = normalized.filter((r) => r.status === status);
+    if (!workers.length) return;
+    visibleColumns += 1;
     const col = createEl('section', 'taskboard-column');
     col.appendChild(createEl('h4', '', status.replaceAll('_', ' ')));
-    normalized.filter((r) => r.status === status).forEach((w) => {
+    workers.forEach((w) => {
       const wc = createEl('article', `worker-card ${w.status}`);
       appendKV(wc, 'Worker', w.worker_name); appendKV(wc, 'Role', w.worker_role); appendKV(wc, 'Task', w.task);
       appendKV(wc, 'Status', `${w.status} · Worker: ${w.worker_status}`); appendKV(wc, 'Attempt', String(w.attempt)); appendKV(wc, 'Output', w.output);
       if (w.error) wc.appendChild(createEl('div', 'pill blocked', `Error: ${w.error}`));
       col.appendChild(wc);
     });
-    if (!col.querySelector('.worker-card')) col.appendChild(createEl('div', 'muted', 'No workers in this state.'));
     wrap.appendChild(col);
   });
+  if (!visibleColumns) wrap.appendChild(createEl('p', 'muted', 'No pending, running, review, or failed workers.'));
   refs.taskboardEl.appendChild(wrap);
   const approval = data?.approval_summary || {};
   const panel = createEl('section', 'panel approval-panel');
-  panel.appendChild(createEl('h4', '', 'Approval and merge summary'));
+  panel.appendChild(createEl('h4', '', 'Review and merge simulation'));
   appendKV(panel, 'Verifier result', pretty(approval.verifier_result, 'Available after run'));
-  appendKV(panel, 'Approval required', pretty(approval.approval_required, 'Available after run'));
-  appendKV(panel, 'Approved for merge', pretty(approval.approved, 'Available after run'));
-  appendKV(panel, 'Merge decision', pretty(approval.merge_decision, 'Available after run'));
+  appendKV(panel, 'Review required', pretty(approval.approval_required, 'Available after run'));
+  appendKV(panel, 'Simulated review outcome', pretty(approval.approved, 'Available after run'));
+  appendKV(panel, 'Simulated merge decision', pretty(approval.merge_decision, 'Available after run'));
   appendKV(panel, 'Merge policy', pretty(approval.merge_policy, 'Workshop-safe simulation'));
-  appendKV(panel, 'Final status', pretty(approval.final_status || approval.merge_decision, 'Available after run'));
+  appendKV(panel, 'Simulation status', pretty(approval.final_status || approval.merge_decision, 'Available after run'));
   const decision = String(approval.merge_decision || '').toLowerCase();
-  panel.appendChild(createEl('p', 'muted', decision.includes('approved') ? 'Merged after verifier and approval gate.' : 'Needs human review — merge blocked by verifier or approval gate.'));
+  panel.appendChild(createEl('p', 'muted', decision.includes('approved') ? 'Verifier supported the output. In a real workflow, this would wait for human approval before merge.' : 'Needs human review — simulated merge would not proceed.'));
   refs.taskboardEl.appendChild(panel);
 }
