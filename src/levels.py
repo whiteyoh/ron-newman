@@ -144,6 +144,34 @@ def use_case_prompt(text: str, use_case: str | None = None) -> str:
     return f"{use_case}\n{text}"
 
 
+def _resolve_use_case_prompt(use_case_key: str, use_case_context: str | None) -> str:
+    context = (use_case_context or "").strip()
+    if use_case_key == "custom":
+        base = (
+            "Use case for all levels: follow the confirmed user context directly. "
+            "Do not assume the user is a teacher, student, curriculum designer, school, or "
+            "business unless the context says so. Do not import details from any preset use "
+            "case. Use the provided goal, audience and constraints as the source of truth. "
+            "Do not ask follow-up questions."
+        )
+        if context:
+            return (
+                f"{base}\n"
+                f"Confirmed context from user: {context}\n"
+                "Use this confirmed context directly and do not ask clarifying questions."
+            )
+        return base
+
+    base = USE_CASE_OPTIONS.get(use_case_key, USE_CASE_OPTIONS[DEFAULT_USE_CASE_KEY])
+    if context:
+        return (
+            f"{base}\n"
+            f"Confirmed context from user: {context}\n"
+            "Use this confirmed context directly and do not ask clarifying questions."
+        )
+    return base
+
+
 def _build_structured_payload(
     level: int,
     level_info: dict[str, str],
@@ -500,13 +528,7 @@ def run_level(
     use_case_key: str = DEFAULT_USE_CASE_KEY,
     use_case_context: str | None = None,
 ) -> dict[str, Any]:
-    use_case = USE_CASE_OPTIONS.get(use_case_key, USE_CASE_OPTIONS[DEFAULT_USE_CASE_KEY])
-    if use_case_context and use_case_context.strip():
-        use_case = (
-            f"{use_case}\n"
-            f"Confirmed context from user: {use_case_context.strip()}\n"
-            "Use this confirmed context directly and do not ask clarifying questions."
-        )
+    use_case = _resolve_use_case_prompt(use_case_key, use_case_context)
     level_info = cast(dict[str, str], LEVELS[level])
     intro = [
         f"Running Level {level}: {level_info['name']}",
@@ -538,7 +560,7 @@ def run_level(
 
     if level == 1:
         objective = "Show prompt-only autocomplete behaviour."
-        prompt = "The teacher begins the lesson: 'Today we're mastering key ideas by'"
+        prompt = f"Start a useful response for this use case: {use_case}"
         continuation = client.chat("Continue the text naturally in one short phrase.", prompt)
         lines = [
             "Prompt-only baseline",
@@ -744,7 +766,9 @@ def run_level(
         ]
         run_data = run
     elif level == 5:
-        objective = use_case_prompt("Design a 2-hour Year 10 revision workshop.", use_case)
+        objective = use_case_prompt(
+            "Design a practical, structured plan for the confirmed use case.", use_case
+        )
         allowed = ["plan", "verify_completion", "revise_completion", "finish"]
 
         def exec_l5(action: str, _state: dict[str, Any]) -> tuple[str, str]:
@@ -796,7 +820,7 @@ def run_level(
         run_data = run
     elif level == 6:
         objective = use_case_prompt(
-            "Write a short lesson-summary note with one clear learner benefit.", use_case
+            "Write a short summary note with one clear audience benefit.", use_case
         )
         allowed = ["draft_completion", "critique", "revise_completion", "finish"]
         attempts: list[tuple[int, int, str]] = []
@@ -846,7 +870,7 @@ def run_level(
         run_data = run
     elif level == 7:
         objective = use_case_prompt(
-            "Design a practical support workflow for teachers creating lessons and revision plans.",
+            "Design a practical support workflow for the confirmed use case.",
             use_case,
         )
         policy = AgentPolicy(
@@ -940,7 +964,8 @@ def run_level(
     else:
         task = AgentTask(
             objective=use_case_prompt(
-                "Draft guidance for writing effective lesson and revision plans.", use_case
+                "Draft practical guidance for completing the confirmed use case effectively.",
+                use_case,
             )
         )
         orch = run_mini_orchestrator(client, task, parallel=True)
