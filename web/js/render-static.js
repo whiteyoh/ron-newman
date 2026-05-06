@@ -2,6 +2,15 @@ import { createEl, el, refs } from './dom.js';
 import { clearOutput, updateLevelButtonsVisibility } from './run-ui.js';
 import { state } from './state.js';
 
+const GUIDED_CONTEXT = 'Year 10 revision lesson on nutrition and healthy eating';
+
+function clearPresetSelectionState() {
+  state.selectedCustomScenario = null;
+  state.customUseCaseGoal = '';
+  state.customUseCaseAudience = '';
+  state.customUseCaseConstraints = '';
+}
+
 export function renderUseCases(data) {
   refs.useCaseOptions.textContent = '';
   Object.entries(data).forEach(([key, text], i) => {
@@ -11,6 +20,9 @@ export function renderUseCases(data) {
     b.onclick = () => {
       state.selectedUseCase = key;
       state.confirmedUseCase = null;
+      clearPresetSelectionState();
+      if (state.selectedUseCaseContext === GUIDED_CONTEXT) state.selectedUseCaseContext = '';
+      if (refs.contextInput?.value.trim() === GUIDED_CONTEXT) refs.contextInput.value = '';
       refs.confirmBtn.disabled = false;
       refs.selectionLabel.textContent = `Selected (not confirmed): ${key.replaceAll('_', ' ')}`;
       document.querySelectorAll('.option').forEach((o) => o.classList.remove('active'));
@@ -39,6 +51,7 @@ export function renderSurpriseUseCases(cases) {
     );
     card.onclick = () => {
       state.selectedUseCase = 'custom';
+      state.confirmedUseCase = null;
       state.selectedCustomScenario = {
         key: 'custom',
         title: useCase.title,
@@ -48,7 +61,6 @@ export function renderSurpriseUseCases(cases) {
         constraints: useCase.constraints,
       };
       state.selectedUseCaseContext = useCase.context;
-      state.confirmedUseCase = null;
       refs.confirmBtn.disabled = false;
       refs.selectionLabel.textContent = `Selected surprise use case: ${useCase.title}`;
       document.querySelectorAll('.surprise-card').forEach((o) => o.classList.remove('active'));
