@@ -49,6 +49,7 @@ def test_structured_payload_fields_all_levels():
         "replay_steps",
         "why_not_production",
         "approval_summary",
+        "final_answer",
     }
     for level in LEVELS:
         payload = run_level(level, DummyClient())
@@ -208,3 +209,13 @@ def test_no_key_fallback_levels_2_to_8_are_level_aware_and_no_chat():
         assert "merged final answer" not in text
         assert "production-ready" not in text
     assert client.chat_calls == 0
+
+
+def test_level8_top_level_final_answer_is_present_and_useful():
+    payload = run_level(8, DummyClient())
+    final_answer = str(payload.get("final_answer", "")).strip()
+
+    assert final_answer
+    assert final_answer == str(payload.get("final_answer")).strip()
+    assert not final_answer.lower().startswith("honest limitation note")
+    assert not final_answer.lower().startswith("workshop-safe")

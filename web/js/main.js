@@ -23,7 +23,6 @@ async function runLevel(level) {
   clearRunPanels();
   refs.log.textContent = '';
   appendMessage('system', 'Running simulation. No answer needed.');
-  appendMessage('trace', 'Read-only simulation trace. Nothing here requires you to answer.');
   try {
     const data = await runLevelRequest({ level, use_case: state.confirmedUseCase, use_case_context: state.selectedUseCaseContext });
     const backend = data?.backend || {};
@@ -35,10 +34,13 @@ async function runLevel(level) {
     const lines = Array.isArray(data.lines) && data.lines.length ? data.lines : ['No output lines returned.'];
     refs.log.textContent = '';
     appendMessage('trace', 'Read-only simulation trace. Nothing here requires you to answer.');
-    const finalAnswer = data?.approval_summary?.final_answer || data?.final_answer || lines[lines.length - 1] || '';
-    if (refs.finalOutputPanel && finalAnswer) {
+    const finalAnswer = data?.final_answer || data?.approval_summary?.final_answer || lines[lines.length - 1] || '';
+    const hiddenPrefixes = ['honest limitation note', 'workshop-safe', 'simulation note', 'audit trail', 'approval gate', 'policy', 'taskboard'];
+    const normalizedFinalAnswer = String(finalAnswer || '').trim();
+    const isUsefulFinalAnswer = normalizedFinalAnswer && !hiddenPrefixes.some((prefix) => normalizedFinalAnswer.toLowerCase().startsWith(prefix));
+    if (refs.finalOutputPanel && isUsefulFinalAnswer) {
       refs.finalOutputPanel.classList.remove('hidden');
-      if (refs.finalOutputBody) refs.finalOutputBody.textContent = finalAnswer;
+      if (refs.finalOutputBody) refs.finalOutputBody.textContent = normalizedFinalAnswer;
       if (refs.finalOutputStatus) refs.finalOutputStatus.textContent = data?.approval_summary?.final_status || 'Candidate';
     } else if (refs.finalOutputPanel) refs.finalOutputPanel.classList.add('hidden');
     if (refs.rawTraceDetails) refs.rawTraceDetails.open = Boolean(data?.runtime_error);
