@@ -1,7 +1,9 @@
 export const state = {
   quizAnswers: Array(8).fill(false),
   selectedUseCase: null,
+  selectedUseCaseLabel: null,
   confirmedUseCase: null,
+  confirmedUseCaseLabel: null,
   setupMode: 'example',
   customUseCaseGoal: '',
   customUseCaseAudience: '',

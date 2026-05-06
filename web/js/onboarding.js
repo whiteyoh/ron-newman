@@ -114,6 +114,18 @@ export function initOnboarding({ runLevel }) {
     setGuideReplayControlsVisible(true);
   };
 
+  const dismissGuideForManualChoice = () => {
+    if (!state.guideActive) return;
+    state.guideActive = false;
+    state.waitingForLevel3Comparison = false;
+    state.level3StartedFromGuide = false;
+    if (refs.guideCard) refs.guideCard.classList.add('hidden');
+    if (refs.guideLevel3Btn) refs.guideLevel3Btn.classList.add('hidden');
+    if (refs.guideFinishBtn) refs.guideFinishBtn.classList.add('hidden');
+    document.querySelectorAll('.guide-highlight').forEach((n) => n.classList.remove('guide-highlight'));
+    setGuideReplayControlsVisible(state.guideCompleted);
+  };
+
   on(refs.guideStartBtn, 'click', startGuide);
   on(refs.guideReplayBtn, 'click', startGuide);
   on(refs.guideInlineBtn, 'click', startGuide);
@@ -174,6 +186,7 @@ export function initOnboarding({ runLevel }) {
       }
     },
     isCompleted: () => state.guideCompleted,
+    dismissGuideForManualChoice,
     openApp,
   };
 }

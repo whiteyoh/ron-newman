@@ -31,9 +31,9 @@ def run_mini_orchestrator(client: AIChatClient, task: AgentTask, parallel: bool 
         AgentWorker("planner", "planner", "Create an execution plan for the objective."),
         AgentWorker("researcher", "researcher", "Gather key evidence and constraints."),
         AgentWorker(
-            "teacher_resource_writer",
-            "teacher_resource_writer",
-            "Draft classroom-ready resource text.",
+            "content_writer",
+            "content_writer",
+            "Draft user-ready content for the confirmed use case.",
         ),
         AgentWorker("critic", "critic", "Identify weaknesses and suggest improvements."),
     ]
