@@ -14,6 +14,8 @@ def test_main_js_ux_regressions():
     assert "OpenAI API Not Connected" not in text
     assert "Rendered with warning" in text
     assert "Completed with warning" not in text
+    assert "workflow steps" in text
+    assert "theatre steps" not in text
 
 
 def test_new_ux_cards_and_confirmed_context_static():
@@ -210,7 +212,8 @@ def test_first_run_advanced_details_static():
         "advanced-results-body",
         "Show workflow detail",
         "Behind the scenes",
-        "Score, steps, taskboard and raw trace",
+        "Scores, workflow steps and raw trace",
+        "A read-only view of the workflow Glytch simulated",
     ]:
         assert snippet in html
 
@@ -256,3 +259,12 @@ def test_first_run_advanced_details_static():
         ".advanced-results-details[open] > summary::after",
     ]:
         assert snippet in css
+
+
+def test_workflow_copy_plain_english_regressions():
+    html = Path("web/index.html").read_text(encoding="utf-8")
+    assert "Behind the scenes" in html
+    assert "A read-only view of the workflow Glytch simulated" in html
+    assert "Show workflow detail" in html
+    assert "Scores, workflow steps and raw trace" in html
+    assert "Agentic theatre" not in html

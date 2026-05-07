@@ -188,6 +188,7 @@ textarea:focus-visible {
 .quiz-card,
 .worker-card,
 .taskboard-column,
+/* Workflow detail cards */
 .theatre-step {
   padding: 0.75rem;
   text-align: left;

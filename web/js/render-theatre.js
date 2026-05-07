@@ -19,7 +19,7 @@ export function renderTheatre(data) {
     const card = createEl('article', `theatre-step ${status}`);
     const header = createEl('div', 'section-header');
     header.append(createEl('span', 'actor', (s.actor || 'agent').toLowerCase()), createEl('span', `pill ${status}`, humanizeStatus(status)));
-    card.append(header, createEl('strong', '', humanizeTheatreLabel(s.label || 'Step')), createEl('div', '', s.summary || ''), createEl('div', 'muted', s.detail || ''));
+    card.append(header, createEl('strong', '', humanizeTheatreLabel(s.label || 'Workflow step')), createEl('div', '', s.summary || ''), createEl('div', 'muted', s.detail || ''));
     state.theatreCards.push(card);
     refs.theatreSteps.appendChild(card);
   });

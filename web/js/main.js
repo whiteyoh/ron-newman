@@ -160,7 +160,7 @@ async function runLevel(level) {
       ].join('\n'));
     } else {
       if (refs.runSummaryStatus) refs.runSummaryStatus.textContent = 'Completed';
-      if (refs.runSummaryCopy) refs.runSummaryCopy.textContent = 'Glytch rendered this level as a workshop-safe simulation. Review the score, theatre steps and transcript before using the output.';
+      if (refs.runSummaryCopy) refs.runSummaryCopy.textContent = 'Glytch rendered this level as a workshop-safe simulation. Review the scores, workflow steps and transcript before using the output.';
       const backendLabel = backend.configured ? 'OpenAI API Connected' : 'Workshop-safe simulation';
       [
         `Level: Level ${level}`,
