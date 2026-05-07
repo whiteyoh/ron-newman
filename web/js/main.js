@@ -54,7 +54,7 @@ async function runLevel(level) {
     } else if (refs.finalOutputPanel) refs.finalOutputPanel.classList.add('hidden');
     if (refs.rawTraceDetails) refs.rawTraceDetails.open = Boolean(data?.runtime_error);
     if (data?.runtime_error) {
-      setStatus('Completed with warning', 'failed');
+      setStatus('Rendered with warning', 'failed');
       if (refs.runSummaryPanel) refs.runSummaryPanel.classList.add('warning');
       if (refs.runSummaryStatus) refs.runSummaryStatus.textContent = 'Rendered with warning';
       if (refs.runSummaryCopy) refs.runSummaryCopy.textContent = 'This level returned structured output, but one or more AI calls failed safely. No external action was taken.';

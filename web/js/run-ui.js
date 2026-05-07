@@ -2,20 +2,25 @@ import { createEl, refs, setStatus } from './dom.js';
 import { state } from './state.js';
 
 export function clearRunPanels() {
-  refs.scorePanel.textContent = '';
-  refs.theatreSteps.textContent = '';
-  refs.taskboardEl.textContent = '';
-  refs.replayState.textContent = '';
-  refs.replayBtn.disabled = true;
+  if (refs.scorePanel) refs.scorePanel.textContent = '';
+  if (refs.theatreSteps) refs.theatreSteps.textContent = '';
+  if (refs.taskboardEl) refs.taskboardEl.textContent = '';
+  if (refs.replayState) refs.replayState.textContent = '';
+  if (refs.replayBtn) refs.replayBtn.disabled = true;
   state.theatreCards = [];
   if (refs.runSummaryPanel) refs.runSummaryPanel.classList.add('hidden');
   if (refs.runSummaryPanel) refs.runSummaryPanel.classList.remove('warning');
   if (refs.runSummaryStatus) refs.runSummaryStatus.textContent = 'Waiting';
   if (refs.runSummaryCopy) refs.runSummaryCopy.textContent = '';
   if (refs.runSummaryList) refs.runSummaryList.textContent = '';
+  if (refs.finalOutputPanel) refs.finalOutputPanel.classList.add('hidden');
+  if (refs.finalOutputBody) refs.finalOutputBody.textContent = '';
+  if (refs.finalOutputStatus) refs.finalOutputStatus.textContent = 'Candidate';
+  if (refs.rawTraceDetails) refs.rawTraceDetails.open = false;
 }
 
 export function appendMessage(role, text) {
+  if (!refs.log) return;
   const item = createEl('div', `msg ${role}`, text);
   item.setAttribute('data-role', role);
   refs.log.appendChild(item);
@@ -23,13 +28,15 @@ export function appendMessage(role, text) {
 }
 
 export function clearOutput(msg = 'Choose a level to watch a simulated agent workflow. The output is a read-only trace; you only need to choose the scenario and level.') {
-  refs.log.textContent = '';
+  if (refs.log) refs.log.textContent = '';
   appendMessage('system', msg);
-  refs.meta.textContent = 'Run a level to verify API path, model and request id.';
+  if (refs.meta) refs.meta.textContent = 'Run a level to verify API path, model and request id.';
   setStatus('Waiting');
   state.latestArtifact = null;
-  refs.downloadArtifactBtn.disabled = true;
+  if (refs.downloadArtifactBtn) refs.downloadArtifactBtn.disabled = true;
   clearRunPanels();
 }
 
-export const updateLevelButtonsVisibility = () => refs.buttons.classList.toggle('hidden', !state.confirmedUseCase);
+export const updateLevelButtonsVisibility = () => {
+  if (refs.buttons) refs.buttons.classList.toggle('hidden', !state.confirmedUseCase);
+};
