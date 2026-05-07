@@ -137,6 +137,19 @@ def test_onboarding_handles_unexpected_level_choices_in_guide():
 
 
 def test_ui_polish_regressions_static():
+    html = Path("web/index.html").read_text(encoding="utf-8")
+    for snippet in [
+        "level-ladder",
+        "AI maturity journey",
+        "Prompting",
+        "Tool use",
+        "Workflow control",
+        "Orchestration",
+        "Levels 2–4",
+        "Levels 5–7",
+    ]:
+        assert snippet in html
+
     css = Path("web/styles.css").read_text(encoding="utf-8")
     assert ".level-recommendation" in css
     assert "flex-basis: 100%" in css
@@ -164,6 +177,11 @@ def test_ui_polish_regressions_static():
     assert "transform: translateY(-1px)" in css
     assert ".ghost:hover:not(:disabled)" in css
     assert ".final-output-panel" in css
+    assert ".level-ladder" in css
+    assert ".level-ladder-step" in css
+    assert ".level-ladder-kicker" in css
+    assert ".level-ladder-arrow" in css
+    assert "grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr" in css
 
     static_js = Path("web/js/render-static.js").read_text(encoding="utf-8")
     assert "Ask and answer." in static_js
