@@ -268,3 +268,35 @@ def test_workflow_copy_plain_english_regressions():
     assert "Show workflow detail" in html
     assert "Scores, workflow steps and raw trace" in html
     assert "Agentic theatre" not in html
+
+
+def test_landing_story_static_regressions():
+    html = Path("web/index.html").read_text(encoding="utf-8")
+    for snippet in [
+        "Most people use AI like search",
+        "Glytch shows what comes next",
+        "Run the same scenario across eight AI maturity levels",
+        "workshop-safe demo",
+        "hero-proof-strip",
+        "Prompt",
+        "Tool",
+        "Check",
+        "Review",
+        "Workflow",
+        "Why Glytch exists",
+        "AI maturity is not about longer prompts",
+        "See the difference",
+        "Stay in control",
+        "Learn what to try next",
+    ]:
+        assert snippet in html
+
+    css = Path("web/styles.css").read_text(encoding="utf-8")
+    for snippet in [
+        ".hero-proof-strip",
+        ".landing-explainer",
+        ".eyebrow",
+        ".landing-cards",
+        "grid-template-columns: repeat(3, minmax(0, 1fr))",
+    ]:
+        assert snippet in css
