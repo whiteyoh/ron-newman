@@ -291,12 +291,20 @@ def test_landing_story_static_regressions():
     ]:
         assert snippet in html
 
+    assert "<!-- See AI evolve from simple prompts into controlled workflows. -->" not in html
+
     css = Path("web/styles.css").read_text(encoding="utf-8")
     for snippet in [
         ".hero-proof-strip",
         ".landing-explainer",
         ".eyebrow",
         ".landing-cards",
-        "grid-template-columns: repeat(3, minmax(0, 1fr))",
     ]:
         assert snippet in css
+
+    expected_landing_cards_desktop_rule = """@media (min-width: 760px) {
+  .landing-cards {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}"""
+    assert expected_landing_cards_desktop_rule in css
