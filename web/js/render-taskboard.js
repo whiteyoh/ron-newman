@@ -1,5 +1,5 @@
 import { appendKV, createEl, pretty, refs } from './dom.js';
-import { normalizeStatus } from './render-theatre.js';
+import { humanizeStatus, normalizeStatus } from './render-theatre.js';
 
 const summarizeOutput = (output) => (!output ? 'No output yet.' : String(output).slice(0, 180));
 
@@ -29,11 +29,11 @@ export function renderTaskboard(data) {
     if (!workers.length) return;
     visibleColumns += 1;
     const col = createEl('section', 'taskboard-column');
-    col.appendChild(createEl('h4', '', status.replaceAll('_', ' ')));
+    col.appendChild(createEl('h4', '', humanizeStatus(status)));
     workers.forEach((w) => {
       const wc = createEl('article', `worker-card ${w.status}`);
       appendKV(wc, 'Worker', w.worker_name); appendKV(wc, 'Role', w.worker_role); appendKV(wc, 'Task', w.task);
-      appendKV(wc, 'Status', `${w.status} · Worker: ${w.worker_status}`); appendKV(wc, 'Attempt', String(w.attempt)); appendKV(wc, 'Output', w.output);
+      appendKV(wc, 'Status', `${humanizeStatus(w.status)} · Worker: ${humanizeStatus(w.worker_status)}`); appendKV(wc, 'Attempt', String(w.attempt)); appendKV(wc, 'Output', w.output);
       if (w.error) wc.appendChild(createEl('div', 'pill blocked', `Error: ${w.error}`));
       col.appendChild(wc);
     });
