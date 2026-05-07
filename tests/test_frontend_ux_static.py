@@ -149,6 +149,13 @@ def test_ui_polish_regressions_static():
     assert ".final-output-panel h3" in css
     assert ".final-output-body" in css
     assert "font-size: 1.03rem" in css
+    assert "font-size: clamp(2.7rem, 8vw, 5.8rem)" in css
+    assert "letter-spacing: -0.06em" in css
+    assert ".hero::after" in css
+    assert "button:hover:not(:disabled)" in css
+    assert "transform: translateY(-1px)" in css
+    assert ".ghost:hover:not(:disabled)" in css
+    assert ".final-output-panel" in css
 
     static_js = Path("web/js/render-static.js").read_text(encoding="utf-8")
     assert "Ask and answer." in static_js
