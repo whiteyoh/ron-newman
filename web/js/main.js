@@ -15,24 +15,33 @@ function on(node, event, handler) {
   node.addEventListener(event, handler);
 }
 
+
+function setText(node, value) {
+  if (node) node.textContent = value;
+}
+
+function setDisabled(node, value) {
+  if (node) node.disabled = value;
+}
+
 async function runLevel(level) {
   state.lastRunLevel = level;
   if (!state.confirmedUseCase || state.runInProgress) return;
   state.runInProgress = true;
   setStatus('Running…', 'running');
   clearRunPanels();
-  refs.log.textContent = '';
+  setText(refs.log, '');
   appendMessage('system', 'Running simulation. No answer needed.');
   try {
     const data = await runLevelRequest({ level, use_case: state.confirmedUseCase, use_case_context: state.selectedUseCaseContext });
     const backend = data?.backend || {};
     setStatus(backend.configured ? 'OpenAI API Connected' : 'OpenAI API Not Connected', backend.configured ? 'ok' : 'err');
-    refs.meta.textContent = `request_id=${data?.request_id || 'Available after run'} · provider=${backend.provider || 'Workshop-safe simulation'} · model=${backend.model || 'Workshop-safe simulation'}`;
+    setText(refs.meta, `request_id=${data?.request_id || 'Available after run'} · provider=${backend.provider || 'Workshop-safe simulation'} · model=${backend.model || 'Workshop-safe simulation'}`);
     renderScorePanel(data.agenticness, data); renderTheatre(data); renderTaskboard(data);
     if (refs.runSummaryPanel) refs.runSummaryPanel.classList.remove('hidden');
     if (refs.runSummaryList) refs.runSummaryList.textContent = '';
     const lines = Array.isArray(data.lines) && data.lines.length ? data.lines : ['No output lines returned.'];
-    refs.log.textContent = '';
+    setText(refs.log, '');
     appendMessage('trace', 'Read-only simulation trace. Nothing here requires you to answer.');
     const finalAnswer = data?.final_answer || data?.approval_summary?.final_answer || lines[lines.length - 1] || '';
     const hiddenPrefixes = ['honest limitation note', 'workshop-safe', 'simulation note', 'audit trail', 'approval gate', 'policy', 'taskboard'];
@@ -80,11 +89,11 @@ async function runLevel(level) {
     }
     for (const line of lines) { appendMessage('trace', line); await sleep(prefersReducedMotion ? 0 : 120); }
     state.latestArtifact = `Glytch Export\nGenerated: ${new Date().toISOString()}\nLevel: ${level}\nUse case: ${state.confirmedUseCaseLabel || state.confirmedUseCase}\nBackend key: ${state.confirmedUseCase}\n\n${lines.join('\n')}`;
-    refs.downloadArtifactBtn.disabled = false;
+    setDisabled(refs.downloadArtifactBtn, false);
   } catch (err) {
     console.error('Level run failed', err);
     setStatus('Request failed', 'failed');
-    refs.log.textContent = '';
+    setText(refs.log, '');
     const lines = [
       'Simulation could not complete. No action was taken.',
       `Reason: ${err?.message || 'Unknown error'}`,
@@ -98,8 +107,8 @@ async function runLevel(level) {
       );
     }
     appendMessage('system', lines.join(String.fromCharCode(10)));
-    refs.replayBtn.disabled = true;
-    refs.downloadArtifactBtn.disabled = true;
+    setDisabled(refs.replayBtn, true);
+    setDisabled(refs.downloadArtifactBtn, true);
   } finally { state.runInProgress = false; }
   onboarding?.onRunComplete(level);
 }

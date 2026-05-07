@@ -6,7 +6,7 @@ def test_main_js_runtime_warning_order_and_start_reset_and_catch_guards():
     text = Path("web/js/main.js").read_text(encoding="utf-8")
 
     assert "runtime_error" in text
-    clear_idx = text.index("refs.log.textContent = '';")
+    clear_idx = text.index("setText(refs.log, '');")
     intro_idx = text.index(
         "appendMessage('trace', "
         "'Read-only simulation trace. Nothing here requires you to answer.');"
@@ -80,7 +80,7 @@ def test_main_js_final_answer_priority_and_trace_intro_once():
     first_intro_idx = text.find(trace_intro)
     assert first_intro_idx > run_idx
 
-    clear_after_idx = text.index("refs.log.textContent = '';", run_idx)
+    clear_after_idx = text.index("setText(refs.log, '');", run_idx)
     intro_after_idx = text.index(trace_intro, clear_after_idx)
     assert intro_after_idx > clear_after_idx
 

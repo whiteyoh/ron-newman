@@ -16,6 +16,14 @@ def test_frontend_js_files_parse():
         )
 
 
+def test_frontend_js_files_do_not_contain_broken_newline_join_patterns():
+    for path in Path("web/js").glob("*.js"):
+        text = path.read_text(encoding="utf-8")
+        assert "].join('\n'));" not in text
+        assert "].join('\n" not in text
+        assert "join('\n" not in text
+
+
 def test_main_menu_button_bindings_exist():
     text = Path("web/js/main.js").read_text(encoding="utf-8")
     assert "on(el('start-btn'), 'click'" in text
