@@ -61,6 +61,19 @@ def test_new_ux_cards_and_confirmed_context_static():
         assert snippet in main_js
     assert "Action: Check OPENAI_MODEL, model access, quota or billing" not in main_js
 
+    for snippet in [
+        "state.customUseCaseGoal.length < 8",
+        "state.confirmedUseCase = null",
+        "state.confirmedUseCaseLabel = null",
+        "hideConfirmedContext();",
+        "Custom use case changed. Add a clear goal, then confirm direction again.",
+        "updateLevelButtonsVisibility();",
+        "const previousMode = state.setupMode",
+        "const modeChanged = previousMode && previousMode !== mode",
+        "if (modeChanged)",
+    ]:
+        assert snippet in main_js
+
     run_ui_js = Path("web/js/run-ui.js").read_text(encoding="utf-8")
     for snippet in [
         "runInsightPanel",
