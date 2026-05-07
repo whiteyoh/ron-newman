@@ -12,6 +12,9 @@ def test_index_html_copy_and_panel_order_updates():
     assert "Human approval gates" not in html
     assert "Human review checkpoints" in html
 
+    assert "visible checks and approval gates" not in html
+    assert "visible checks and review checkpoints" in html
+
     final_output_idx = html.index('<section id="final-output-panel"')
     score_panel_idx = html.index('<div id="score-panel" class="dashboard-grid"></div>')
     assert final_output_idx < score_panel_idx
@@ -37,6 +40,12 @@ def test_main_js_confirmation_copy_and_context_merge_behaviour_are_preserved():
     assert "Context included:" in text
     assert "mergeOptionalContext" in text
     assert "User refinement:" in text
+
+    assert "Small business launch" in text
+    assert "new product or service" in text
+    assert "do not assume a specific industry" in text
+    assert "sustainable coffee brand" not in text
+    assert "coffee brand" not in text
     expected_call = (
         "runLevelRequest({ level, use_case: state.confirmedUseCase, "
         "use_case_context: state.selectedUseCaseContext })"
