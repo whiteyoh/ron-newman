@@ -6,7 +6,7 @@
     <title>Glytch | See AI grow from prompts into controlled agents</title>
     <meta
       name="description"
-      content="Workshop-safe demo that shows decisions, checks, human approval gates, and orchestration in plain English across 8 AI maturity levels."
+      content="Workshop-safe demo that shows decisions, checks, human review checkpoints, and orchestration in plain English across 8 AI maturity levels."
     />
     <meta property="og:title" content="Glytch | Controlled Agent Demo" />
     <meta
@@ -34,7 +34,7 @@
       </div></details>
       <div class="badges" aria-label="Safety and design badges">
         <span class="badge">Workshop-safe</span>
-        <span class="badge">Human approval gates</span>
+        <span class="badge">Human review checkpoints</span>
         <span class="badge">No real side effects</span>
       </div>
     </header>
@@ -70,11 +70,11 @@
             <h3>Create your own use case</h3>
             <p class="muted helper-text">Write a real task. Glytch will use it as the context for each level.</p>
             <label for="custom-goal-input">What do you want to use AI for?</label>
-            <textarea id="custom-goal-input" rows="3" placeholder="I need to plan a revision lesson for Year 10 food technology"></textarea>
+            <textarea id="custom-goal-input" rows="3" placeholder="I need to plan a product launch, revision session, workshop, report, or workflow"></textarea>
             <label for="custom-audience-input">Who is it for? optional</label>
             <textarea id="custom-audience-input" rows="2" placeholder="A team of non-technical managers"></textarea>
             <label for="custom-constraints-input">Any constraints? optional</label>
-            <textarea id="custom-constraints-input" rows="2" placeholder="Keep it plain English and suitable for a 20-minute session"></textarea>
+            <textarea id="custom-constraints-input" rows="2" placeholder="Keep it plain English, practical, and easy to act on"></textarea>
           </div>
           <div id="surprise-use-case-options" class="choices hidden"></div>
           <div class="confirm-panel">
@@ -122,14 +122,6 @@
             <p id="run-summary-copy" class="muted" aria-live="polite"></p>
             <ul id="run-summary-list" class="run-summary-list"></ul>
           </section>
-          <div id="score-panel" class="dashboard-grid"></div>
-          <h3>Agentic theatre</h3>
-          <div id="theatre-steps" class="theatre-flow" aria-live="polite"></div>
-          <div class="toolbar">
-            <button id="replay-btn" class="ghost" disabled>Replay this run</button>
-            <span id="replay-state" class="muted"></span>
-          </div>
-          <div id="taskboard"></div>
           <section id="final-output-panel" class="panel final-output-panel hidden" aria-labelledby="final-output-title">
             <div class="section-header">
               <h3 id="final-output-title">Final output</h3>
@@ -137,6 +129,15 @@
             </div>
             <div id="final-output-body" class="final-output-body"></div>
           </section>
+<div id="score-panel" class="dashboard-grid"></div>
+          <h3>Agentic theatre</h3>
+          <div id="theatre-steps" class="theatre-flow" aria-live="polite"></div>
+          <div class="toolbar">
+            <button id="replay-btn" class="ghost" disabled>Replay this run</button>
+            <span id="replay-state" class="muted"></span>
+          </div>
+          <div id="taskboard"></div>
+          
           <details id="raw-trace-details" class="raw-trace-details">
             <summary>Raw output transcript</summary>
             <div id="log" aria-live="polite"></div>

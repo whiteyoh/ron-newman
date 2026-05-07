@@ -65,6 +65,7 @@ export function renderSurpriseUseCases(cases) {
         constraints: useCase.constraints,
       };
       state.selectedUseCaseContext = useCase.context;
+      if (refs.contextInput) refs.contextInput.value = "";
       refs.confirmBtn.disabled = false;
       refs.selectionLabel.textContent = `Selected surprise use case: ${useCase.title}`;
       document.querySelectorAll('.surprise-card').forEach((o) => o.classList.remove('active'));

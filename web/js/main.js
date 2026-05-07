@@ -269,7 +269,10 @@ on(refs.confirmBtn, 'click', () => {
   state.confirmedUseCase = state.selectedUseCase;
   state.confirmedUseCaseLabel = state.selectedUseCaseLabel || state.selectedUseCase;
   const label = state.confirmedUseCaseLabel;
-  if (refs.selectionLabel) refs.selectionLabel.textContent = `Confirmed direction: ${label}${state.selectedUseCaseContext ? ` | context: ${state.selectedUseCaseContext}` : ''}`;
+  const hasContext = Boolean(state.selectedUseCaseContext && state.selectedUseCaseContext.trim());
+  if (refs.selectionLabel) {
+    refs.selectionLabel.textContent = `Confirmed direction: ${label}. Context included: ${hasContext ? 'yes' : 'no'}.`;
+  }
   clearOutput('Direction confirmed. Choose a level to run.');
   updateLevelButtonsVisibility();
   onboarding.onConfirmed();
