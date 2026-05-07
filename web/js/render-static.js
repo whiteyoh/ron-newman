@@ -80,7 +80,57 @@ export function renderSurpriseUseCases(cases) {
   });
 }
 
-export const renderBeforeAfter = (levels) => { refs.beforeAfter.textContent = ''; Object.entries(levels).forEach(([id, l]) => { const c = createEl('article', 'card'); c.append(createEl('h3', '', `Level ${id}: ${l.name}`), createEl('p', '', `Before: ${l.before || 'Raw model capability.'}`), createEl('p', '', `Agentic: ${l.agentic || 'Adds checks, approval, and traceable decisions.'}`)); refs.beforeAfter.appendChild(c); }); };
+const beforeAfterCopy = {
+  1: {
+    before: 'You ask for help and receive one draft or suggestion.',
+    controlled: 'The human reviews, edits and decides the next step.',
+  },
+  2: {
+    before: 'The prompt may be vague or inconsistent.',
+    controlled: 'The task follows clearer instructions, format and constraints.',
+  },
+  3: {
+    before: 'The model may guess concrete facts or calculations.',
+    controlled: 'A bounded tool is used and the result can be checked.',
+  },
+  4: {
+    before: 'The answer may rely on general model knowledge.',
+    controlled: 'The response is grounded in retrieved evidence.',
+  },
+  5: {
+    before: 'A broad task comes back as one large answer.',
+    controlled: 'The work is split into visible steps with a clearer plan.',
+  },
+  6: {
+    before: 'The first draft is treated as the final answer.',
+    controlled: 'The draft is critiqued and revised before review.',
+  },
+  7: {
+    before: 'The human manually drives every step.',
+    controlled: 'A bounded loop observes, acts, checks and stops safely.',
+  },
+  8: {
+    before: 'One response tries to do all the work.',
+    controlled: 'Multiple simulated workers coordinate through checks, review and merge policy.',
+  },
+};
+
+export const renderBeforeAfter = (levels) => {
+  refs.beforeAfter.textContent = '';
+  Object.entries(levels).forEach(([id, l]) => {
+    const copy = beforeAfterCopy[id] || {
+      before: 'This level shows the basic capability.',
+      controlled: 'Glytch makes the workflow more visible, reviewable and bounded.',
+    };
+    const c = createEl('article', 'card');
+    c.append(
+      createEl('h3', '', `Level ${id}: ${l.name}`),
+      createEl('p', '', `Basic use: ${copy.before}`),
+      createEl('p', '', `With more control: ${copy.controlled}`),
+    );
+    refs.beforeAfter.appendChild(c);
+  });
+};
 export const renderMaturityStages = (stages) => stages.forEach((s) => { const c = createEl('article', 'card'); c.append(createEl('strong', '', `Stage ${s.id}: ${s.name}`), createEl('div', 'muted', s.plain_english_summary || '')); el('maturity-cards').appendChild(c); });
 export const renderLevelCards = (levels, onClick) => {
   refs.buttons.textContent = '';
