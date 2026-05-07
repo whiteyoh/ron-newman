@@ -49,6 +49,9 @@ def test_ui_polish_regressions_static():
     css = Path("web/styles.css").read_text(encoding="utf-8")
     assert ".level-recommendation" in css
     assert "flex-basis: 100%" in css
+    assert ".level-group-grid" in css
+    assert "grid-template-columns: 1fr" in css
+    assert ".level-group-grid { grid-template-columns: repeat(2" not in css
     assert "#buttons" in css
     assert "repeat(auto-fit, minmax(240px, 1fr))" in css
     assert ".level-group-description" in css
