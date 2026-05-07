@@ -1,5 +1,6 @@
 import { createEl, el, refs } from './dom.js';
 import { clearOutput, updateLevelButtonsVisibility } from './run-ui.js';
+import { hideConfirmedContext } from './confirmed-context.js';
 import { state } from './state.js';
 
 const GUIDED_CONTEXT = 'Year 10 revision lesson on nutrition and healthy eating';
@@ -22,6 +23,7 @@ export function renderUseCases(data) {
       state.selectedUseCaseLabel = key.replaceAll('_', ' ');
       state.confirmedUseCase = null;
       state.confirmedUseCaseLabel = null;
+      hideConfirmedContext();
       clearPresetSelectionState();
       if (state.selectedUseCaseContext === GUIDED_CONTEXT) state.selectedUseCaseContext = '';
       if (refs.contextInput?.value.trim() === GUIDED_CONTEXT) refs.contextInput.value = '';
@@ -56,6 +58,7 @@ export function renderSurpriseUseCases(cases) {
       state.selectedUseCaseLabel = useCase.title;
       state.confirmedUseCase = null;
       state.confirmedUseCaseLabel = null;
+      hideConfirmedContext();
       state.selectedCustomScenario = {
         key: 'custom',
         title: useCase.title,

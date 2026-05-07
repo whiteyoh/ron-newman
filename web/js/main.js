@@ -8,6 +8,7 @@ import { renderTheatre } from './render-theatre.js';
 import { runReplay } from './replay.js';
 import { appendMessage, clearOutput, clearRunPanels, updateLevelButtonsVisibility } from './run-ui.js';
 import { initOnboarding } from './onboarding.js';
+import { showConfirmedContext, hideConfirmedContext } from './confirmed-context.js';
 import { prefersReducedMotion, sleep, state } from './state.js';
 
 function on(node, event, handler) {
@@ -51,6 +52,46 @@ function getRecommendedNextStep(level) {
   if (level === 3) return 'Next, try Level 8 to see orchestration with multiple simulated workers.';
   if (level === 8) return 'Now compare this with Level 1 to see how much structure was added.';
   return 'Try Level 1, Level 3, or Level 8 to compare the maturity jump.';
+}
+
+
+function getRuntimeWarningLines(runtimeError) {
+  const code = runtimeError?.code || 'unavailable';
+  const message = runtimeError?.message || 'Unknown runtime warning';
+
+  if (code === 'upstream_timeout') {
+    return [
+      `Warning: ${message}`,
+      `Code: ${code}`,
+      'Action: The AI provider took too long to respond. Retry, try a lower level, or reduce scenario detail.',
+      'Next step: The demo stayed safe and no external action was taken.',
+    ];
+  }
+
+  if (code === 'insufficient_quota') {
+    return [
+      `Warning: ${message}`,
+      `Code: ${code}`,
+      'Action: Check OpenAI quota or billing.',
+      'Next step: Retry after quota or billing is resolved.',
+    ];
+  }
+
+  if (code === 'model_not_found' || code === 'invalid_model') {
+    return [
+      `Warning: ${message}`,
+      `Code: ${code}`,
+      'Action: Check OPENAI_MODEL and model access.',
+      'Next step: Use a model your OpenAI project can access.',
+    ];
+  }
+
+  return [
+    `Warning: ${message}`,
+    `Code: ${code}`,
+    'Action: Review the trace, retry, or try a lower level.',
+    'Next step: The demo stayed safe and no external action was taken.',
+  ];
 }
 
 async function runLevel(level) {
@@ -103,12 +144,7 @@ async function runLevel(level) {
       if (refs.runSummaryPanel) refs.runSummaryPanel.classList.add('warning');
       if (refs.runSummaryStatus) refs.runSummaryStatus.textContent = 'Rendered with warning';
       if (refs.runSummaryCopy) refs.runSummaryCopy.textContent = 'This level returned structured output, but one or more AI calls failed safely. No external action was taken.';
-      [
-        `Warning: ${data.runtime_error.message || 'Unknown runtime warning'}`,
-        `Code: ${data.runtime_error.code || 'unavailable'}`,
-        'Action: Check OPENAI_MODEL, model access, quota or billing',
-        'Next step: Review the trace, retry, or try a lower level',
-      ].forEach((line) => {
+      getRuntimeWarningLines(data.runtime_error).forEach((line) => {
         const item = createEl('li', '', line);
         refs.runSummaryList?.appendChild(item);
       });
@@ -146,6 +182,11 @@ async function runLevel(level) {
     if (err?.code) lines.push(`Code: ${err.code}`);
     if (err?.status) lines.push(`HTTP status: ${err.status}`);
     if (err?.requestId) lines.push(`Request ID: ${err.requestId}`);
+    if (err?.code === 'upstream_timeout') {
+      lines.push(
+        'Hint: The AI provider took too long to respond. Retry, try a lower level, or reduce scenario detail.'
+      );
+    }
     if (err?.code === 'upstream_http') {
       lines.push(
         'Hint: Check OPENAI_MODEL in your hosting environment. If you recently tried gpt-5.2, set OPENAI_MODEL back to gpt-4.1-mini or confirm your OpenAI project has access to the configured model.'
@@ -275,6 +316,7 @@ function updateCustomScenario() {
   state.selectedUseCaseContext = buildCustomContext();
   state.confirmedUseCase = null;
   state.confirmedUseCaseLabel = null;
+  hideConfirmedContext();
   if (refs.selectionLabel) refs.selectionLabel.textContent = `Selected custom use case: ${state.customUseCaseGoal.slice(0, 72)}`;
   if (refs.confirmBtn) refs.confirmBtn.disabled = false;
   clearOutput('Custom use case updated. Confirm direction to continue.');
@@ -284,6 +326,7 @@ function updateCustomScenario() {
 on(el('start-btn'), 'click', () => {
   onboarding.openApp();
   state.selectedUseCaseContext = '';
+  hideConfirmedContext();
   if (refs.contextInput) refs.contextInput.value = '';
 });
 on(refs.setupModeExampleBtn, 'click', () => {
@@ -386,20 +429,4 @@ function renderQuickCompareActions(level) {
     button.addEventListener('click', () => runLevel(targetLevel));
     refs.quickCompareActions.appendChild(button);
   });
-}
-
-function showConfirmedContext() {
-  const context = String(state.selectedUseCaseContext || '').trim();
-  if (!context || !refs.confirmedContextDetails || !refs.confirmedContextBody) return hideConfirmedContext();
-  refs.confirmedContextBody.textContent = context;
-  refs.confirmedContextDetails.open = false;
-  refs.confirmedContextDetails.classList.remove('hidden');
-}
-
-function hideConfirmedContext() {
-  if (refs.confirmedContextBody) refs.confirmedContextBody.textContent = '';
-  if (refs.confirmedContextDetails) {
-    refs.confirmedContextDetails.open = false;
-    refs.confirmedContextDetails.classList.add('hidden');
-  }
 }
