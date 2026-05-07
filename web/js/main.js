@@ -112,6 +112,10 @@ async function runLevel(level) {
     setStatus(backend.configured ? 'OpenAI API Connected' : 'Workshop-safe simulation mode', backend.configured ? 'ok' : 'review');
     setText(refs.meta, `request_id=${data?.request_id || 'Available after run'} · provider=${backend.provider || 'Workshop-safe simulation'} · model=${backend.model || 'Workshop-safe simulation'}`);
     renderScorePanel(data.agenticness, data); renderTheatre(data); renderTaskboard(data);
+    if (refs.advancedResultsDetails) {
+      refs.advancedResultsDetails.classList.remove('hidden');
+      refs.advancedResultsDetails.open = false;
+    }
     if (refs.runSummaryPanel) refs.runSummaryPanel.classList.remove('hidden');
     if (refs.runInsightPanel) refs.runInsightPanel.classList.remove('hidden');
     if (refs.runInsightLevel) refs.runInsightLevel.textContent = `Level ${level}`;

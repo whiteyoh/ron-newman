@@ -256,6 +256,47 @@ textarea:focus-visible {
   color: #f2f6ff;
 }
 
+
+.advanced-results-details {
+  margin-top: 1rem;
+  border: 1px solid rgba(104, 231, 255, 0.24);
+  border-radius: 16px;
+  background: rgba(7, 14, 34, 0.58);
+  overflow: hidden;
+}
+
+.advanced-results-details > summary {
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  align-items: center;
+  padding: 0.85rem 1rem;
+  color: var(--text);
+  list-style: none;
+  flex-wrap: wrap;
+}
+
+.advanced-results-details > summary::-webkit-details-marker {
+  display: none;
+}
+
+.advanced-results-details > summary::after {
+  content: "+";
+  color: var(--accent);
+  font-weight: 800;
+  font-size: 1.25rem;
+}
+
+.advanced-results-details[open] > summary::after {
+  content: "–";
+}
+
+.advanced-results-body {
+  display: grid;
+  gap: 0.85rem;
+  padding: 0 1rem 1rem;
+}
 .output-actions {
   display: flex;
   gap: 0.6rem;
