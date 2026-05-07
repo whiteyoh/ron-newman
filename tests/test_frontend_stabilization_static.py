@@ -119,3 +119,25 @@ def test_main_js_has_single_post_response_trace_intro_and_no_pre_request_intro()
     run_idx = text.index("const data = await runLevelRequest")
     intro_idx = text.index(trace_intro)
     assert intro_idx > run_idx
+
+
+def test_run_ui_clear_panels_reset_final_output_and_guards():
+    text = Path("web/js/run-ui.js").read_text(encoding="utf-8")
+
+    assert "if (refs.finalOutputPanel) refs.finalOutputPanel.classList.add('hidden');" in text
+    assert "if (refs.finalOutputBody) refs.finalOutputBody.textContent = '';" in text
+    assert "if (refs.finalOutputStatus) refs.finalOutputStatus.textContent = 'Candidate';" in text
+    assert "if (refs.rawTraceDetails) refs.rawTraceDetails.open = false;" in text
+
+    assert "if (!refs.log) return;" in text
+    assert (
+        "if (refs.buttons) refs.buttons.classList.toggle('hidden', !state.confirmedUseCase);"
+        in text
+    )
+
+
+def test_runtime_warning_copy_is_rendered_with_warning():
+    text = Path("web/js/main.js").read_text(encoding="utf-8")
+
+    assert "Rendered with warning" in text
+    assert "Completed with warning" not in text
