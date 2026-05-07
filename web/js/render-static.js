@@ -82,6 +82,12 @@ export const renderMaturityStages = (stages) => stages.forEach((s) => { const c 
 export const renderLevelCards = (levels, onClick) => {
   refs.buttons.textContent = '';
   const groupOrder = ['Prompting', 'Tool use', 'Workflow control', 'Orchestration'];
+  const groupDescriptions = {
+    Prompting: 'Ask and answer.',
+    'Tool use': 'Use bounded tools.',
+    'Workflow control': 'Add checks and structure.',
+    Orchestration: 'Coordinate multiple workers.',
+  };
   const groups = { Prompting: [], 'Tool use': [], 'Workflow control': [], Orchestration: [] };
   Object.entries(levels).forEach(([k, v]) => {
     const id = Number(k);
@@ -92,6 +98,7 @@ export const renderLevelCards = (levels, onClick) => {
   groupOrder.forEach((groupName) => {
     const section = createEl('section', 'level-group');
     section.appendChild(createEl('h3', '', groupName));
+    section.appendChild(createEl('p', 'muted level-group-description', groupDescriptions[groupName]));
     const grid = createEl('div', 'level-group-grid');
     groups[groupName].forEach(([k, v]) => {
       const b = createEl('button', 'level-card');
