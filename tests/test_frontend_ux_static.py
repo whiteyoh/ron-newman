@@ -16,6 +16,84 @@ def test_main_js_ux_regressions():
     assert "Completed with warning" not in text
 
 
+def test_new_ux_cards_and_confirmed_context_static():
+    html = Path("web/index.html").read_text(encoding="utf-8")
+    for snippet in [
+        "What just happened?",
+        "Learning takeaway",
+        "Recommended next step",
+        "quick-compare-actions",
+        "confirmed-context-details",
+        "confirmed-context-body",
+    ]:
+        assert snippet in html
+
+    dom_js = Path("web/js/dom.js").read_text(encoding="utf-8")
+    for snippet in [
+        "runInsightPanel",
+        "runInsightCopy",
+        "learningTakeawayPanel",
+        "learningTakeawayCopy",
+        "nextStepPanel",
+        "nextStepCopy",
+        "quickCompareActions",
+        "confirmedContextDetails",
+        "confirmedContextBody",
+    ]:
+        assert snippet in dom_js
+
+    main_js = Path("web/js/main.js").read_text(encoding="utf-8")
+    for snippet in [
+        "getRunInsight",
+        "getLearningTakeaway",
+        "getRecommendedNextStep",
+        "getRuntimeWarningLines",
+        "renderQuickCompareActions",
+        "This is basic prompting",
+        "This is orchestration",
+        "Next, try Level 3",
+        "Compare Level 1",
+        "Compare Level 3",
+        "Compare Level 8",
+        "upstream_timeout",
+        "The AI provider took too long to respond",
+    ]:
+        assert snippet in main_js
+    assert "Action: Check OPENAI_MODEL, model access, quota or billing" not in main_js
+
+    run_ui_js = Path("web/js/run-ui.js").read_text(encoding="utf-8")
+    for snippet in [
+        "runInsightPanel",
+        "learningTakeawayPanel",
+        "nextStepPanel",
+        "quickCompareActions",
+    ]:
+        assert snippet in run_ui_js
+
+    confirmed_context_js = Path("web/js/confirmed-context.js").read_text(encoding="utf-8")
+    for snippet in [
+        "export function showConfirmedContext",
+        "export function hideConfirmedContext",
+        "import { refs }",
+        "import { state }",
+    ]:
+        assert snippet in confirmed_context_js
+
+    render_static_js = Path("web/js/render-static.js").read_text(encoding="utf-8")
+    assert "import { hideConfirmedContext } from './confirmed-context.js';" in render_static_js
+    assert render_static_js.count("hideConfirmedContext();") >= 2
+
+    css = Path("web/styles.css").read_text(encoding="utf-8")
+    for snippet in [
+        ".run-insight-panel",
+        ".learning-takeaway-panel",
+        ".next-step-panel",
+        ".quick-compare-actions",
+        ".confirmed-context-details",
+    ]:
+        assert snippet in css
+
+
 def test_render_theatre_humanizes_visible_status():
     text = Path("web/js/render-theatre.js").read_text(encoding="utf-8")
 
