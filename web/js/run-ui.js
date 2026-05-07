@@ -13,9 +13,17 @@ export function clearRunPanels() {
   if (refs.runSummaryStatus) refs.runSummaryStatus.textContent = 'Waiting';
   if (refs.runSummaryCopy) refs.runSummaryCopy.textContent = '';
   if (refs.runSummaryList) refs.runSummaryList.textContent = '';
+  if (refs.runInsightPanel) refs.runInsightPanel.classList.add('hidden');
+  if (refs.runInsightLevel) refs.runInsightLevel.textContent = 'Level insight';
+  if (refs.runInsightCopy) refs.runInsightCopy.textContent = '';
   if (refs.finalOutputPanel) refs.finalOutputPanel.classList.add('hidden');
   if (refs.finalOutputBody) refs.finalOutputBody.textContent = '';
   if (refs.finalOutputStatus) refs.finalOutputStatus.textContent = 'Candidate';
+  if (refs.learningTakeawayPanel) refs.learningTakeawayPanel.classList.add('hidden');
+  if (refs.learningTakeawayCopy) refs.learningTakeawayCopy.textContent = '';
+  if (refs.nextStepPanel) refs.nextStepPanel.classList.add('hidden');
+  if (refs.nextStepCopy) refs.nextStepCopy.textContent = '';
+  if (refs.quickCompareActions) refs.quickCompareActions.textContent = '';
   if (refs.copyOutputBtn) {
     refs.copyOutputBtn.disabled = true;
     refs.copyOutputBtn.textContent = 'Copy output';

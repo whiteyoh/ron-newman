@@ -105,3 +105,53 @@ def test_ui_ux_lift_static_regressions():
     assert ".level-group-grid" in css
     assert ".final-output-panel" in css
     assert "width: min(240px, 100%);" in css
+
+
+def test_guided_learning_cards_and_context_preview_static_regressions():
+    html = Path("web/index.html").read_text(encoding="utf-8")
+    assert "What just happened?" in html
+    assert "Learning takeaway" in html
+    assert "Recommended next step" in html
+    assert "quick-compare-actions" in html
+    assert "confirmed-context-details" in html
+    assert "confirmed-context-body" in html
+
+    dom = Path("web/js/dom.js").read_text(encoding="utf-8")
+    assert "runInsightPanel" in dom
+    assert "runInsightCopy" in dom
+    assert "learningTakeawayPanel" in dom
+    assert "learningTakeawayCopy" in dom
+    assert "nextStepPanel" in dom
+    assert "nextStepCopy" in dom
+    assert "quickCompareActions" in dom
+    assert "confirmedContextDetails" in dom
+    assert "confirmedContextBody" in dom
+
+    main = Path("web/js/main.js").read_text(encoding="utf-8")
+    assert "getRunInsight" in main
+    assert "getLearningTakeaway" in main
+    assert "getRecommendedNextStep" in main
+    assert "renderQuickCompareActions" in main
+    assert "showConfirmedContext" in main
+    assert "hideConfirmedContext" in main
+    assert "This is basic prompting" in main
+    assert "This is orchestration" in main
+    assert "Next, try Level 3" in main
+    assert "Compare Level 1" in main
+    assert "Compare Level 3" in main
+    assert "Compare Level 8" in main
+    assert "showConfirmedContext();" in main
+    assert "hideConfirmedContext();" in main
+
+    run_ui = Path("web/js/run-ui.js").read_text(encoding="utf-8")
+    assert "runInsightPanel" in run_ui
+    assert "learningTakeawayPanel" in run_ui
+    assert "nextStepPanel" in run_ui
+    assert "quickCompareActions" in run_ui
+
+    css = Path("web/styles.css").read_text(encoding="utf-8")
+    assert ".run-insight-panel" in css
+    assert ".learning-takeaway-panel" in css
+    assert ".next-step-panel" in css
+    assert ".quick-compare-actions" in css
+    assert ".confirmed-context-details" in css

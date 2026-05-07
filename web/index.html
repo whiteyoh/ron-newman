@@ -84,6 +84,10 @@
             <textarea id="context-input" rows="4" placeholder="Example: audience, constraints, or workshop focus"></textarea>
             <button id="confirm-btn" disabled>Confirm this direction</button>
           </div>
+          <details id="confirmed-context-details" class="confirmed-context-details hidden">
+            <summary>Show confirmed context</summary>
+            <pre id="confirmed-context-body"></pre>
+          </details>
         </section>
 
         <section id="guide-card" class="guide-card hidden" aria-live="polite" tabindex="-1">
@@ -123,12 +127,28 @@
             <p id="run-summary-copy" class="muted" aria-live="polite"></p>
             <ul id="run-summary-list" class="run-summary-list"></ul>
           </section>
+          <section id="run-insight-panel" class="panel run-insight-panel hidden" aria-labelledby="run-insight-title">
+            <div class="section-header">
+              <h3 id="run-insight-title">What just happened?</h3>
+              <span id="run-insight-level" class="badge">Level insight</span>
+            </div>
+            <p id="run-insight-copy" class="muted"></p>
+          </section>
           <section id="final-output-panel" class="panel final-output-panel hidden" aria-labelledby="final-output-title">
             <div class="section-header">
               <h3 id="final-output-title">Candidate output</h3>
               <span id="final-output-status" class="badge">Candidate</span>
             </div>
             <div id="final-output-body" class="final-output-body"></div>
+          </section>
+          <section id="learning-takeaway-panel" class="panel learning-takeaway-panel hidden" aria-labelledby="learning-takeaway-title">
+            <h3 id="learning-takeaway-title">Learning takeaway</h3>
+            <p id="learning-takeaway-copy" class="muted"></p>
+          </section>
+          <section id="next-step-panel" class="panel next-step-panel hidden" aria-labelledby="next-step-title">
+            <h3 id="next-step-title">Recommended next step</h3>
+            <p id="next-step-copy" class="muted"></p>
+            <div id="quick-compare-actions" class="quick-compare-actions"></div>
           </section>
           <div id="score-panel" class="dashboard-grid"></div>
           <h3>Agentic theatre</h3>
