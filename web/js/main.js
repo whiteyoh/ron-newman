@@ -196,6 +196,25 @@ async function runLevel(level) {
         'Hint: Check OPENAI_MODEL in your hosting environment. If you recently tried gpt-5.2, set OPENAI_MODEL back to gpt-4.1-mini or confirm your OpenAI project has access to the configured model.'
       );
     }
+    if (refs.runSummaryPanel) {
+      refs.runSummaryPanel.classList.remove('hidden');
+      refs.runSummaryPanel.classList.add('warning');
+    }
+    if (refs.runSummaryStatus) refs.runSummaryStatus.textContent = 'Request failed';
+    if (refs.runSummaryCopy) {
+      refs.runSummaryCopy.textContent = 'The run could not complete. No external action was taken.';
+    }
+    if (refs.runSummaryList) {
+      refs.runSummaryList.textContent = '';
+      lines.forEach((line) => {
+        refs.runSummaryList.appendChild(createEl('li', '', line));
+      });
+    }
+    if (refs.advancedResultsDetails) {
+      refs.advancedResultsDetails.classList.remove('hidden');
+      refs.advancedResultsDetails.open = true;
+    }
+    if (refs.rawTraceDetails) refs.rawTraceDetails.open = true;
     appendMessage('system', lines.join(String.fromCharCode(10)));
     setDisabled(refs.replayBtn, true);
     setDisabled(refs.downloadArtifactBtn, true);

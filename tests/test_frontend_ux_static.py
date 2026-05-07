@@ -215,6 +215,21 @@ def test_first_run_advanced_details_static():
     ]:
         assert snippet in main_js
 
+    for snippet in [
+        "Request failed",
+        "The run could not complete. No external action was taken.",
+        "refs.runSummaryPanel",
+        "classList.add('warning')",
+        "refs.runSummaryStatus",
+        "refs.runSummaryCopy",
+        "refs.runSummaryList",
+        "advancedResultsDetails",
+        "classList.remove('hidden')",
+        "refs.advancedResultsDetails.open = true",
+        "refs.rawTraceDetails.open = true",
+    ]:
+        assert snippet in main_js
+
     css = Path("web/styles.css").read_text(encoding="utf-8")
     for snippet in [
         ".advanced-results-details",
