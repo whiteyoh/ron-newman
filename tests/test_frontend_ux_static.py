@@ -183,3 +183,43 @@ def test_ui_polish_regressions_static():
     )
     assert "Maturity match = how clearly this run demonstrates the intended level" in score_js
     assert "workflow control/autonomy surrounds it" not in score_js
+
+
+def test_first_run_advanced_details_static():
+    html = Path("web/index.html").read_text(encoding="utf-8")
+    for snippet in [
+        "advanced-results-details",
+        "advanced-results-body",
+        "Show workflow detail",
+        "Behind the scenes",
+        "Score, steps, taskboard and raw trace",
+    ]:
+        assert snippet in html
+
+    dom_js = Path("web/js/dom.js").read_text(encoding="utf-8")
+    assert "advancedResultsDetails" in dom_js
+
+    run_ui_js = Path("web/js/run-ui.js").read_text(encoding="utf-8")
+    for snippet in [
+        "advancedResultsDetails",
+        "classList.add('hidden')",
+        "open = false",
+    ]:
+        assert snippet in run_ui_js
+
+    main_js = Path("web/js/main.js").read_text(encoding="utf-8")
+    for snippet in [
+        "advancedResultsDetails",
+        "classList.remove('hidden')",
+        "open = false",
+    ]:
+        assert snippet in main_js
+
+    css = Path("web/styles.css").read_text(encoding="utf-8")
+    for snippet in [
+        ".advanced-results-details",
+        ".advanced-results-body",
+        ".advanced-results-details > summary",
+        ".advanced-results-details[open] > summary::after",
+    ]:
+        assert snippet in css

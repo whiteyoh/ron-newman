@@ -44,6 +44,7 @@ export const refs = {
   nextStepPanel: el('next-step-panel'),
   nextStepCopy: el('next-step-copy'),
   quickCompareActions: el('quick-compare-actions'),
+  advancedResultsDetails: el('advanced-results-details'),
   rawTraceDetails: el('raw-trace-details'),
   confirmedContextDetails: el('confirmed-context-details'),
   confirmedContextBody: el('confirmed-context-body'),
