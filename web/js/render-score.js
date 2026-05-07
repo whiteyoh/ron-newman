@@ -5,9 +5,9 @@ export function renderScorePanel(agenticness, data) {
   if (!agenticness) return;
   const sim = data?.yegge_simulation || {};
   const fields = [
-    ['Capability score', safeScore(agenticness.capability_score ?? data?.score_summary?.capability_score), 'Capability score = what AI behaviour is being demonstrated'],
-    ['Agenticness score', safeScore(agenticness.agenticness_score ?? agenticness.score), 'Agenticness score = how much workflow control/autonomy surrounds it'],
-    ['Stage fidelity score', safeScore(agenticness.yegge_alignment_score, 'Not applicable to this level'), 'Stage fidelity = how clearly this level demonstrates its intended maturity stage'],
+    ['Capability', safeScore(agenticness.capability_score ?? data?.score_summary?.capability_score), 'Capability = what AI behaviour is being demonstrated'],
+    ['Workflow control', safeScore(agenticness.agenticness_score ?? agenticness.score), 'Workflow control = how much workflow control/autonomy surrounds it'],
+    ['Maturity match', safeScore(agenticness.yegge_alignment_score, 'Not applicable to this level'), 'Maturity match = how clearly this run demonstrates the intended level'],
   ];
   fields.forEach(([k, v, e]) => {
     const c = createEl('article', 'score-card');
@@ -15,8 +15,8 @@ export function renderScorePanel(agenticness, data) {
     refs.scorePanel.appendChild(c);
   });
   [
-    ['Closest Yegge stage', pretty(agenticness.closest_yegge_stage || sim.closest_yegge_stage, 'Workshop-safe simulation')],
-    ['Why this maps to Yegge', pretty(sim.why_this_maps_to_yegge || agenticness.yegge_alignment_explanation, 'Workshop-safe simulation mapping shown after run')],
+    ['Closest maturity stage', pretty(agenticness.closest_yegge_stage || sim.closest_yegge_stage, 'Workshop-safe simulation')],
+    ['Why this maps to the maturity model', pretty(sim.why_this_maps_to_yegge || agenticness.yegge_alignment_explanation, 'Workshop-safe simulation mapping shown after run')],
     ['Why this is not production', pretty(sim.why_not_production, 'Workshop-safe simulation')],
   ].forEach(([k, v]) => {
     const c = createEl('article', 'score-card');

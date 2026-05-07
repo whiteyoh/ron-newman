@@ -11,7 +11,7 @@
     <meta property="og:title" content="Glytch | Controlled Agent Demo" />
     <meta
       property="og:description"
-      content="See what the human asked, what the agent decided, what was checked, and what should happen next."
+      content="See what the human asked, what the agent decided, what was checked, and what should happen next with visible checks and review checkpoints."
     />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://glytch.uk" />
@@ -41,8 +41,8 @@
 
     <main id="main" class="app-shell" tabindex="-1">
       <section id="entry" class="panel hero" aria-labelledby="hero-title">
-        <h1 id="hero-title">Understand AI maturity in 10 seconds.</h1>
-        <p class="lead">Choose a scenario, confirm direction, launch a level, and watch a simulated agentic run with visible checks and review checkpoints.</p>
+        <h1 id="hero-title">See AI evolve from simple prompts into controlled workflows.</h1>
+        <p class="lead">Choose a scenario, run a level, and watch how AI gains structure, checks, review points, and orchestration.</p>
         <p class="guide-muted">New here? Try a guided first run and see how Glytch works in under a minute.</p>
         <div class="guide-actions">
           <button id="guided-start-btn">Try your first Glytch run</button>
@@ -101,6 +101,7 @@
           <div class="section-header">
             <h2 id="levels-title">2) Choose a level</h2>
             <p class="muted">Use the lowest useful level first.</p>
+            <p class="level-recommendation">Not sure? Start with Level 1, then compare it with Level 3. Use Level 8 to see orchestration.</p>
           </div>
           <div class="grid" id="buttons"></div>
         </section>
@@ -124,7 +125,7 @@
           </section>
           <section id="final-output-panel" class="panel final-output-panel hidden" aria-labelledby="final-output-title">
             <div class="section-header">
-              <h3 id="final-output-title">Final output</h3>
+              <h3 id="final-output-title">Candidate output</h3>
               <span id="final-output-status" class="badge">Candidate</span>
             </div>
             <div id="final-output-body" class="final-output-body"></div>
@@ -141,7 +142,10 @@
             <summary>Raw output transcript</summary>
             <div id="log" aria-live="polite"></div>
           </details>
-          <button id="download-artifact" class="ghost" disabled>Download latest artifact (.txt)</button>
+          <div class="output-actions">
+            <button id="copy-output" class="ghost" disabled>Copy output</button>
+            <button id="download-artifact" class="ghost" disabled>Download latest artifact (.txt)</button>
+          </div>
         </section>
 
         <section class="panel" aria-labelledby="maturity-title">

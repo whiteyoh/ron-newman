@@ -79,4 +79,28 @@ export function renderSurpriseUseCases(cases) {
 
 export const renderBeforeAfter = (levels) => { refs.beforeAfter.textContent = ''; Object.entries(levels).forEach(([id, l]) => { const c = createEl('article', 'card'); c.append(createEl('h3', '', `Level ${id}: ${l.name}`), createEl('p', '', `Before: ${l.before || 'Raw model capability.'}`), createEl('p', '', `Agentic: ${l.agentic || 'Adds checks, approval, and traceable decisions.'}`)); refs.beforeAfter.appendChild(c); }); };
 export const renderMaturityStages = (stages) => stages.forEach((s) => { const c = createEl('article', 'card'); c.append(createEl('strong', '', `Stage ${s.id}: ${s.name}`), createEl('div', 'muted', s.plain_english_summary || '')); el('maturity-cards').appendChild(c); });
-export const renderLevelCards = (levels, onClick) => Object.entries(levels).forEach(([k, v]) => { const b = createEl('button', 'level-card'); b.type = 'button'; b.append(createEl('strong', '', `Level ${k}: ${v.name}`), createEl('span', '', v.description || ''), createEl('span', 'muted', 'Run to inspect workflow'), createEl('span', 'pill', 'Workshop-safe')); b.onclick = () => onClick(Number(k)); refs.buttons.appendChild(b); });
+export const renderLevelCards = (levels, onClick) => {
+  refs.buttons.textContent = '';
+  const groupOrder = ['Prompting', 'Tool use', 'Workflow control', 'Orchestration'];
+  const groups = { Prompting: [], 'Tool use': [], 'Workflow control': [], Orchestration: [] };
+  Object.entries(levels).forEach(([k, v]) => {
+    const id = Number(k);
+    const group = id <= 2 ? 'Prompting' : id <= 4 ? 'Tool use' : id <= 6 ? 'Workflow control' : 'Orchestration';
+    groups[group].push([k, v]);
+  });
+
+  groupOrder.forEach((groupName) => {
+    const section = createEl('section', 'level-group');
+    section.appendChild(createEl('h3', '', groupName));
+    const grid = createEl('div', 'level-group-grid');
+    groups[groupName].forEach(([k, v]) => {
+      const b = createEl('button', 'level-card');
+      b.type = 'button';
+      b.append(createEl('strong', '', `Level ${k}: ${v.name}`), createEl('span', '', v.description || ''), createEl('span', 'muted', 'Run to inspect workflow'), createEl('span', 'pill', 'Workshop-safe'));
+      b.onclick = () => onClick(Number(k));
+      grid.appendChild(b);
+    });
+    section.appendChild(grid);
+    refs.buttons.appendChild(section);
+  });
+};

@@ -59,3 +59,49 @@ def test_main_menu_button_bindings_exist():
     assert "on(refs.setupModeExampleBtn, 'click'" in text
     assert "on(refs.setupModeCustomBtn, 'click'" in text
     assert "on(refs.setupModeSurpriseBtn, 'click'" in text
+
+
+def test_ui_ux_lift_static_regressions():
+    html = Path("web/index.html").read_text(encoding="utf-8")
+    assert "See AI evolve from simple prompts into controlled workflows." in html
+    assert "Not sure? Start with Level 1" in html
+    assert "Candidate output" in html
+    assert "final-output-panel" in html
+    assert 'id="copy-output"' in html
+
+    dom = Path("web/js/dom.js").read_text(encoding="utf-8")
+    assert "copyOutputBtn" in dom
+    assert "copyOutputBtn: el('copy-output')" in dom
+
+    main = Path("web/js/main.js").read_text(encoding="utf-8")
+    assert "navigator.clipboard.writeText" in main
+    assert "'Copied'" in main
+    assert "'Copy output'" in main
+    assert "if (refs.copyOutputBtn) refs.copyOutputBtn.disabled = false;" in main
+    assert "if (refs.copyOutputBtn) refs.copyOutputBtn.disabled = true;" in main
+
+    run_ui = Path("web/js/run-ui.js").read_text(encoding="utf-8")
+    assert "copyOutputBtn" in run_ui
+    assert "refs.copyOutputBtn.disabled = true;" in run_ui
+    assert "refs.copyOutputBtn.textContent = 'Copy output';" in run_ui
+
+    static_js = Path("web/js/render-static.js").read_text(encoding="utf-8")
+    assert "Prompting" in static_js
+    assert "Tool use" in static_js
+    assert "Workflow control" in static_js
+    assert "Orchestration" in static_js
+    assert "level-card" in static_js
+
+    score_js = Path("web/js/render-score.js").read_text(encoding="utf-8")
+    assert "Workflow control" in score_js
+    assert "Maturity match" in score_js
+    assert "Closest maturity stage" in score_js
+    assert "Why this maps to the maturity model" in score_js
+    assert "Closest Yegge stage" not in score_js
+    assert "Why this maps to Yegge" not in score_js
+
+    css = Path("web/styles.css").read_text(encoding="utf-8")
+    assert ".level-group" in css
+    assert ".level-group-grid" in css
+    assert ".final-output-panel" in css
+    assert "width: min(240px, 100%);" in css
