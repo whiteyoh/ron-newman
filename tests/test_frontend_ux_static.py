@@ -308,3 +308,26 @@ def test_landing_story_static_regressions():
   }
 }"""
     assert expected_landing_cards_desktop_rule in css
+
+
+def test_render_static_before_after_copy_regression():
+    render_static_js = Path("web/js/render-static.js").read_text(encoding="utf-8")
+
+    for snippet in [
+        "beforeAfterCopy",
+        "Basic use",
+        "With more control",
+        "You ask for help and receive one draft or suggestion.",
+        "The model may guess concrete facts or calculations.",
+        "The response is grounded in retrieved evidence.",
+        "The draft is critiqued and revised before review.",
+        "Multiple simulated workers coordinate through checks, review and merge policy.",
+    ]:
+        assert snippet in render_static_js
+
+    for snippet in [
+        "Raw model capability.",
+        "Adds checks, approval, and traceable decisions.",
+        "Agentic:",
+    ]:
+        assert snippet not in render_static_js
