@@ -66,18 +66,29 @@ body {
 }
 
 .panel { padding: 1rem; margin-bottom: 1rem; background: rgba(14, 23, 51, 0.66); border-color: rgba(255, 255, 255, 0.14); box-shadow: 0 10px 24px rgba(0, 0, 0, 0.22); }
-h1, h2, h3 {
-  letter-spacing: -0.06em;
+h1,
+h2,
+h3 {
   text-wrap: balance;
   overflow-wrap: anywhere;
 }
+
 h1 {
+  letter-spacing: -0.06em;
   font-size: clamp(2.7rem, 8vw, 5.8rem);
   line-height: 0.98;
   margin: 0 0 0.65rem;
 }
-h2 { font-size: clamp(1.55rem, 3.8vw, 2.35rem); line-height: 1.08; }
-h3 { font-size: clamp(1.22rem, 2.8vw, 1.7rem); line-height: 1.14; }
+h2 {
+  letter-spacing: -0.035em;
+  font-size: clamp(1.55rem, 3.8vw, 2.35rem);
+  line-height: 1.08;
+}
+h3 {
+  letter-spacing: -0.02em;
+  font-size: clamp(1.22rem, 2.8vw, 1.7rem);
+  line-height: 1.14;
+}
 .hero {
   text-align: left;
   position: relative;
@@ -96,7 +107,7 @@ h3 { font-size: clamp(1.22rem, 2.8vw, 1.7rem); line-height: 1.14; }
   pointer-events: none;
 }
 .hero > * { position: relative; z-index: 1; }
-.lead { font-size: 1.16rem; max-width: min(62ch, 100%); }
+.lead { font-size: clamp(1.1rem, 2vw, 1.35rem); max-width: min(62ch, 100%); }
 
 .guide-inline-control {
   display: flex;

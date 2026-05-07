@@ -150,7 +150,15 @@ def test_ui_polish_regressions_static():
     assert ".final-output-body" in css
     assert "font-size: 1.03rem" in css
     assert "font-size: clamp(2.7rem, 8vw, 5.8rem)" in css
-    assert "letter-spacing: -0.06em" in css
+    for snippet in [
+        "h1,",
+        "h2,",
+        "h3 {",
+        "letter-spacing: -0.06em",
+        "letter-spacing: -0.035em",
+        "letter-spacing: -0.02em",
+    ]:
+        assert snippet in css
     assert ".hero::after" in css
     assert "button:hover:not(:disabled)" in css
     assert "transform: translateY(-1px)" in css
