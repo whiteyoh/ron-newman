@@ -141,6 +141,7 @@ textarea:focus-visible {
 .level-card { min-height: 112px; display: flex; flex-direction: column; justify-content: center; gap: 0.25rem; }
 
 .level-recommendation {
+  flex-basis: 100%;
   margin: 0.15rem 0 0;
   padding: 0.55rem 0.7rem;
   border: 1px solid rgba(104, 231, 255, 0.28);
@@ -151,6 +152,12 @@ textarea:focus-visible {
 }
 
 .level-recommendation span { color: var(--accent); }
+
+
+#buttons {
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  align-items: stretch;
+}
 
 .level-group {
   display: grid;
@@ -163,6 +170,13 @@ textarea:focus-visible {
   font-size: 0.98rem;
 }
 
+.level-group-description {
+  margin: 0;
+  font-size: 0.87rem;
+  line-height: 1.35;
+}
+
+
 .level-group-grid {
   display: grid;
   gap: 0.75rem;
@@ -171,13 +185,19 @@ textarea:focus-visible {
 
 .final-output-panel {
   margin-bottom: 1rem;
+  background: linear-gradient(145deg, rgba(14, 23, 51, 0.98), rgba(7, 17, 42, 0.98));
   padding: 1.1rem;
   border: 1px solid rgba(104, 231, 255, 0.55);
   box-shadow: 0 0 0 1px rgba(104, 231, 255, 0.2), 0 0 22px rgba(104, 231, 255, 0.1), var(--shadow);
 }
 
+.final-output-panel h3 {
+  font-size: 1.35rem;
+}
+
 .final-output-body {
   margin-top: 0.35rem;
+  font-size: 1.03rem;
   line-height: 1.62;
   color: #f2f6ff;
 }
@@ -227,6 +247,20 @@ textarea {
   resize: vertical;
 }
 
+
+.score-card,
+.taskboard-column {
+  box-shadow: none;
+}
+
+.raw-trace-details {
+  margin-top: 0.5rem;
+  opacity: 0.94;
+}
+
+.raw-trace-details summary {
+  color: var(--muted);
+}
 
 .run-summary-panel {
   margin-bottom: 0.9rem;
@@ -328,6 +362,10 @@ textarea {
 .site-footer a { color: var(--accent); }
 
 @media (max-width: 759px) {
+  #buttons {
+    grid-template-columns: 1fr;
+  }
+
   .guide-inline-control {
     justify-content: flex-start;
   }
@@ -378,7 +416,8 @@ body.force-mobile .choices,
 body.force-mobile .dashboard-grid,
 body.force-mobile .quiz-grid,
 body.force-mobile .taskboard-grid,
-body.force-mobile .status {
+body.force-mobile .status,
+body.force-mobile #buttons {
   grid-template-columns: 1fr !important;
 }
 

@@ -5,8 +5,8 @@ export function renderScorePanel(agenticness, data) {
   if (!agenticness) return;
   const sim = data?.yegge_simulation || {};
   const fields = [
-    ['Capability', safeScore(agenticness.capability_score ?? data?.score_summary?.capability_score), 'Capability = what AI behaviour is being demonstrated'],
-    ['Workflow control', safeScore(agenticness.agenticness_score ?? agenticness.score), 'Workflow control = how much workflow control/autonomy surrounds it'],
+    ['Capability', safeScore(agenticness.capability_score ?? data?.score_summary?.capability_score), 'Capability = what the AI is being asked to do'],
+    ['Workflow control', safeScore(agenticness.agenticness_score ?? agenticness.score), 'Workflow control = how much structure, checking, and process surrounds the AI'],
     ['Maturity match', safeScore(agenticness.yegge_alignment_score, 'Not applicable to this level'), 'Maturity match = how clearly this run demonstrates the intended level'],
   ];
   fields.forEach(([k, v, e]) => {
