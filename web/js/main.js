@@ -30,12 +30,16 @@ async function runLevel(level) {
   state.runInProgress = true;
   setStatus('Running…', 'running');
   clearRunPanels();
+  el('dashboard-title')?.scrollIntoView({
+    behavior: prefersReducedMotion ? 'auto' : 'smooth',
+    block: 'start',
+  });
   setText(refs.log, '');
   appendMessage('system', 'Running simulation. No answer needed.');
   try {
     const data = await runLevelRequest({ level, use_case: state.confirmedUseCase, use_case_context: state.selectedUseCaseContext });
     const backend = data?.backend || {};
-    setStatus(backend.configured ? 'OpenAI API Connected' : 'OpenAI API Not Connected', backend.configured ? 'ok' : 'err');
+    setStatus(backend.configured ? 'OpenAI API Connected' : 'Workshop-safe simulation mode', backend.configured ? 'ok' : 'review');
     setText(refs.meta, `request_id=${data?.request_id || 'Available after run'} · provider=${backend.provider || 'Workshop-safe simulation'} · model=${backend.model || 'Workshop-safe simulation'}`);
     renderScorePanel(data.agenticness, data); renderTheatre(data); renderTaskboard(data);
     if (refs.runSummaryPanel) refs.runSummaryPanel.classList.remove('hidden');
@@ -255,6 +259,16 @@ on(refs.setupModeSurpriseBtn, 'click', () => {
 on(refs.customGoalInput, 'input', updateCustomScenario);
 on(refs.customAudienceInput, 'input', updateCustomScenario);
 on(refs.customConstraintsInput, 'input', updateCustomScenario);
+on(refs.contextInput, 'input', () => {
+  if (!state.confirmedUseCase) return;
+  state.confirmedUseCase = null;
+  state.confirmedUseCaseLabel = null;
+  if (refs.selectionLabel) {
+    refs.selectionLabel.textContent = 'Context changed. Confirm this direction again before running.';
+  }
+  if (refs.confirmBtn) refs.confirmBtn.disabled = false;
+  updateLevelButtonsVisibility();
+});
 on(refs.confirmBtn, 'click', () => {
   if (!state.selectedUseCase) return clearOutput('Select a use case before confirming direction.');
   const optionalContext = refs.contextInput?.value.trim() || '';

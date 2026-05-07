@@ -184,6 +184,19 @@ export function initOnboarding({ runLevel }) {
         highlight('theatre-steps');
         ensureVisible('theatre-steps');
       }
+
+      if (level !== RECOMMENDED_LEVEL) {
+        state.guideStep = 'explore';
+        state.waitingForLevel3Comparison = false;
+        state.level3StartedFromGuide = false;
+        setGuideStep(
+          `You ran Level ${level}. Good — you can now compare it with Level 1 or continue exploring freely.`,
+          'The higher the level, the more workflow control and review structure Glytch shows.'
+        );
+        if (refs.guideLevel3Btn) refs.guideLevel3Btn.classList.add('hidden');
+        if (refs.guideFinishBtn) refs.guideFinishBtn.classList.remove('hidden');
+        if (refs.guideRecommendation) refs.guideRecommendation.textContent = '';
+      }
     },
     isCompleted: () => state.guideCompleted,
     dismissGuideForManualChoice,
