@@ -16,6 +16,10 @@ export function clearRunPanels() {
   if (refs.finalOutputPanel) refs.finalOutputPanel.classList.add('hidden');
   if (refs.finalOutputBody) refs.finalOutputBody.textContent = '';
   if (refs.finalOutputStatus) refs.finalOutputStatus.textContent = 'Candidate';
+  if (refs.copyOutputBtn) {
+    refs.copyOutputBtn.disabled = true;
+    refs.copyOutputBtn.textContent = 'Copy output';
+  }
   if (refs.rawTraceDetails) refs.rawTraceDetails.open = false;
 }
 

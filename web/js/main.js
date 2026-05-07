@@ -55,7 +55,11 @@ async function runLevel(level) {
       refs.finalOutputPanel.classList.remove('hidden');
       if (refs.finalOutputBody) refs.finalOutputBody.textContent = normalizedFinalAnswer;
       if (refs.finalOutputStatus) refs.finalOutputStatus.textContent = data?.approval_summary?.final_status || 'Candidate';
+      if (refs.copyOutputBtn) refs.copyOutputBtn.disabled = false;
     } else if (refs.finalOutputPanel) refs.finalOutputPanel.classList.add('hidden');
+    if (!isUsefulFinalAnswer) {
+      if (refs.copyOutputBtn) refs.copyOutputBtn.disabled = true;
+    }
     if (refs.rawTraceDetails) refs.rawTraceDetails.open = Boolean(data?.runtime_error);
     if (data?.runtime_error) {
       setStatus('Rendered with warning', 'failed');
@@ -301,6 +305,22 @@ on(refs.confirmBtn, 'click', () => {
   onboarding.onConfirmed();
 });
 on(refs.replayBtn, 'click', runReplay);
+
+on(refs.copyOutputBtn, 'click', async () => {
+  const text = refs.finalOutputBody?.textContent?.trim() || '';
+  if (!text) return;
+  try {
+    await navigator.clipboard.writeText(text);
+    if (refs.copyOutputBtn) refs.copyOutputBtn.textContent = 'Copied';
+    setTimeout(() => {
+      if (refs.copyOutputBtn) refs.copyOutputBtn.textContent = 'Copy output';
+    }, 1400);
+  } catch (err) {
+    console.warn('Copy output failed', err);
+    appendMessage('system', 'Could not copy output automatically. You can select and copy it manually.');
+  }
+});
+
 on(refs.downloadArtifactBtn, 'click', () => {
   if (!state.latestArtifact) return;
   const blob = new Blob([state.latestArtifact], { type: 'text/plain;charset=utf-8' });

@@ -9,6 +9,7 @@ export const refs = {
   selectionLabel: el('selection-label'),
   confirmBtn: el('confirm-btn'),
   downloadArtifactBtn: el('download-artifact'),
+  copyOutputBtn: el('copy-output'),
   useCaseModal: el('use-case-modal'),
   modalTitle: el('modal-title'),
   modalBody: el('modal-body'),
