@@ -249,7 +249,17 @@ async function init() {
 const onboarding = initOnboarding({ runLevel });
 
 function setSetupMode(mode) {
+  const previousMode = state.setupMode;
+  const modeChanged = previousMode && previousMode !== mode;
+
   state.setupMode = mode;
+
+  if (modeChanged) {
+    state.confirmedUseCase = null;
+    state.confirmedUseCaseLabel = null;
+    hideConfirmedContext();
+    updateLevelButtonsVisibility();
+  }
   if (refs.setupModeExampleBtn) refs.setupModeExampleBtn.classList.toggle('active', mode === 'example');
   if (refs.setupModeCustomBtn) refs.setupModeCustomBtn.classList.toggle('active', mode === 'custom');
   if ((mode === 'custom' || mode === 'surprise') && onboarding?.dismissGuideForManualChoice) onboarding.dismissGuideForManualChoice();
@@ -299,8 +309,17 @@ function updateCustomScenario() {
   state.customUseCaseConstraints = constraints;
   if (state.customUseCaseGoal.length < 8) {
     state.selectedUseCaseLabel = null;
-    if (refs.selectionLabel) refs.selectionLabel.textContent = 'Enter your goal to enable confirmation.';
+    state.confirmedUseCase = null;
+    state.confirmedUseCaseLabel = null;
+    hideConfirmedContext();
+
+    if (refs.selectionLabel) {
+      refs.selectionLabel.textContent = 'Enter your goal to enable confirmation.';
+    }
     if (refs.confirmBtn) refs.confirmBtn.disabled = true;
+
+    clearOutput('Custom use case changed. Add a clear goal, then confirm direction again.');
+    updateLevelButtonsVisibility();
     return;
   }
   state.selectedUseCase = 'custom';
