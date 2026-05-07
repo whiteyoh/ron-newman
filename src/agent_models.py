@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from enum import Enum
+from enum import StrEnum
 
 
 @dataclass
@@ -59,7 +59,7 @@ class AgentRunResult:
     final_verdict: str
 
 
-class TaskStatus(str, Enum):
+class TaskStatus(StrEnum):
     PENDING = "pending"
     RUNNING = "running"
     COMPLETED = "completed"
@@ -69,7 +69,7 @@ class TaskStatus(str, Enum):
     NEEDS_HUMAN_REVIEW = "needs_human_review"
 
 
-class WorkerStatus(str, Enum):
+class WorkerStatus(StrEnum):
     WAITING = "waiting"
     RUNNING = "running"
     COMPLETED = "completed"
