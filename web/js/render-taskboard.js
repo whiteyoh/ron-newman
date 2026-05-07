@@ -1,5 +1,5 @@
 import { appendKV, createEl, pretty, refs } from './dom.js';
-import { humanizeStatus, normalizeStatus } from './render-theatre.js';
+import { humanizeStatus, normalizeStatus } from './status-utils.js';
 
 const summarizeOutput = (output) => (!output ? 'No output yet.' : String(output).slice(0, 180));
 
