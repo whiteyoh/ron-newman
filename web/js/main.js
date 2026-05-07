@@ -24,6 +24,35 @@ function setDisabled(node, value) {
   if (node) node.disabled = value;
 }
 
+function getRunInsight(level) {
+  const copyByLevel = {
+    1: 'This is basic prompting. The AI answers directly, but the human still has to judge quality, accuracy, and next steps.',
+    2: 'This adds more structure to the prompt. The AI has clearer instructions, but the workflow is still mostly human-led.',
+    3: 'This introduces a bounded tool-style path. The AI is no longer just answering; it is following a more controlled process.',
+    4: 'This shows a more structured workflow with clearer checks. The task is still safe and simulated, but the path is more visible.',
+    5: 'This adds stronger workflow control. The AI output is shaped by steps, constraints, and review points.',
+    6: 'This shows a more mature controlled workflow. The value is not just the answer, but the visible process around it.',
+    7: 'This starts to look like coordinated agentic work. The system separates responsibilities and makes decisions easier to inspect.',
+    8: 'This is orchestration. Multiple simulated workers plan, draft, check, and prepare a candidate output for review.',
+  };
+  return copyByLevel[level] || 'This run shows how structure, checks, and visibility change the AI experience.';
+}
+
+function getLearningTakeaway(level, hasRuntimeError) {
+  let takeaway = 'Mature AI use means adding boundaries, checks, and clear process around the model.';
+  if (level <= 2) takeaway = 'Higher AI maturity is not about longer prompts. It is about adding the right amount of structure for the task.';
+  if (level >= 7) takeaway = 'Orchestration is useful when work needs multiple roles, but it still needs review before real-world action.';
+  if (hasRuntimeError) takeaway += ' This run rendered with a safe warning, so treat the output as a demonstration only.';
+  return takeaway;
+}
+
+function getRecommendedNextStep(level) {
+  if (level === 1) return 'Next, try Level 3 to see how a controlled tool-style path changes the workflow.';
+  if (level === 3) return 'Next, try Level 8 to see orchestration with multiple simulated workers.';
+  if (level === 8) return 'Now compare this with Level 1 to see how much structure was added.';
+  return 'Try Level 1, Level 3, or Level 8 to compare the maturity jump.';
+}
+
 async function runLevel(level) {
   state.lastRunLevel = level;
   if (!state.confirmedUseCase || state.runInProgress) return;
@@ -43,6 +72,9 @@ async function runLevel(level) {
     setText(refs.meta, `request_id=${data?.request_id || 'Available after run'} · provider=${backend.provider || 'Workshop-safe simulation'} · model=${backend.model || 'Workshop-safe simulation'}`);
     renderScorePanel(data.agenticness, data); renderTheatre(data); renderTaskboard(data);
     if (refs.runSummaryPanel) refs.runSummaryPanel.classList.remove('hidden');
+    if (refs.runInsightPanel) refs.runInsightPanel.classList.remove('hidden');
+    if (refs.runInsightLevel) refs.runInsightLevel.textContent = `Level ${level}`;
+    if (refs.runInsightCopy) refs.runInsightCopy.textContent = getRunInsight(level);
     if (refs.runSummaryList) refs.runSummaryList.textContent = '';
     const lines = Array.isArray(data.lines) && data.lines.length ? data.lines : ['No output lines returned.'];
     setText(refs.log, '');
@@ -60,6 +92,11 @@ async function runLevel(level) {
     if (!isUsefulFinalAnswer) {
       if (refs.copyOutputBtn) refs.copyOutputBtn.disabled = true;
     }
+    if (refs.learningTakeawayPanel) refs.learningTakeawayPanel.classList.remove('hidden');
+    if (refs.learningTakeawayCopy) refs.learningTakeawayCopy.textContent = getLearningTakeaway(level, Boolean(data?.runtime_error));
+    if (refs.nextStepPanel) refs.nextStepPanel.classList.remove('hidden');
+    if (refs.nextStepCopy) refs.nextStepCopy.textContent = getRecommendedNextStep(level);
+    renderQuickCompareActions(level);
     if (refs.rawTraceDetails) refs.rawTraceDetails.open = Boolean(data?.runtime_error);
     if (data?.runtime_error) {
       setStatus('Rendered with warning', 'failed');
@@ -185,6 +222,7 @@ function setSetupMode(mode) {
     surprise: 'Pick from two quick examples.',
   };
   if (refs.setupModeHelp) refs.setupModeHelp.textContent = helpText[mode];
+  hideConfirmedContext();
 }
 
 
@@ -272,6 +310,7 @@ on(refs.contextInput, 'input', () => {
   }
   if (refs.confirmBtn) refs.confirmBtn.disabled = false;
   updateLevelButtonsVisibility();
+  hideConfirmedContext();
 });
 on(refs.confirmBtn, 'click', () => {
   if (!state.selectedUseCase) return clearOutput('Select a use case before confirming direction.');
@@ -302,6 +341,7 @@ on(refs.confirmBtn, 'click', () => {
   }
   clearOutput('Direction confirmed. Choose a level to run.');
   updateLevelButtonsVisibility();
+  showConfirmedContext();
   onboarding.onConfirmed();
 });
 on(refs.replayBtn, 'click', runReplay);
@@ -334,3 +374,32 @@ document.addEventListener('keydown', (e) => { if (e.key === 'Escape') refs.useCa
 if (new URLSearchParams(window.location.search).get('debug') !== '1' && refs.previewTools) refs.previewTools.hidden = true;
 setSetupMode('example');
 init();
+
+function renderQuickCompareActions(level) {
+  if (!refs.quickCompareActions) return;
+  refs.quickCompareActions.textContent = '';
+  if (!state.confirmedUseCase) return;
+  const labelByLevel = { 1: 'Compare Level 1', 3: 'Compare Level 3', 8: 'Compare Level 8' };
+  [1, 3, 8].filter((targetLevel) => targetLevel !== level).forEach((targetLevel) => {
+    const button = createEl('button', 'ghost', labelByLevel[targetLevel] || `Compare Level ${targetLevel}`);
+    button.type = 'button';
+    button.addEventListener('click', () => runLevel(targetLevel));
+    refs.quickCompareActions.appendChild(button);
+  });
+}
+
+function showConfirmedContext() {
+  const context = String(state.selectedUseCaseContext || '').trim();
+  if (!context || !refs.confirmedContextDetails || !refs.confirmedContextBody) return hideConfirmedContext();
+  refs.confirmedContextBody.textContent = context;
+  refs.confirmedContextDetails.open = false;
+  refs.confirmedContextDetails.classList.remove('hidden');
+}
+
+function hideConfirmedContext() {
+  if (refs.confirmedContextBody) refs.confirmedContextBody.textContent = '';
+  if (refs.confirmedContextDetails) {
+    refs.confirmedContextDetails.open = false;
+    refs.confirmedContextDetails.classList.add('hidden');
+  }
+}
