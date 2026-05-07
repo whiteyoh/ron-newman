@@ -40,7 +40,7 @@ def test_main_js_context_flow_regressions():
 def test_render_static_surprise_me_clears_optional_context():
     text = Path("web/js/render-static.js").read_text(encoding="utf-8")
     assert "refs.contextInput" in text
-    assert "refs.contextInput.value = ''" in text
+    assert "refs.contextInput.value = ''" in text or 'refs.contextInput.value = ""' in text
 
 
 def test_index_html_review_copy_and_panel_order_regressions():
