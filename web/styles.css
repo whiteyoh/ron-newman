@@ -303,7 +303,7 @@ textarea {
   .choices { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .dashboard-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  .taskboard-grid { grid-template-columns: repeat(5, minmax(150px, 1fr)); }
+  .taskboard-grid { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -349,7 +349,7 @@ body.force-desktop .status {
   align-items: center !important;
 }
 body.force-desktop .taskboard-grid {
-  grid-template-columns: repeat(5, minmax(150px, 1fr)) !important;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)) !important;
 }
 
 .preview-tools { margin-top: 0.65rem; opacity: 0.85; }
