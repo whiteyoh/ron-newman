@@ -63,7 +63,8 @@ def test_main_menu_button_bindings_exist():
 
 def test_ui_ux_lift_static_regressions():
     html = Path("web/index.html").read_text(encoding="utf-8")
-    assert "See AI evolve from simple prompts into controlled workflows." in html
+    assert "See AI evolve from simple prompts into controlled workflows." not in html
+    assert 'name="landing-story"' not in html
     assert "Not sure? Start with Level 1" in html
     assert "Candidate output" in html
     assert "final-output-panel" in html
