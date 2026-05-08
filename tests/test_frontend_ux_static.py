@@ -316,6 +316,11 @@ def test_before_after_heading_and_landing_story_regression():
     assert "5) Basic use vs controlled workflow" in html
     assert "5) Before vs agentic" not in html
     assert 'data-story="See AI evolve from simple prompts into controlled workflows."' not in html
+    assert (
+        '<meta name="landing-story" content="See AI evolve from simple prompts into controlled '
+        'workflows." />' not in html
+    )
+    assert 'name="landing-story"' not in html
 
 
 def test_render_static_before_after_copy_regression():
