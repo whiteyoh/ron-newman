@@ -344,3 +344,17 @@ def test_render_static_before_after_copy_regression():
         "Agentic:",
     ]:
         assert snippet not in render_static_js
+
+
+def test_readme_and_reading_output_language_static():
+    readme = Path("README.md").read_text(encoding="utf-8")
+    assert "Most people use AI like search. Glytch shows what comes next." in readme
+    assert "workshop-safe demo" in readme
+    assert "workflow detail" in readme
+    assert "Agentic Theatre" not in readme
+
+    reading = Path("docs/READING_GLYTCH_OUTPUT.md").read_text(encoding="utf-8")
+    assert "## Workflow detail" in reading
+    assert "Behind the scenes" in reading
+    assert "Workflow detail presents the run as a visual step-by-step sequence." in reading
+    assert "Agentic Theatre" not in reading

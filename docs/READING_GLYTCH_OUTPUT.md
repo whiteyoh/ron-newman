@@ -4,13 +4,13 @@ After you run a Glytch level, the app shows several views of the same run. This 
 
 ## How to use this guide
 
-Start with the score panel, then read the trace. If you want to understand the run visually, use Agentic Theatre. If you ran Level 8, use the taskboard to see how the simulated orchestration ended.
+Start with the score panel, then read the trace. If you want to understand the run visually, open workflow detail. The app shows this under “Behind the scenes”. If you ran Level 8, use the taskboard to see how the simulated orchestration ended.
 
 ## Quick version
 
 - Start with the score panel.
 - Read the simulation trace.
-- Use Agentic Theatre for the step-by-step flow.
+- Use workflow detail for the step-by-step flow.
 - Check the Level 8 taskboard when orchestration is shown.
 - Use the lowest useful level; higher is not always better.
 
@@ -33,9 +33,9 @@ The simulation trace is a text record of what happened during the run. It is not
 
 If it looks like a question, read it as part of the demo trace, not as something you need to respond to.
 
-## Agentic Theatre
+## Workflow detail
 
-Agentic Theatre presents the run as a visual step-by-step sequence.
+Workflow detail presents the run as a visual step-by-step sequence.
 
 Each step includes:
 - actor
@@ -53,7 +53,7 @@ Each step includes:
 
 ## Replay
 
-Replay shows the same theatre steps again. It does not rerun the AI.
+Replay shows the same workflow steps again. It does not rerun the AI.
 
 It is useful for teaching or presenting the flow.
 
