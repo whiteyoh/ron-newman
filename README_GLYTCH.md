@@ -1,171 +1,206 @@
+![Glytch logo](assets/glytch-logo.svg)
+
 # Glytch
 
 Most people use AI like search. Glytch shows what comes next.
 
-Glytch is an 8-level, workshop-safe demo that helps people understand how simple prompts become tools, checks, review points and controlled workflows.
+Glytch is a plain-English AI fluency demo for people who want to understand AI capability without getting trapped in tool names, model names, vendor features, or technical jargon.
 
-![Glytch logo](assets/glytch-logo.svg)
-
-## What is Glytch?
-
-Glytch is a practical, plain-English AI fluency demo.
+It helps people see how AI use can move from a simple question-and-answer interaction into a more controlled way of working, with structure, checks, review points and human judgement.
 
 Glytch teaches AI capability, not AI products.
 
-It is a workshop-safe simulation that helps people see how work changes from:
-- one prompt and one draft
-- to structured instructions
-- to tool use and evidence checks
-- to a controlled workflow with human review
+---
 
-It does this without requiring people to commit to one specific vendor or interface.
+## Why Glytch exists
+
+AI tools are changing quickly.
+
+One month people are talking about ChatGPT. The next month it is Gemini, Claude, Copilot, agents, workflows, assistants or something new.
+
+That makes AI training difficult. If people only learn a specific tool, their knowledge can become outdated quickly.
+
+Glytch focuses on the more durable lesson underneath the tools:
+
+What is the AI being asked to do?
+
+What information is it using?
+
+Was anything checked?
+
+Where does the human need to stay in control?
+
+Is this just a prompt, or is it becoming a controlled workflow?
+
+That is the knowledge people can carry from one AI tool to another.
+
+---
 
 ## Why use Glytch?
 
-Glytch helps people see what usually stays hidden when they use AI:
+Glytch helps people see what usually stays hidden when they use AI.
+
+When someone asks an AI tool a question, they usually only see the final answer. They do not always see what the AI assumed, whether evidence was used, whether a tool was needed, whether anything was checked, or where a human should review the result.
+
+Glytch makes those ideas visible.
+
+It helps people understand:
+
 - what the task is
 - what the AI is doing
-- whether evidence was used
-- whether anything was checked
+- whether the answer is based on evidence
+- whether anything has been checked
 - where human review is needed
-- whether the work should stay simple or become more structured
+- when a simple prompt is enough
+- when a more structured workflow is safer
+- why higher automation is not always better
 
-The aim is not to teach one specific AI tool. The aim is to build practical judgement that works across many tools.
+The aim is not to turn everyone into an AI engineer.
+
+The aim is to build practical judgement.
+
+---
 
 ## Who Glytch is for
 
-Glytch is not only for developers. It is for people who need clear, practical AI understanding:
+Glytch is for people and teams who need to understand AI clearly, safely and practically.
+
+It is for:
 
 - students learning how AI can support study and problem solving
-- teachers explaining AI capability safely
-- public sector teams exploring safe AI use
+- teachers explaining AI capability in a safe and understandable way
+- public sector teams exploring responsible AI use
 - non-technical managers trying to understand what AI can and cannot do
-- small businesses looking for practical AI workflow ideas
-- job seekers building AI confidence
+- small businesses looking for practical ways to use AI
+- job seekers building confidence with AI
 - teams that need shared language before choosing tools
+- workshop leaders who want to explain AI without overwhelming people
+- organisations that want people to understand AI before automating work
+
+Glytch is not only for developers.
+
+It is for anyone who needs to make better decisions about how AI should be used.
+
+---
 
 ## What Glytch teaches
 
-The capability pattern is more durable than any single AI app:
+Glytch shows a simple journey.
+
+AI use can start with a basic prompt, but it can become more structured over time.
+
+The pattern looks like this:
 
 Prompt → instruction → tool use → evidence → planning → critique → loop → orchestration
 
-| Stage | Plain English idea |
+In plain English:
+
+| Stage | What it means |
 |---|---|
 | Prompt | Ask AI for a response |
 | Instruction | Give clearer rules and format |
-| Tool | Use a bounded helper such as a calculator |
+| Tool | Use a helper such as a calculator or lookup |
 | Evidence | Ground the answer in supplied facts |
 | Plan | Break broad work into visible steps |
 | Improve | Critique and revise before use |
 | Loop | Observe, act, check and stop safely |
-| Orchestrate | Coordinate multiple simulated workers with review gates |
+| Orchestrate | Coordinate multiple pieces of work with review gates |
 
-Higher levels are not automatically better. The best AI use is the lowest level that safely gets the job done.
+The important lesson is simple:
+
+The best AI use is the lowest level that safely gets the job done.
+
+Higher is not automatically better.
+
+Sometimes a prompt is enough. Sometimes a checked answer is better. Sometimes a controlled workflow is needed. Glytch helps people understand the difference.
+
+---
 
 ## The 8 Glytch levels
+
+Glytch uses eight levels to show how AI capability changes.
 
 | Level | Focus | What it shows |
 |---:|---|---|
 | 1 | Autocomplete | One prompt, one draft, human decides next |
 | 2 | Instruction following | Clearer instructions, format and constraints |
-| 3 | Tool use | Bounded tool use with a checkable result |
-| 4 | Retrieval + grounding | Output tied to retrieved evidence |
+| 3 | Tool use | A bounded tool with a result that can be checked |
+| 4 | Retrieval and grounding | An answer tied to supplied evidence |
 | 5 | Planning | Broad work split into visible steps |
-| 6 | Critique + revision | Draft, critique and improve before review |
-| 7 | Constrained agent loop | Bounded observe-act-check loop with stop conditions |
-| 8 | Mini orchestrator | Multiple simulated workers, verifier, review gate and merge decision |
+| 6 | Critique and revision | Draft, review and improve before use |
+| 7 | Controlled loop | Observe, act, check and stop safely |
+| 8 | Orchestration | Multiple simulated workers with review gates |
+
+The levels are not a race.
+
+They are a way to understand what kind of AI behaviour is being used, how much control surrounds it, and where human judgement belongs.
+
+---
 
 ## How Glytch avoids tool chasing
 
-AI tools change quickly. Glytch focuses on the mental model underneath them.
+Glytch does not start with the question, “Which AI tool should I use?”
 
-Whether someone uses ChatGPT, Gemini, Claude, Copilot or another AI tool, the same questions matter:
-- what am I asking it to do?
-- what information is it using?
-- what should be checked?
-- what should the human decide?
-- is this simple prompting or a controlled workflow?
+It starts with better questions:
 
-## Reading the output
+- What am I trying to do?
+- Is AI the right help for this task?
+- What information should the AI use?
+- What should be checked?
+- What decision should stay with the human?
+- Is this a simple prompt or a controlled workflow?
 
-New to Glytch? Start with [Reading Glytch output](docs/READING_GLYTCH_OUTPUT.md). It explains the scores, read-only simulation trace, workflow detail, replay and Level 8 taskboard.
+That makes Glytch useful even as tools change.
 
-## Guided first run
+Whether someone uses ChatGPT, Gemini, Claude, Copilot or another AI tool, the same judgement still matters.
 
-Try your first Glytch run to see the model in action.
+---
 
-- Start with Level 1.
-- Compare the same scenario at Level 3.
-- Use Level 8 to see orchestration with review gates.
-- Custom use cases are request-scoped and are not stored.
+## What people should take away
 
-## Architecture
+After using Glytch, people should be able to explain:
 
-Architecture notes live in [architecture/](architecture/README.md). The diagrams are generated from `scripts/generate_architecture_diagrams.py` and describe the conceptual flow for each Glytch level.
+- the difference between asking AI a question and designing an AI-supported workflow
+- why evidence and checking matter
+- why human review is still important
+- why more automation is not always better
+- how to choose the simplest safe level for a task
+- how to talk about AI capability without relying on tool names
 
-## Run it locally
+The goal is confidence, not hype.
 
-```bash
-make install-dev
-make run
-```
+The goal is understanding, not tool chasing.
 
-Open http://127.0.0.1:8000.
+---
 
-## Optional AI backend
+## Workshop-safe by design
 
-Glytch runs without an API key and shows a safe fallback. To use a live OpenAI-compatible backend, set the variables above.
+Glytch is designed for learning.
 
-```bash
-export OPENAI_API_KEY="your_api_key_here"
-export OPENAI_MODEL="gpt-4.1-mini"
-export OPENAI_BASE_URL="https://api.openai.com/v1"
-```
+It is a simulation. It does not take real-world action.
 
-The default model is gpt-4.1-mini because the current implementation uses Chat Completions. You can override OPENAI_MODEL for any model your provider supports.
+That means people can explore AI capability safely without worrying that the demo is sending emails, changing files, running commands or making real decisions.
 
-## Checks
+Glytch is there to help people understand the shape of AI work before they apply similar ideas in the real world.
 
-```bash
-make check
-bash scripts/smoke_test.sh
-```
+---
 
-## Pre-merge checks
+## What Glytch is not
 
-GitHub Actions runs the `pre-merge-checks` workflow with Python checks, a smoke test, a dependency audit and a secret scan.
+Glytch is not a replacement for human judgement.
 
-See [docs/PIPELINE_CHECKS.md](docs/PIPELINE_CHECKS.md) for details.
+It is not a production automation platform.
 
-## API
+It is not a promise that AI should be used everywhere.
 
-- `GET /healthz`
-- `GET /api/levels`
-- `GET /api/use-cases`
-- `GET /api/agentic-maturity`
-- `POST /api/run`
+It is not tied to one AI company or one AI product.
 
-If `OPENAI_API_KEY` is missing, `/api/run` returns a safe fallback rather than crashing.
+It is not about chasing the newest tool.
 
-## What Glytch does not do
+Glytch is a way to understand how AI capability develops, where control is needed, and how people can use AI more safely and effectively.
 
-Glytch is a workshop-safe simulation. It does not perform real-world side effects.
+---
 
-## Deployment
+## One-line summary
 
-Render settings:
-- Build: `pip install -r requirements.txt`
-- Start: `python app.py`
-- Health check: `/healthz`
-
-## Safety model
-
-- workshop-safe simulation
-- no real shell execution
-- no real file writes
-- no GitHub writes
-- no background jobs
-- no real external side effects
-- Level 8 is request-scoped orchestration, not production orchestration
-- rate limiting is lightweight and in-memory, not a distributed production limiter
+Glytch helps people move from using AI as a search box to understanding AI as a controlled workflow.
