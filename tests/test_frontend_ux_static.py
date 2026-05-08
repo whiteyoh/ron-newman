@@ -310,6 +310,14 @@ def test_landing_story_static_regressions():
     assert expected_landing_cards_desktop_rule in css
 
 
+def test_before_after_heading_and_landing_story_regression():
+    html = Path("web/index.html").read_text(encoding="utf-8")
+
+    assert "5) Basic use vs controlled workflow" in html
+    assert "5) Before vs agentic" not in html
+    assert 'data-story="See AI evolve from simple prompts into controlled workflows."' not in html
+
+
 def test_render_static_before_after_copy_regression():
     render_static_js = Path("web/js/render-static.js").read_text(encoding="utf-8")
 
