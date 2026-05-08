@@ -1,6 +1,8 @@
 # Glytch
 
-Glytch is an 8-level workshop demo that helps people understand AI capability, agentic workflow maturity and what changes as AI moves beyond simple prompting.
+Most people use AI like search. Glytch shows what comes next.
+
+Glytch is an 8-level, workshop-safe demo that shows how simple prompts become tools, checks, review points and controlled workflows.
 
 ![Glytch logo](assets/glytch-logo.svg)
 
@@ -8,24 +10,32 @@ Glytch is an 8-level workshop demo that helps people understand AI capability, a
 
 Glytch is a plain-English AI maturity demo with a static frontend and a stdlib Python API.
 
-It is built as a workshop-safe simulation: no real external action is taken.
+It is built as a workshop-safe simulation. No real external action is taken.
+
+It helps users compare:
+- basic prompting
+- bounded tool use
+- evidence grounding
+- planning and revision
+- controlled workflow loops
+- simulated orchestration
 
 ## The 8 levels
 
 | Level | Focus | What it shows |
 |---:|---|---|
-| 1 | Autocomplete | Simple prompt and response |
-| 2 | Instruction following | Clearer instruction and human approval |
-| 3 | Tool use | Bounded tool path |
-| 4 | Retrieval + grounding | Evidence-backed output |
-| 5 | Planning | Plan, execute, verify |
-| 6 | Review loop | Critique and revision |
-| 7 | Agent loop | Coordination pressure and controlled autonomy |
-| 8 | Orchestration | Taskboard, verifier, approval gate and merge decision |
+| 1 | Autocomplete | One prompt, one draft, human decides next |
+| 2 | Instruction following | Clearer instructions, format and constraints |
+| 3 | Tool use | Bounded tool use with a checkable result |
+| 4 | Retrieval + grounding | Output tied to retrieved evidence |
+| 5 | Planning | Broad work split into visible steps |
+| 6 | Critique + revision | Draft, critique and improve before review |
+| 7 | Constrained agent loop | Bounded observe-act-check loop with stop conditions |
+| 8 | Mini orchestrator | Multiple simulated workers, verifier, review gate and merge decision |
 
 ## Reading the output
 
-New to Glytch? Start with [Reading Glytch output](docs/READING_GLYTCH_OUTPUT.md). It explains the scores, simulation trace, Agentic Theatre, replay and Level 8 taskboard.
+New to Glytch? Start with [Reading Glytch output](docs/READING_GLYTCH_OUTPUT.md). It explains the scores, read-only simulation trace, workflow detail, replay and Level 8 taskboard.
 
 ## Guided first run
 
@@ -56,7 +66,7 @@ export OPENAI_MODEL="gpt-4.1-mini"
 export OPENAI_BASE_URL="https://api.openai.com/v1"
 ```
 
-gpt-4.1-mini is the recommended default for Glytch because it is stable for the current Chat Completions implementation. You can still override OPENAI_MODEL for testing other supported models.
+The default model is gpt-4.1-mini because the current implementation uses Chat Completions. You can override OPENAI_MODEL for any model your provider supports.
 
 ## Checks
 
