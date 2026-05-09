@@ -357,3 +357,18 @@ def test_readme_and_reading_output_language_static():
     assert "Behind the scenes" in reading
     assert "Workflow detail presents the run as a visual step-by-step sequence." in reading
     assert "Agentic Theatre" not in reading
+
+
+def test_homepage_public_polish_copy_static():
+    html = Path("web/index.html").read_text(encoding="utf-8")
+
+    assert "Glytch | Understand AI beyond the chat box" in html
+    assert "A workshop-safe AI fluency demo" in html
+    assert "visible checks and review checkpoints" in html
+    assert "Glytch | Controlled Agent Demo" not in html
+    assert "See AI grow from prompts into controlled agents" not in html
+    assert "what the agent decided" not in html
+    assert "Preview layout" not in html
+    assert "Yegge/design inspiration" not in html
+    assert "workshop-safe AI maturity demo" not in html
+    assert "workshop-safe AI fluency demo" in html
