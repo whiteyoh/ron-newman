@@ -1,6 +1,6 @@
-![Glytch logo](assets/glytch-logo.svg)
-
 # Glytch
+
+![Glytch logo](assets/glytch-logo.svg)
 
 Most people use AI like search. Glytch shows what comes next.
 
@@ -10,7 +10,8 @@ It helps people see how AI use can move from a simple question-and-answer intera
 
 Glytch teaches AI capability, not AI products.
 
----
+It is designed to help people build confidence with AI before they are asked to choose tools, automate work, or trust AI-supported outputs.
+
 
 ## Why Glytch exists
 
@@ -34,7 +35,6 @@ Is this just a prompt, or is it becoming a controlled workflow?
 
 That is the knowledge people can carry from one AI tool to another.
 
----
 
 ## Why use Glytch?
 
@@ -59,7 +59,6 @@ The aim is not to turn everyone into an AI engineer.
 
 The aim is to build practical judgement.
 
----
 
 ## Who Glytch is for
 
@@ -81,7 +80,6 @@ Glytch is not only for developers.
 
 It is for anyone who needs to make better decisions about how AI should be used.
 
----
 
 ## What Glytch teaches
 
@@ -104,7 +102,7 @@ In plain English:
 | Plan | Break broad work into visible steps |
 | Improve | Critique and revise before use |
 | Loop | Observe, act, check and stop safely |
-| Orchestrate | Coordinate multiple pieces of work with review gates |
+| Orchestrate | Coordinate several pieces of AI-supported work with review gates |
 
 The important lesson is simple:
 
@@ -114,7 +112,6 @@ Higher is not automatically better.
 
 Sometimes a prompt is enough. Sometimes a checked answer is better. Sometimes a controlled workflow is needed. Glytch helps people understand the difference.
 
----
 
 ## The 8 Glytch levels
 
@@ -129,13 +126,12 @@ Glytch uses eight levels to show how AI capability changes.
 | 5 | Planning | Broad work split into visible steps |
 | 6 | Critique and revision | Draft, review and improve before use |
 | 7 | Controlled loop | Observe, act, check and stop safely |
-| 8 | Orchestration | Multiple simulated workers with review gates |
+| 8 | Orchestration | Several simulated AI workers coordinated with review gates |
 
 The levels are not a race.
 
 They are a way to understand what kind of AI behaviour is being used, how much control surrounds it, and where human judgement belongs.
 
----
 
 ## How Glytch avoids tool chasing
 
@@ -154,7 +150,6 @@ That makes Glytch useful even as tools change.
 
 Whether someone uses ChatGPT, Gemini, Claude, Copilot or another AI tool, the same judgement still matters.
 
----
 
 ## What people should take away
 
@@ -171,7 +166,6 @@ The goal is confidence, not hype.
 
 The goal is understanding, not tool chasing.
 
----
 
 ## Workshop-safe by design
 
@@ -183,7 +177,6 @@ That means people can explore AI capability safely without worrying that the dem
 
 Glytch is there to help people understand the shape of AI work before they apply similar ideas in the real world.
 
----
 
 ## What Glytch is not
 
@@ -199,7 +192,6 @@ It is not about chasing the newest tool.
 
 Glytch is a way to understand how AI capability develops, where control is needed, and how people can use AI more safely and effectively.
 
----
 
 ## One-line summary
 
