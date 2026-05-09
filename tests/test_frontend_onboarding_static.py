@@ -15,10 +15,9 @@ def test_onboarding_static_content():
     assert "Finish guide" in html
     assert "js/main.js" in html
     assert "footer-disclaimer" in html
-    assert (
-        "https://justin.abrah.ms/blog/2026-01-08-yegge-s-developer-agent-evolution-model.html"
-        in html
-    )
+    assert "Yegge/design inspiration" not in html
+    assert "https://github.com/whiteyoh/ron-newman" in html
+    assert "https://glytch.uk" in html
 
     assert "glytch.firstRunGuide.completed" in js
     assert "lowest useful level" in js
