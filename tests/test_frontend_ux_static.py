@@ -273,8 +273,7 @@ def test_workflow_copy_plain_english_regressions():
 def test_landing_story_static_regressions():
     html = Path("web/index.html").read_text(encoding="utf-8")
     for snippet in [
-        "Most people use AI like search",
-        "Glytch shows what comes next",
+        "Helping people understand AI beyond the chat box.",
         "Run the same scenario across eight AI maturity levels",
         "workshop-safe demo",
         "hero-proof-strip",
@@ -348,7 +347,7 @@ def test_render_static_before_after_copy_regression():
 
 def test_readme_and_reading_output_language_static():
     readme = Path("README.md").read_text(encoding="utf-8")
-    assert "Most people use AI like search. Glytch shows what comes next." in readme
+    assert "Helping people understand AI beyond the chat box." in readme
     assert "workshop-safe demo" in readme
     assert "workflow detail" in readme
     assert "Agentic Theatre" not in readme
