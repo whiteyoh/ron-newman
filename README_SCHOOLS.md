@@ -35,6 +35,28 @@ Glytch helps people understand:
 - when more structure is needed
 - why more automation is not always better
 
+## How this relates to UNESCO AI competency frameworks
+
+Glytch is not affiliated with UNESCO and is not endorsed by UNESCO.
+
+It is designed to support the same broad AI literacy themes found in UNESCO’s AI competency frameworks for students and teachers: human-centred use, ethical judgement, critical thinking, safe practice, and understanding how AI systems work.
+
+UNESCO’s AI competency frameworks encourage students and teachers to understand both the potential and risks of AI so they can engage with it in a safe, ethical and responsible way.
+
+Glytch supports these themes by helping students and staff explore:
+
+- what the AI is being asked to do
+- what information it is using
+- what needs checking
+- where human judgement belongs
+- why AI should support learning, not replace thinking
+
+Useful UNESCO references:
+
+- [UNESCO: AI competency frameworks for students and teachers](https://www.unesco.org/en/digital-education/ai-future-learning/competency-frameworks?hub=66966)
+- [UNESCO: AI competency framework for students](https://www.unesco.org/en/articles/ai-competency-framework-students)
+- [UNESCO: AI competency framework for teachers](https://www.unesco.org/en/articles/ai-competency-framework-teachers)
+
 ## The simple learning model
 
 Glytch shows a journey from basic AI help to checked work:
