@@ -2,7 +2,7 @@
 
 ![Glytch logo](assets/glytch-logo.svg)
 
-Most people use AI like search. Glytch shows what comes next.
+Helping people understand AI beyond the chat box.
 
 Glytch is a plain-English AI fluency demo for people who want to understand AI capability without getting trapped in tool names, model names, vendor features, or technical jargon.
 

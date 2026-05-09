@@ -1,6 +1,6 @@
 # ron-newman
 
-Most people use AI like search. Glytch shows what comes next.
+Helping people understand AI beyond the chat box.
 
 This repository includes the full Glytch workshop-safe demo documentation in a separate file:
 
