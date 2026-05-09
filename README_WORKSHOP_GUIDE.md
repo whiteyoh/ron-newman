@@ -45,7 +45,7 @@ Appropriate for:
 - Individual builders learning workflow trade-offs.
 - Teams comparing safe ways to use AI support.
 
-Prerequisites: basic Python and web app familiarity.
+Prerequisites: none for participants. A facilitator should be able to open and run the demo before the session.
 
 ## Quick start
 
