@@ -1,4 +1,4 @@
-# ron-newman
+# Glytch
 
 Helping people understand AI beyond the chat box.
 
