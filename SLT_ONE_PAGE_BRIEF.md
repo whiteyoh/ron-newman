@@ -22,6 +22,20 @@ Students and staff need to know:
 - when a person must stay in control
 - why more automation is not always better
 
+## Link to wider AI literacy themes
+
+Glytch is not affiliated with UNESCO and is not endorsed by UNESCO.
+
+It is designed to support the same broad AI literacy themes found in UNESCO’s AI competency frameworks for students and teachers, including safe use, ethical judgement, human agency, critical thinking and understanding how AI systems work.
+
+This makes Glytch useful as a practical school workshop tool: it turns those themes into a visible, discussion-based activity where staff and students can see what needs checking before AI-supported work is trusted.
+
+Useful UNESCO references:
+
+- [UNESCO: AI competency frameworks for students and teachers](https://www.unesco.org/en/digital-education/ai-future-learning/competency-frameworks?hub=66966)
+- [UNESCO: AI competency framework for students](https://www.unesco.org/en/articles/ai-competency-framework-students)
+- [UNESCO: AI competency framework for teachers](https://www.unesco.org/en/articles/ai-competency-framework-teachers)
+
 ## What Glytch teaches
 
 Glytch teaches AI capability, not AI products.
