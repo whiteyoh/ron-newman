@@ -1,0 +1,32 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Glytch G avatar">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="42%" r="70%">
+      <stop offset="0%" stop-color="#111827"/>
+      <stop offset="65%" stop-color="#050816"/>
+      <stop offset="100%" stop-color="#020617"/>
+    </radialGradient>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#22d3ee"/>
+      <stop offset="45%" stop-color="#60a5fa"/>
+      <stop offset="100%" stop-color="#f472d0"/>
+    </linearGradient>
+    <filter id="glow" x="-45%" y="-45%" width="190%" height="190%">
+      <feGaussianBlur stdDeviation="10" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <rect width="512" height="512" rx="92" fill="url(#bg)"/>
+  <circle cx="256" cy="256" r="178" fill="none" stroke="#22d3ee" stroke-width="3" opacity="0.55"/>
+  <circle cx="256" cy="256" r="204" fill="none" stroke="#f472d0" stroke-width="3" opacity="0.38" stroke-dasharray="90 38"/>
+  <path d="M50 260 H126 L152 286 H198" stroke="#22d3ee" stroke-width="4" fill="none" opacity="0.5"/>
+  <path d="M314 230 H404 L430 204 H466" stroke="#f472d0" stroke-width="4" fill="none" opacity="0.5"/>
+
+  <g filter="url(#glow)">
+    <path d="M284 96 L404 166 L404 328 L284 398 L156 398 L108 350 L108 184 L156 136 H304 L270 202 H186 L174 214 V318 L202 346 H258 L336 300 V258 H252 L284 202 H404 V336 L300 416 H170 L86 332 V176 L170 96 Z" fill="url(#g)" opacity="0.96"/>
+    <path d="M284 96 L404 166 L404 328 L284 398 L156 398 L108 350 L108 184 L156 136 H304 L270 202 H186 L174 214 V318 L202 346 H258 L336 300 V258 H252 L284 202 H404 V336 L300 416 H170 L86 332 V176 L170 96 Z" fill="none" stroke="#ffffff" stroke-width="2" opacity="0.35"/>
+  </g>
+</svg>
