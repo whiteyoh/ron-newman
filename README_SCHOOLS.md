@@ -1,5 +1,7 @@
 # Glytch for Schools
 
+![Glytch banner](assets/glytch-readme-banner.svg)
+
 Helping people understand AI beyond the chat box.
 
 Glytch is a workshop-safe AI fluency demo that helps schools teach AI judgement, not just AI prompts.
