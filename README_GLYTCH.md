@@ -1,6 +1,6 @@
 # Glytch
 
-![Glytch logo](assets/glytch-logo.svg)
+![Glytch banner](assets/glytch-readme-banner.svg)
 
 Helping people understand AI beyond the chat box.
 
