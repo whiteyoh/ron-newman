@@ -1,5 +1,7 @@
 # Glytch
 
+![Glytch banner](assets/glytch-readme-banner.svg)
+
 Helping people understand AI beyond the chat box.
 
 This repository includes the full Glytch workshop-safe demo documentation in a separate file:
