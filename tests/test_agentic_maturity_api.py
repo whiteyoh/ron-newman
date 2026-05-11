@@ -70,7 +70,7 @@ def test_level7_trace_has_action_observation_stop_condition():
 def test_level8_orchestrator_roles_present():
     payload = run_level(8, DummyClient())
     text = "\n".join(payload["lines"])
-    assert "Simulated orchestration note:" in text
+    assert "Orchestrator summary:" in text
     assert "planner" in text
     assert "critic" in text
     assert "content writer" in text

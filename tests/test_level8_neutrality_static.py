@@ -58,4 +58,5 @@ def test_level8_export_has_single_verifier_result_entry():
 def test_level8_custom_output_targets_artifact_and_human_review():
     text = Path("src/levels.py").read_text(encoding="utf-8")
     assert "Produce the requested artifact directly for the confirmed use case" in text
-    assert "check before sending" in text.lower() or "needs human review:" in text.lower()
+    assert "final answer:" in text.lower()
+    assert "human review is required before use" in text.lower()

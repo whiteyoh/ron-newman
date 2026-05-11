@@ -78,29 +78,57 @@ def test_level8_yegge_alignment_score_increased_by_one():
     assert AGENTICNESS[8]["yegge_alignment_score"] == 9
 
 
-def test_level8_custom_outage_input_produces_customer_update_sections():
-    class OutageClient(StableClient):
+def test_level8_custom_input_produces_requested_artifact_sections():
+    class ArtifactClient(StableClient):
         def chat(self, prompt, context):
             p = prompt.lower()
             if "merger" in p:
                 return (
-                    "Draft customer update\n\n"
-                    "We experienced a service outage lasting 42 minutes.\n\n"
-                    "Confirmed facts:\n- Service unavailable for 42 minutes\n"
-                    "Current assumption / still being verified:\n- Likely failed database connection pool\n"
-                    "Check before sending:\n- Confirm recovery and timeline\n"
-                    "Internal approval checklist:\n- Incident lead, support lead, communications owner"
+                    "Draft output\n\n"
+                    "Summary based on confirmed information.\n\n"
+                    "Assumptions:\n- Pending verification item\n"
+                    "Checks before use:\n- Confirm latest inputs\n"
+                    "Next steps:\n- Route for human approval"
                 )
             return super().chat(prompt, context)
 
     custom_context = (
-        "Goal: customer update for outage; Audience: non-technical customers and senior managers; "
-        "Constraints: calm, honest, plain English, separate facts from assumptions."
+        "Goal: Create a customer-facing update based on confirmed facts and assumptions. "
+        "Audience: Non-technical readers. Constraints: Plain English, do not invent facts, include checks before use."
     )
-    payload = run_level(8, OutageClient(), use_case_key="custom", use_case_context=custom_context)
+    payload = run_level(8, ArtifactClient(), use_case_key="custom", use_case_context=custom_context)
     text = "\n".join(payload["lines"]).lower()
-    assert "draft customer update" in text
-    assert "confirmed facts" in text
-    assert "current assumption" in text or "still being verified" in text
-    assert "check before sending" in text
-    assert "internal approval checklist" in text
+    assert "draft output" in text
+    assert "assumptions" in text
+    assert "checks before use" in text
+    assert "final answer:" in text
+
+
+def test_level8_output_order_and_single_verifier_result():
+    lines = run_level(8, StableClient(), use_case_key="custom", use_case_context="Goal: Draft a short status update.")["lines"]
+    text = "\n".join(lines)
+    assert text.count("Verifier result:") == 1
+    assert "teacher-resource-writer" not in text.lower()
+    assert "nourishment" not in text.lower()
+    assert "topic tip: optimization tip" not in text.lower()
+    expected = [
+        "Running Level 8",
+        "What this level shows:",
+        "Run focus:",
+        "Confirmed user context:",
+        "Orchestrator summary:",
+        "Taskboard:",
+        "Verifier result:",
+        "Approval gate:",
+        "Final answer:",
+        "honest limitation note:",
+    ]
+    positions = [text.index(marker) for marker in expected]
+    assert positions == sorted(positions)
+
+
+def test_level8_workshop_safe_limitations_remain_visible():
+    text = "\n".join(run_level(8, StableClient())["lines"]).lower()
+    assert "workshop-safe orchestrator simulation" in text
+    assert "no real external action was taken" in text
+    assert "human review is required before use" in text

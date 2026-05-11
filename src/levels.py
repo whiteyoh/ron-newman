@@ -567,7 +567,8 @@ def run_level(
         intro.append(
             f"Why this is more advanced than Level {level - 1}: {LEVEL_ADVANCEMENT_REASONS[level]}"
         )
-    intro.append(use_case)
+    if level != 8:
+        intro.append(use_case)
     simulation = build_yegge_simulation(level, level_info["name"], use_case).to_dict()
     run_data: dict[str, Any] = {}
 
@@ -997,10 +998,11 @@ def run_level(
         )
         orch = run_mini_orchestrator(client, task, parallel=True)
         lines = [
-            "Simulated orchestration note: This remains workshop-safe and is not a production orchestrator.",
-            f"Orchestrator run id: {orch['run_id']}",
-            f"orchestration mode: {orch['mode']}",
-            "Policy:",
+            "Confirmed user context:",
+            use_case,
+            "Orchestrator summary:",
+            f"run id: {orch['run_id']}",
+            f"mode: {orch['mode']}",
             f"max worker retries: {orch['policy']['max_worker_retries']}",
             f"verifier required: {orch['policy']['require_verifier_supported']}",
             f"human approval required: {orch['policy']['require_human_approval_before_merge']}",
@@ -1015,18 +1017,22 @@ def run_level(
                     f"attempt: {item['attempt']}",
                 ]
             )
+        audit_without_verifier = [
+            entry for entry in orch["audit_log"] if not str(entry).lower().startswith("verifier result:")
+        ]
         lines.extend(
             [
                 "Audit trail:",
-                *orch["audit_log"],
+                *audit_without_verifier,
+                f"Verifier result: {orch['verifier_result']}",
                 "Approval gate:",
                 f"approval required: {'yes' if orch['approval_required'] else 'no'}",
                 f"approved for merge: {'yes' if orch['approved_for_merge'] else 'no'}",
                 f"merge policy: {orch['merge_policy']}",
                 f"final status: {orch['status']}",
-                ("final answer:" if orch["approved_for_merge"] else "needs human review:"),
+                "Final answer:",
                 orch["final_answer"],
-                "honest limitation note: This is still a workshop-safe orchestrator simulation. It does not execute repository changes, manage real background jobs, or persist state outside the request.",
+                "honest limitation note: This is still a workshop-safe orchestrator simulation. It does not execute repository changes, manage real background jobs, or persist state outside the request. No real external action was taken, and human review is required before use.",
             ]
         )
         run_data = orch
