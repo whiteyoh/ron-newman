@@ -45,7 +45,6 @@ def test_level8_output_includes_taskboard_audit_and_approval_gate():
         "Approval gate:",
         "approval required: yes",
         "approved for merge: yes",
-        "verifier result:",
         "merge policy:",
     ]:
         assert needle in lines
@@ -77,3 +76,31 @@ def test_orchestrator_unsupported_verifier_needs_human_review_and_blocks_merger(
 def test_level8_yegge_alignment_score_increased_by_one():
     assert AGENTICNESS[8]["score"] == 8
     assert AGENTICNESS[8]["yegge_alignment_score"] == 9
+
+
+def test_level8_custom_outage_input_produces_customer_update_sections():
+    class OutageClient(StableClient):
+        def chat(self, prompt, context):
+            p = prompt.lower()
+            if "merger" in p:
+                return (
+                    "Draft customer update\n\n"
+                    "We experienced a service outage lasting 42 minutes.\n\n"
+                    "Confirmed facts:\n- Service unavailable for 42 minutes\n"
+                    "Current assumption / still being verified:\n- Likely failed database connection pool\n"
+                    "Check before sending:\n- Confirm recovery and timeline\n"
+                    "Internal approval checklist:\n- Incident lead, support lead, communications owner"
+                )
+            return super().chat(prompt, context)
+
+    custom_context = (
+        "Goal: customer update for outage; Audience: non-technical customers and senior managers; "
+        "Constraints: calm, honest, plain English, separate facts from assumptions."
+    )
+    payload = run_level(8, OutageClient(), use_case_key="custom", use_case_context=custom_context)
+    text = "\n".join(payload["lines"]).lower()
+    assert "draft customer update" in text
+    assert "confirmed facts" in text
+    assert "current assumption" in text or "still being verified" in text
+    assert "check before sending" in text
+    assert "internal approval checklist" in text

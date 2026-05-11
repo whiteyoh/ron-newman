@@ -39,3 +39,23 @@ def test_custom_business_context_no_education_leakage():
     assert "classroom-ready" not in text
     assert "teacher resource" not in text
     assert "lesson resource" not in text
+
+
+def test_level8_labels_and_focus_are_business_friendly():
+    text = Path("src/levels.py").read_text(encoding="utf-8")
+    assert "Nourishment:" not in text
+    assert "Topic tip:" not in text
+    assert "Optimization tip:" not in text
+    assert "What this level shows:" in text
+    assert "Run focus:" in text
+
+
+def test_level8_export_has_single_verifier_result_entry():
+    text = Path("src/levels.py").read_text(encoding="utf-8")
+    assert "verifier result: {orch['verifier_result']}" not in text
+
+
+def test_level8_custom_output_targets_artifact_and_human_review():
+    text = Path("src/levels.py").read_text(encoding="utf-8")
+    assert "Produce the requested artifact directly for the confirmed use case" in text
+    assert "check before sending" in text.lower() or "needs human review:" in text.lower()

@@ -66,8 +66,7 @@ LEVEL_CONTEXT_TIP_TEMPLATES = {
         "a stop condition."
     ),
     8: (
-        "Optimization tip: for {topic}, compare multiple drafts and keep the one with "
-        "the strongest actionability."
+        "Compare multiple drafts and keep the one with the strongest clarity, honesty and actionability."
     ),
 }
 
@@ -561,8 +560,8 @@ def run_level(
     intro = [
         f"Running Level {level}: {level_info['name']}",
         level_info["desc"],
-        f"Nourishment: {level_info['nourishment']}",
-        f"Topic tip: {_contextual_tip(level, use_case_context, use_case)}",
+        f"What this level shows: {level_info['nourishment']}",
+        f"Run focus: {_contextual_tip(level, use_case_context, use_case)}",
     ]
     if level > 1:
         intro.append(
@@ -992,7 +991,7 @@ def run_level(
     else:
         task = AgentTask(
             objective=use_case_prompt(
-                "Draft practical guidance for completing the confirmed use case effectively.",
+                "Produce the requested artifact directly for the confirmed use case. Return the final user-facing draft, not meta guidance about how to write it.",
                 use_case,
             )
         )
@@ -1020,11 +1019,11 @@ def run_level(
             [
                 "Audit trail:",
                 *orch["audit_log"],
-                f"verifier result: {orch['verifier_result']}",
                 "Approval gate:",
                 f"approval required: {'yes' if orch['approval_required'] else 'no'}",
                 f"approved for merge: {'yes' if orch['approved_for_merge'] else 'no'}",
                 f"merge policy: {orch['merge_policy']}",
+                f"final status: {orch['status']}",
                 ("final answer:" if orch["approved_for_merge"] else "needs human review:"),
                 orch["final_answer"],
                 "honest limitation note: This is still a workshop-safe orchestrator simulation. It does not execute repository changes, manage real background jobs, or persist state outside the request.",

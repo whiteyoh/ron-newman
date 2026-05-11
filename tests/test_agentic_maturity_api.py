@@ -73,5 +73,5 @@ def test_level8_orchestrator_roles_present():
     assert "Simulated orchestration note:" in text
     assert "planner" in text
     assert "critic" in text
-    assert "teacher-resource-writer" in text
+    assert "content writer" in text
     assert "verifier" in text

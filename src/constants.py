@@ -51,7 +51,7 @@ LEVELS = {
         "name": "Mini Orchestrator",
         "desc": (
             "Workshop-safe simulation that coordinates planner, researcher, "
-            "teacher-resource-writer, critic, verifier and merge policy."
+            "content writer, critic, verifier and approval gate."
         ),
         "nourishment": (
             "Shows how specialist workers, verification, approval and merge "
