@@ -1000,6 +1000,7 @@ def run_level(
         lines = [
             "Confirmed user context:",
             use_case,
+            "Simulated orchestration: workshop-safe run summary.",
             "Orchestrator summary:",
             f"run id: {orch['run_id']}",
             f"mode: {orch['mode']}",
@@ -1018,7 +1019,9 @@ def run_level(
                 ]
             )
         audit_without_verifier = [
-            entry for entry in orch["audit_log"] if not str(entry).lower().startswith("verifier result:")
+            entry
+            for entry in orch["audit_log"]
+            if not str(entry).lower().startswith("verifier result:")
         ]
         lines.extend(
             [

@@ -94,7 +94,8 @@ def test_level8_custom_input_produces_requested_artifact_sections():
 
     custom_context = (
         "Goal: Create a customer-facing update based on confirmed facts and assumptions. "
-        "Audience: Non-technical readers. Constraints: Plain English, do not invent facts, include checks before use."
+        "Audience: Non-technical readers. Constraints: Plain English, "
+        "do not invent facts, include checks before use."
     )
     payload = run_level(8, ArtifactClient(), use_case_key="custom", use_case_context=custom_context)
     text = "\n".join(payload["lines"]).lower()
@@ -105,7 +106,12 @@ def test_level8_custom_input_produces_requested_artifact_sections():
 
 
 def test_level8_output_order_and_single_verifier_result():
-    lines = run_level(8, StableClient(), use_case_key="custom", use_case_context="Goal: Draft a short status update.")["lines"]
+    lines = run_level(
+        8,
+        StableClient(),
+        use_case_key="custom",
+        use_case_context="Goal: Draft a short status update.",
+    )["lines"]
     text = "\n".join(lines)
     assert text.count("Verifier result:") == 1
     assert "teacher-resource-writer" not in text.lower()
