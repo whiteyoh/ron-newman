@@ -54,8 +54,7 @@ LEVELS = {
             "content writer, critic, verifier and approval gate."
         ),
         "nourishment": (
-            "What this level shows: Specialist workers, verification, approval "
-            "and merge policy coordinate a safer final result."
+            "Specialist workers, verification, approval and merge policy coordinate a safer final result."
         ),
     },
 }
