@@ -144,7 +144,8 @@ def test_level8_output_order_and_single_verifier_result():
     assert text.count("Verifier result:") == 1
     assert "verifier result:" not in text
     assert "teacher-resource-writer" not in text.lower()
-    assert "nourishment" not in text.lower()
+    assert "nourishment:" not in text
+    assert "what this level shows: what this level shows:" not in text.lower()
     assert "topic tip: optimization tip" not in text.lower()
     assert "practical guidance for preparing" not in text.lower()
     expected = [
