@@ -129,9 +129,12 @@ def run_mini_orchestrator(client: AIChatClient, task: AgentTask, parallel: bool 
     if run_state.approved_for_merge:
         merger = client.chat(
             (
-                "You are merger. Produce the user-requested output first and make it action-ready. "
-                "Do not default to generic guidance or 'guidance for preparing' wording unless guidance was requested. "
-                "Preserve known facts, clearly label assumptions, and include 'Check before use' where appropriate. "
+                "You are merger. Produce the user-requested output first "
+                "and make it action-ready. "
+                "Do not default to generic guidance. "
+                "Avoid 'guidance for preparing' wording unless guidance was requested. "
+                "Preserve known facts, clearly label assumptions, "
+                "and include 'Check before use' where appropriate. "
                 "Use plain English."
             ),
             f"Objective: {task.objective}\nVerifier: {verifier}\n\nOutputs:\n{verifier_input}",
