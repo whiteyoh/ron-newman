@@ -64,7 +64,7 @@ Prompt-only use is useful, but it is low agenticness because the AI does not cho
 - Limitation: still needs careful action constraints and iteration limits.
 
 ### 8) Mini Orchestrator / Self-improving Workflow
-- Workshop-safe simulation of orchestrating planner, critic, teacher-resource-writer, and verifier roles.
+- Workshop-safe simulation of orchestrating planner, researcher, content writer, critic, verifier, and approval gate roles.
 - Strength: demonstrates role-based coordination and verification in one flow.
 - Limitation: simulation only, not a production orchestrator.
 

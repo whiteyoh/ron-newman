@@ -116,7 +116,7 @@ def run_mini_orchestrator(client: AIChatClient, task: AgentTask, parallel: bool 
         f"Objective: {task.objective}\n\nOutputs:\n{verifier_input}",
     )
     run_state.verifier_result = verifier
-    run_state.audit_log.append(f"verifier result: {verifier}")
+    run_state.audit_log.append("verifier completed")
 
     verifier_supported = "supported" in verifier.lower() and "unsupported" not in verifier.lower()
     run_state.approval_required = require_human_approval_before_merge
@@ -129,8 +129,10 @@ def run_mini_orchestrator(client: AIChatClient, task: AgentTask, parallel: bool 
     if run_state.approved_for_merge:
         merger = client.chat(
             (
-                "You are merger. Merge outputs using policy: prioritize objective "
-                "coverage, then clarity, then actionability."
+                "You are merger. Produce the user-requested output first and make it action-ready. "
+                "Do not default to generic guidance or 'guidance for preparing' wording unless guidance was requested. "
+                "Preserve known facts, clearly label assumptions, and include 'Check before use' where appropriate. "
+                "Use plain English."
             ),
             f"Objective: {task.objective}\nVerifier: {verifier}\n\nOutputs:\n{verifier_input}",
         )

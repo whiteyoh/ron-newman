@@ -105,6 +105,34 @@ def test_level8_custom_input_produces_requested_artifact_sections():
     assert "final answer:" in text
 
 
+def test_level8_merger_prompt_requires_artifact_first_and_not_generic_guidance():
+    class PromptCaptureClient(StableClient):
+        def __init__(self):
+            self.merger_prompt = ""
+
+        def chat(self, prompt, context):
+            if "you are merger" in prompt.lower():
+                self.merger_prompt = prompt
+                return "Draft update\n\nCheck before use:\n- Confirm dates"
+            return super().chat(prompt, context)
+
+    client = PromptCaptureClient()
+    run_level(
+        8,
+        client,
+        use_case_key="custom",
+        use_case_context=(
+            "Goal: Create a customer-facing update from provided facts and assumptions. "
+            "Audience: Non-technical readers. Constraints: Plain English. Do not invent facts."
+        ),
+    )
+    prompt = client.merger_prompt.lower()
+    assert "produce the user-requested output first" in prompt
+    assert "do not default to generic guidance" in prompt
+    assert "guidance for preparing" in prompt
+    assert "check before use" in prompt
+
+
 def test_level8_output_order_and_single_verifier_result():
     lines = run_level(
         8,
@@ -114,9 +142,11 @@ def test_level8_output_order_and_single_verifier_result():
     )["lines"]
     text = "\n".join(lines)
     assert text.count("Verifier result:") == 1
+    assert "verifier result:" not in text
     assert "teacher-resource-writer" not in text.lower()
     assert "nourishment" not in text.lower()
     assert "topic tip: optimization tip" not in text.lower()
+    assert "practical guidance for preparing" not in text.lower()
     expected = [
         "Running Level 8",
         "What this level shows:",
