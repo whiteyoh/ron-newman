@@ -58,7 +58,7 @@ def test_failed_worker_retries_once_and_audit_log_contains_lifecycle_events():
         "created task",
         "started worker",
         "completed worker",
-        "verifier result",
+        "verifier completed",
         "approval decision",
         "merge decision",
     ]:
