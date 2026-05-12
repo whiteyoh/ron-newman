@@ -2,6 +2,16 @@ import { appendKV, createEl, pretty, refs } from './dom.js';
 import { humanizeStatus, normalizeStatus } from './status-utils.js';
 
 const summarizeOutput = (output) => (!output ? 'No output yet.' : String(output).slice(0, 180));
+const humanizeApprovalValue = (value) => {
+  if (value === true || value === 'true') return 'Yes';
+  if (value === false || value === 'false') return 'No';
+  const normalized = String(value || '').toLowerCase();
+  if (normalized === 'needs_human_review') return 'Needs human review';
+  if (normalized === 'merged') return 'Ready for review';
+  if (normalized === 'approved') return 'Approved';
+  if (normalized === 'blocked') return 'Blocked';
+  return pretty(value, 'Available after run');
+};
 
 export function renderTaskboard(data) {
   refs.taskboardEl.textContent = '';
@@ -32,8 +42,8 @@ export function renderTaskboard(data) {
     col.appendChild(createEl('h4', '', humanizeStatus(status)));
     workers.forEach((w) => {
       const wc = createEl('article', `worker-card ${w.status}`);
-      appendKV(wc, 'Worker', w.worker_name); appendKV(wc, 'Role', w.worker_role); appendKV(wc, 'Task', w.task);
-      appendKV(wc, 'Status', `${humanizeStatus(w.status)} · Worker: ${humanizeStatus(w.worker_status)}`); appendKV(wc, 'Attempt', String(w.attempt)); appendKV(wc, 'Output', w.output);
+      appendKV(wc, 'Step', w.worker_name); appendKV(wc, 'Role', w.worker_role); appendKV(wc, 'What it worked on', w.task);
+      appendKV(wc, 'Result', `${humanizeStatus(w.status)} · Step status: ${humanizeStatus(w.worker_status)}`); appendKV(wc, 'Try', String(w.attempt)); appendKV(wc, 'Summary', w.output);
       if (w.error) wc.appendChild(createEl('div', 'pill blocked', `Error: ${w.error}`));
       col.appendChild(wc);
     });
@@ -44,12 +54,12 @@ export function renderTaskboard(data) {
   const approval = data?.approval_summary || {};
   const panel = createEl('section', 'panel approval-panel');
   panel.appendChild(createEl('h4', '', 'Review and merge simulation'));
-  appendKV(panel, 'Verifier result', pretty(approval.verifier_result, 'Available after run'));
-  appendKV(panel, 'Review required', pretty(approval.approval_required, 'Available after run'));
-  appendKV(panel, 'Simulated review outcome', pretty(approval.approved, 'Available after run'));
-  appendKV(panel, 'Simulated merge decision', pretty(approval.merge_decision, 'Available after run'));
+  appendKV(panel, 'Verifier result', humanizeApprovalValue(approval.verifier_result));
+  appendKV(panel, 'Review required', humanizeApprovalValue(approval.approval_required));
+  appendKV(panel, 'Simulated review outcome', humanizeApprovalValue(approval.approved));
+  appendKV(panel, 'Simulated merge decision', humanizeApprovalValue(approval.merge_decision));
   appendKV(panel, 'Merge policy', pretty(approval.merge_policy, 'Workshop-safe simulation'));
-  appendKV(panel, 'Simulation status', pretty(approval.final_status || approval.merge_decision, 'Available after run'));
+  appendKV(panel, 'Simulation status', humanizeApprovalValue(approval.final_status || approval.merge_decision));
   const decision = String(approval.merge_decision || '').toLowerCase();
   panel.appendChild(createEl('p', 'muted', decision.includes('approved') ? 'Verifier supported the output. In a real workflow, this would wait for human approval before merge.' : 'Needs human review — simulated merge would not proceed.'));
   refs.taskboardEl.appendChild(panel);

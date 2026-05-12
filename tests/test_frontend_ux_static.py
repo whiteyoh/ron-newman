@@ -122,11 +122,7 @@ def test_render_taskboard_humanizes_user_visible_statuses():
 
     assert "humanizeStatus" in text
     assert "createEl('h4', '', humanizeStatus(status))" in text
-    expected = (
-        "appendKV(wc, 'Status', `${humanizeStatus(w.status)} · Worker: "
-        "${humanizeStatus(w.worker_status)}`);"
-    )
-    assert expected in text
+    assert "appendKV(wc, 'Result', `${humanizeStatus(w.status)} · Step status: ${humanizeStatus(w.worker_status)}`);" in text
 
 
 def test_onboarding_handles_unexpected_level_choices_in_guide():
