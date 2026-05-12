@@ -28,6 +28,7 @@ export function clearRunPanels() {
     refs.copyOutputBtn.disabled = true;
     refs.copyOutputBtn.textContent = 'Copy output';
   }
+  state.latestCandidateOutput = null;
   if (refs.advancedResultsDetails) {
     refs.advancedResultsDetails.open = false;
     refs.advancedResultsDetails.classList.add('hidden');
