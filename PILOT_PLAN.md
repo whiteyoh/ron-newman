@@ -4,6 +4,21 @@
 
 Helping people understand AI beyond the chat box.
 
+
+## Executive summary
+
+This pilot tests whether Glytch improves practical AI judgement.
+
+It measures whether people leave with a clearer understanding of:
+
+- what the AI did
+- what evidence was used
+- what needs checking
+- where human review belongs
+- why more automation is not automatically better
+
+The pilot is designed to be safe, measurable and easy to run with a school, team, organisation or workshop group.
+
 This pilot plan is designed to help a school, team, organisation or workshop group test Glytch safely and gather evidence about whether it improves AI confidence, AI judgement and understanding of human review.
 
 Glytch is a workshop-safe simulation. It does not take real-world action, change files, send messages, make decisions for people or remove the need for human review.
@@ -180,7 +195,7 @@ A pilot should be considered successful if most of the following are true:
 - the session produces useful feedback for improving Glytch
 - no personal or sensitive data is used during the pilot
 
-A strong pilot result would show:
+Suggested strong-result indicators:
 
 - at least 70% of attendees improve by one point or more on at least three questions
 - at least 80% of attendees agree that Glytch made AI checks and review easier to understand
