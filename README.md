@@ -16,6 +16,10 @@ For school AI literacy and upskilling materials, see:
 - [Safe use in schools](SAFE_USE_IN_SCHOOLS.md)
 - [SLT one-page brief](SLT_ONE_PAGE_BRIEF.md)
 
+For pilot planning and evidence collection, see:
+
+- [Pilot plan](PILOT_PLAN.md)
+
 For scoring and simulation explanations such as **workflow detail**, replay, and taskboard behavior, see:
 
 - [Reading Glytch output](docs/READING_GLYTCH_OUTPUT.md)
