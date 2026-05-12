@@ -25,6 +25,42 @@ function setDisabled(node, value) {
   if (node) node.disabled = value;
 }
 
+function getCandidateStatusLabel(status) {
+  const value = String(status || '').toLowerCase();
+  if (['merged', 'completed', 'approved'].includes(value)) return 'Ready for review';
+  if (value === 'needs_human_review') return 'Needs human review';
+  if (value === 'blocked') return 'Blocked by check';
+  if (value === 'failed') return 'Could not complete safely';
+  if (value === 'running') return 'Running';
+  if (value === 'pending') return 'Pending';
+  return 'Review needed';
+}
+
+function renderFinalOutput(bodyNode, text) {
+  if (!bodyNode) return;
+  bodyNode.textContent = '';
+  const headingSet = new Set([
+    'draft', 'draft update', 'draft customer update', 'confirmed facts', 'assumptions',
+    'current assumption', 'checks before use', 'check before use', 'human review',
+    'human review needed', 'next steps',
+  ]);
+  const lines = String(text || '').split('\n');
+  let current = createEl('section', 'final-output-section');
+  lines.forEach((line) => {
+    const normalized = line.trim().replace(/:$/, '').toLowerCase();
+    if (headingSet.has(normalized)) {
+      if (current.childNodes.length) bodyNode.appendChild(current);
+      const block = createEl('section', 'final-output-section');
+      block.appendChild(createEl('h4', 'final-output-heading', line.trim().replace(/:$/, '')));
+      bodyNode.appendChild(block);
+      current = createEl('section', 'final-output-section');
+      return;
+    }
+    current.appendChild(document.createTextNode(`${line}\n`));
+  });
+  if (current.childNodes.length) bodyNode.appendChild(current);
+}
+
 function getRunInsight(level) {
   const copyByLevel = {
     1: 'This is basic prompting. The AI answers directly, but the human still has to judge quality, accuracy, and next steps.',
@@ -130,8 +166,8 @@ async function runLevel(level) {
     const isUsefulFinalAnswer = normalizedFinalAnswer && !hiddenPrefixes.some((prefix) => normalizedFinalAnswer.toLowerCase().startsWith(prefix));
     if (refs.finalOutputPanel && isUsefulFinalAnswer) {
       refs.finalOutputPanel.classList.remove('hidden');
-      if (refs.finalOutputBody) refs.finalOutputBody.textContent = normalizedFinalAnswer;
-      if (refs.finalOutputStatus) refs.finalOutputStatus.textContent = data?.approval_summary?.final_status || 'Candidate';
+      if (refs.finalOutputBody) renderFinalOutput(refs.finalOutputBody, normalizedFinalAnswer);
+      if (refs.finalOutputStatus) refs.finalOutputStatus.textContent = getCandidateStatusLabel(data?.approval_summary?.final_status);
       if (refs.copyOutputBtn) refs.copyOutputBtn.disabled = false;
     } else if (refs.finalOutputPanel) refs.finalOutputPanel.classList.add('hidden');
     if (!isUsefulFinalAnswer) {

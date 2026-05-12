@@ -355,6 +355,17 @@ textarea:focus-visible {
   font-size: 1.03rem;
   line-height: 1.62;
   color: #f2f6ff;
+  white-space: pre-wrap;
+}
+
+.final-output-section { margin-top: 0.7rem; }
+.final-output-section:first-child { margin-top: 0; }
+.final-output-heading {
+  margin: 0 0 0.2rem;
+  font-size: 0.9rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--accent);
 }
 
 
