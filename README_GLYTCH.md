@@ -193,6 +193,14 @@ It is not about chasing the newest tool.
 Glytch is a way to understand how AI capability develops, where control is needed, and how people can use AI more safely and effectively.
 
 
+
+## Piloting Glytch
+
+To test Glytch with a school, team, organisation or workshop group, use the [Pilot plan](PILOT_PLAN.md).
+
+The pilot plan includes session formats, before-and-after confidence questions, evidence collection, success indicators and safety boundaries.
+
+
 ## One-line summary
 
 Glytch helps people move from using AI as a search box to understanding AI as a controlled workflow.
