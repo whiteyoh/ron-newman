@@ -47,13 +47,18 @@ function renderFinalOutput(bodyNode, text) {
   const lines = String(text || '').split('\n');
   let current = createEl('section', 'final-output-section');
   lines.forEach((line) => {
-    const normalized = line.trim().replace(/:$/, '').toLowerCase();
+    const cleanedHeading = line
+      .trim()
+      .replace(/^#+\s*/, '')
+      .replace(/^\*\*/, '')
+      .replace(/\*\*$/, '')
+      .replace(/:$/, '')
+      .trim();
+    const normalized = cleanedHeading.toLowerCase();
     if (headingSet.has(normalized)) {
       if (current.childNodes.length) bodyNode.appendChild(current);
-      const block = createEl('section', 'final-output-section');
-      block.appendChild(createEl('h4', 'final-output-heading', line.trim().replace(/:$/, '')));
-      bodyNode.appendChild(block);
       current = createEl('section', 'final-output-section');
+      current.appendChild(createEl('h4', 'final-output-heading', cleanedHeading));
       return;
     }
     current.appendChild(document.createTextNode(`${line}\n`));
@@ -163,6 +168,7 @@ async function runLevel(level) {
     const finalAnswer = data?.final_answer || data?.approval_summary?.final_answer || lines[lines.length - 1] || '';
     const hiddenPrefixes = ['honest limitation note', 'workshop-safe', 'simulation note', 'audit trail', 'approval gate', 'policy', 'taskboard'];
     const normalizedFinalAnswer = String(finalAnswer || '').trim();
+    state.latestCandidateOutput = normalizedFinalAnswer;
     const isUsefulFinalAnswer = normalizedFinalAnswer && !hiddenPrefixes.some((prefix) => normalizedFinalAnswer.toLowerCase().startsWith(prefix));
     if (refs.finalOutputPanel && isUsefulFinalAnswer) {
       refs.finalOutputPanel.classList.remove('hidden');
@@ -468,7 +474,7 @@ on(refs.confirmBtn, 'click', () => {
 on(refs.replayBtn, 'click', runReplay);
 
 on(refs.copyOutputBtn, 'click', async () => {
-  const text = refs.finalOutputBody?.textContent?.trim() || '';
+  const text = state.latestCandidateOutput || refs.finalOutputBody?.textContent?.trim() || '';
   if (!text) return;
   try {
     await navigator.clipboard.writeText(text);

@@ -12,6 +12,7 @@ export const state = {
   selectedCustomScenario: null,
   selectedUseCaseContext: '',
   latestArtifact: null,
+  latestCandidateOutput: null,
   runInProgress: false,
   lastReplaySteps: [],
   theatreCards: [],

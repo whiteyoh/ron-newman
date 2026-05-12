@@ -61,6 +61,12 @@ export function renderTaskboard(data) {
   appendKV(panel, 'Merge policy', pretty(approval.merge_policy, 'Workshop-safe simulation'));
   appendKV(panel, 'Simulation status', humanizeApprovalValue(approval.final_status || approval.merge_decision));
   const decision = String(approval.merge_decision || '').toLowerCase();
-  panel.appendChild(createEl('p', 'muted', decision.includes('approved') ? 'Verifier supported the output. In a real workflow, this would wait for human approval before merge.' : 'Needs human review — simulated merge would not proceed.'));
+  const finalStatus = String(approval.final_status || '').toLowerCase();
+  const approvedValue = String(approval.approved || '').toLowerCase();
+  const isSuccess = approval.approved === true
+    || approvedValue === 'true'
+    || ['approved', 'merged'].includes(decision)
+    || ['approved', 'merged', 'completed'].includes(finalStatus);
+  panel.appendChild(createEl('p', 'muted', isSuccess ? 'Verifier supported the output. In a real workflow, this would still wait for human review before use.' : 'Needs human review — simulated merge would not proceed.'));
   refs.taskboardEl.appendChild(panel);
 }
