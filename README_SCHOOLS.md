@@ -12,7 +12,7 @@ It gives staff and students a safe way to see how AI-supported work changes when
 
 Glytch helps schools introduce AI in a safe, practical and human way.
 
-It is not about telling students to use AI for everything. It is about helping them understand what AI did, what needs checking, and where human judgement belongs.
+It is not about telling students to use AI for everything. It helps them understand what AI did, what needs checking, and where human judgement belongs.
 
 By the end of a Glytch session, students and staff should be able to explain the difference between a quick AI answer and a checked AI-supported workflow.
 
@@ -29,7 +29,7 @@ Use this pack to run AI literacy sessions with:
 - careers and employability teams
 - school support and admin teams
 
-The same demo can be used at different depths. With students, keep the focus on learning, checking and responsible use. With staff and leaders, use it to build a shared language for safe AI adoption.
+The same demo can be used at different depths. With students, keep the focus on learning, checking and responsible use. With staff and leaders, use it to build a shared language for safe, responsible AI use.
 
 ## The core message
 
@@ -140,6 +140,7 @@ During a school session:
 - do not treat AI answers as automatically correct
 - do not use AI output as a final decision
 - do not use the demo for safeguarding decisions
+- do not use Glytch for safeguarding decisions
 - do not use the demo to replace teacher judgement
 - do keep the focus on checking, evidence and review
 - do remind students that AI can be useful and still be wrong
@@ -159,7 +160,7 @@ It is designed to support broad AI literacy themes that many schools and educati
 - checking evidence and assumptions
 - keeping people in control of important decisions
 
-Glytch helps make those ideas visible in a classroom or workshop setting.
+Glytch helps make those ideas visible in a classroom or workshop setting. It is for workshop learning, not production use.
 
 ## What Glytch is not
 
