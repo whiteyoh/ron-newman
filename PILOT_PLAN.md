@@ -19,7 +19,7 @@ It measures whether people leave with a clearer understanding of:
 
 The pilot is designed to be safe, measurable and easy to run with a school, team, organisation or workshop group.
 
-This pilot plan is designed to help a school, team, organisation or workshop group test Glytch safely and gather evidence about whether it improves AI confidence, AI judgement and understanding of human review.
+Use this plan to run the pilot safely, collect evidence and decide the next step.
 
 Glytch is a workshop-safe simulation. It does not take real-world action, change files, send messages, make decisions for people or remove the need for human review.
 
