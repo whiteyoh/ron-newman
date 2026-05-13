@@ -35,14 +35,17 @@ Glytch gives people a safe way to explore that judgement without taking real-wor
 
 ## What the demo shows
 
-Glytch lets people compare different levels of AI support:
+Glytch lets people compare all eight levels of AI support:
 
 | Level | What it shows |
 |---:|---|
 | 1 | A quick AI answer |
+| 2 | Clearer instructions, format and constraints |
 | 3 | A bounded tool-style path |
 | 4 | A more evidence-aware answer |
+| 5 | A visible plan before action |
 | 6 | Critique and revision before use |
+| 7 | A controlled loop with stop conditions |
 | 8 | Simulated orchestration with review gates |
 
 The core lesson is:
