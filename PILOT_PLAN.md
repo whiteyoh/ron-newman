@@ -92,14 +92,17 @@ Use this for deeper learning or staff CPD.
 
 ## 4. What Glytch will demonstrate
 
-The pilot should show that AI work can be understood at different levels:
+The pilot should show that AI work can be understood across all eight levels:
 
 | Level | What people see | What it teaches |
 |---:|---|---|
 | 1 | A quick AI answer | Fast output still needs judgement |
+| 2 | Clearer instructions, format and constraints | Better instructions improve structure, but still need checking |
 | 3 | A bounded tool-style path | Tools and checks reduce guesswork |
 | 4 | A more evidence-aware answer | Grounding makes checking easier |
+| 5 | A visible plan before action | Planning makes the work easier to inspect |
 | 6 | Critique and revision | First drafts should not always be final |
+| 7 | A controlled loop with stop conditions | Loops need clear limits and review points |
 | 8 | Simulated orchestration | More automation needs more visible review |
 
 The key lesson is:
