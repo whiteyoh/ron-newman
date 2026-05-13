@@ -66,6 +66,19 @@ For school use, explain it like this:
 | Review | A person checks before using it |
 | Controlled work | More steps, more checks and more responsibility |
 
+## How this maps to the 8 Glytch levels
+
+| Level | School-friendly explanation |
+|---:|---|
+| 1 | AI gives a quick answer |
+| 2 | AI follows clearer instructions |
+| 3 | AI uses a bounded helper or tool |
+| 4 | AI uses supplied evidence |
+| 5 | AI creates a visible plan |
+| 6 | AI reviews and improves a draft |
+| 7 | AI follows a controlled loop with limits |
+| 8 | AI simulates several workers with review gates |
+
 The important lesson is:
 
 > Use the lowest level of AI support that safely gets the job done.
