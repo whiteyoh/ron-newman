@@ -8,6 +8,11 @@ This repository includes the full Glytch workshop-safe demo documentation in a s
 
 - [Glytch README](README_GLYTCH.md)
 
+For leadership, pilot planning and evidence collection, see:
+
+- [MD one-page brief](MD_ONE_PAGE_BRIEF.md)
+- [Pilot plan](PILOT_PLAN.md)
+
 For school AI literacy and upskilling materials, see:
 
 - [Glytch for Schools](README_SCHOOLS.md)
@@ -15,10 +20,6 @@ For school AI literacy and upskilling materials, see:
 - [Student activity sheet](STUDENT_ACTIVITY_SHEET.md)
 - [Safe use in schools](SAFE_USE_IN_SCHOOLS.md)
 - [SLT one-page brief](SLT_ONE_PAGE_BRIEF.md)
-
-For pilot planning and evidence collection, see:
-
-- [Pilot plan](PILOT_PLAN.md)
 
 For scoring and simulation explanations such as **workflow detail**, replay, and taskboard behavior, see:
 
