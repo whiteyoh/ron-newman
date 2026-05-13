@@ -139,8 +139,7 @@ During a school session:
 - do not enter sensitive school data
 - do not treat AI answers as automatically correct
 - do not use AI output as a final decision
-- do not use the demo for safeguarding decisions
-- do not use Glytch for safeguarding decisions
+- do not use Glytch or any demo output for safeguarding decisions
 - do not use the demo to replace teacher judgement
 - do keep the focus on checking, evidence and review
 - do remind students that AI can be useful and still be wrong
@@ -160,7 +159,7 @@ It is designed to support broad AI literacy themes that many schools and educati
 - checking evidence and assumptions
 - keeping people in control of important decisions
 
-Glytch helps make those ideas visible in a classroom or workshop setting. It is for workshop learning, not production use.
+Glytch helps make those ideas visible in a classroom or workshop setting. It is designed for workshop learning, not live operational use.
 
 ## What Glytch is not
 
