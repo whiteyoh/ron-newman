@@ -16,7 +16,7 @@ def test_onboarding_static_content():
     assert "js/main.js" in html
     assert "footer-disclaimer" in html
     assert "Yegge/design inspiration" not in html
-    assert "https://github.com/whiteyoh/ron-newman" in html
+    assert "https://github.com/whiteyoh/glytch" in html
     assert "https://glytch.uk" in html
 
     assert "glytch.firstRunGuide.completed" in js
