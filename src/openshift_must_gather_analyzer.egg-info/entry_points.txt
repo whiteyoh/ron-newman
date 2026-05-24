@@ -1,0 +1,2 @@
+[console_scripts]
+openshift-must-gather-analyzer = openshift_log_analyzer.cli:main

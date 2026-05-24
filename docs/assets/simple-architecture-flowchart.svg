@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="760" viewBox="0 0 1400 760" role="img" aria-labelledby="title desc">
+  <title id="title">Glytch architecture flowchart</title>
+  <desc id="desc">A left-to-right flow of input, level runner, tools, verification, and learning output in Glytch.</desc>
+  <defs>
+    <style>
+      .bg { fill: #f8fafc; }
+      .box { fill: #ffffff; stroke: #0f172a; stroke-width: 2; rx: 16; ry: 16; }
+      .accent { fill: #dbeafe; stroke: #1d4ed8; }
+      .text { fill: #0f172a; font-family: 'Helvetica Neue', Arial, sans-serif; font-size: 24px; }
+      .small { fill: #334155; font-family: 'Helvetica Neue', Arial, sans-serif; font-size: 19px; }
+      .arrow { stroke: #1e293b; stroke-width: 4; fill: none; marker-end: url(#arrowhead); }
+    </style>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#1e293b" />
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="1400" height="760" />
+
+  <rect class="box accent" x="70" y="270" width="210" height="180" />
+  <text class="text" x="105" y="350">Scenario</text>
+  <text class="small" x="96" y="384">User prompt + level</text>
+
+  <rect class="box" x="340" y="180" width="280" height="170" />
+  <text class="text" x="380" y="255">Level Runner</text>
+  <text class="small" x="372" y="286">Selects behavior rules</text>
+
+  <rect class="box" x="340" y="390" width="280" height="170" />
+  <text class="text" x="398" y="466">AI Client</text>
+  <text class="small" x="370" y="496">Calls upstream model</text>
+
+  <rect class="box accent" x="700" y="130" width="290" height="150" />
+  <text class="text" x="760" y="208">Tool Layer</text>
+  <text class="small" x="738" y="238">Calculator and retrieval</text>
+
+  <rect class="box" x="700" y="320" width="290" height="170" />
+  <text class="text" x="752" y="396">Verifier</text>
+  <text class="small" x="748" y="428">Checks evidence, gates</text>
+
+  <rect class="box accent" x="1080" y="240" width="250" height="220" />
+  <text class="text" x="1124" y="320">Output</text>
+  <text class="small" x="1110" y="354">Score panel</text>
+  <text class="small" x="1110" y="382">Workflow detail</text>
+  <text class="small" x="1110" y="410">Taskboard (L8)</text>
+
+  <path class="arrow" d="M 280 360 L 340 265" />
+  <path class="arrow" d="M 280 360 L 340 475" />
+  <path class="arrow" d="M 620 265 L 700 205" />
+  <path class="arrow" d="M 620 475 L 700 395" />
+  <path class="arrow" d="M 845 280 L 845 320" />
+  <path class="arrow" d="M 990 405 L 1080 350" />
+
+  <text class="small" x="70" y="90">Glytch keeps the workflow visible so learners can inspect where evidence, checks, and human review fit.</text>
+</svg>

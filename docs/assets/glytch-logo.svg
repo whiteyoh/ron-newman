@@ -1,0 +1,39 @@
+<svg width="960" height="280" viewBox="0 0 960 280" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Glytch - intelligently artificial logo">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0b1020"/>
+      <stop offset="100%" stop-color="#151a2f"/>
+    </linearGradient>
+    <linearGradient id="text" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#6ee7ff"/>
+      <stop offset="50%" stop-color="#a78bfa"/>
+      <stop offset="100%" stop-color="#f472b6"/>
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="2.5" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <rect x="0" y="0" width="960" height="280" rx="24" fill="url(#bg)"/>
+
+  <g filter="url(#glow)">
+    <text x="54" y="132" font-size="76" font-family="'Segoe UI', 'Inter', sans-serif" font-weight="800" fill="url(#text)">GLYTCH</text>
+    <text x="56" y="138" font-size="76" font-family="'Segoe UI', 'Inter', sans-serif" font-weight="800" fill="#ff4d8d" opacity="0.28">GLYTCH</text>
+    <text x="50" y="126" font-size="76" font-family="'Segoe UI', 'Inter', sans-serif" font-weight="800" fill="#22d3ee" opacity="0.28">GLYTCH</text>
+  </g>
+
+  <text x="56" y="194" font-size="30" font-family="'Consolas', 'Menlo', monospace" letter-spacing="1.2" fill="#d7dbf5">intelligently artificial</text>
+
+  <g stroke="#4cc9f0" stroke-width="4" fill="none" opacity="0.75">
+    <path d="M730 70h74l22 22v52l-22 22h-74l-22-22V92z"/>
+    <circle cx="754" cy="118" r="7" fill="#4cc9f0"/>
+    <circle cx="780" cy="118" r="7" fill="#4cc9f0"/>
+    <path d="M744 148q24 16 48 0"/>
+    <path d="M826 118h58"/>
+    <path d="M850 96v44"/>
+  </g>
+</svg>

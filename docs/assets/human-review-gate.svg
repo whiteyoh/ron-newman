@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="640" viewBox="0 0 1200 640" role="img" aria-labelledby="title desc">
+  <title id="title">Human review gate diagram</title>
+  <desc id="desc">A checkpoint diagram showing AI draft, verification, and human approval before release.</desc>
+  <defs>
+    <style>
+      .bg { fill: #f8fafc; }
+      .box { fill: #ffffff; stroke: #0f172a; stroke-width: 2; rx: 16; ry: 16; }
+      .accent { fill: #dbeafe; }
+      .warn { fill: #fef3c7; }
+      .good { fill: #dcfce7; }
+      .h { fill: #0f172a; font-family: 'Helvetica Neue', Arial, sans-serif; font-size: 30px; font-weight: 700; }
+      .p { fill: #334155; font-family: 'Helvetica Neue', Arial, sans-serif; font-size: 20px; }
+      .arrow { stroke: #1e293b; stroke-width: 4; fill: none; marker-end: url(#m); }
+    </style>
+    <marker id="m" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#1e293b"/>
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="1200" height="640"/>
+  <rect class="box accent" x="80" y="220" width="280" height="180"/>
+  <text class="h" x="130" y="300">AI Draft</text>
+  <text class="p" x="110" y="336">Initial response</text>
+
+  <rect class="box warn" x="460" y="220" width="280" height="180"/>
+  <text class="h" x="500" y="300">Verifier</text>
+  <text class="p" x="490" y="336">Checks and flags</text>
+
+  <rect class="box" x="840" y="220" width="280" height="180"/>
+  <text class="h" x="882" y="300">Human Gate</text>
+  <text class="p" x="876" y="336">Approve or revise</text>
+
+  <path class="arrow" d="M 360 310 L 460 310"/>
+  <path class="arrow" d="M 740 310 L 840 310"/>
+
+  <rect class="box good" x="840" y="470" width="280" height="110"/>
+  <text class="p" x="892" y="534">Release with notes</text>
+  <path class="arrow" d="M 980 400 L 980 470"/>
+
+  <text class="p" x="80" y="120">No Glytch output should bypass human judgement for sensitive decisions.</text>
+</svg>
